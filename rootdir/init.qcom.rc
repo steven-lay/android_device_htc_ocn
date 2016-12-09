@@ -439,6 +439,9 @@ on post-fs-data
     chown radio radio /data/misc/radio/db_check_done
     chmod 0660 /data/misc/radio/db_check_done
 
+    # Wifi firmware reload path
+    chown wifi wifi /sys/module/wlan/parameters/fwpath
+
     mkdir /data/misc/movepdg 0770 system system
     mkdir /data/misc/movepdg/ipsec 0770 system system
 
