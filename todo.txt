@@ -1,0 +1,3 @@
+BoardConfig.mk - partition sizes
+Android.mk - more firmware symlinkage
+sepolicy - complete bringup currently so permissive currently!
