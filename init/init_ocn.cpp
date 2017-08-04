@@ -42,6 +42,7 @@
 #include "htc-emeads.h"
 #include "htc-asiads.h"
 #include "htc-indiads.h"
+#include "htc-unlocked.h"
 
 static void load_properties(const char *original_data)
 {
@@ -104,6 +105,8 @@ void vendor_load_properties()
            load_properties(htc_sprint_properties);
         } else if (is_variant_eeuk(bootcid)) {
            load_properties(htc_eeuk_properties);
+        } else if (is_variant_unlocked(bootcid)) {
+           load_properties(htc_unlocked_properties);
         }
     } else if (bootmid == "2PZC30000") {
         if (is_variant_emeads(bootcid)) {
