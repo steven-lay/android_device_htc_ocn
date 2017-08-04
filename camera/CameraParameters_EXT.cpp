@@ -39,26 +39,17 @@ const char CameraParameters_EXT::ISO_200[] = "ISO200";
 const char CameraParameters_EXT::ISO_400[] = "ISO400";
 const char CameraParameters_EXT::ISO_800[] = "ISO800";
 const char CameraParameters_EXT::ISO_1600[] = "ISO1600";
+const char CameraParameters_EXT::ISO_3200[] = "ISO3200";
 const char CameraParameters_EXT::VIDEO_HFR_OFF[] = "off";
 const char CameraParameters_EXT::VIDEO_HFR_2X[] = "60";
 const char CameraParameters_EXT::VIDEO_HFR_3X[] = "90";
 const char CameraParameters_EXT::VIDEO_HFR_4X[] = "120";
 const char CameraParameters_EXT::VIDEO_HFR_5X[] = "150";
-const char CameraParameters_EXT::KEY_FASTVIDEO_FPS60_1080P_SUPPORTED[] = "video-1080p60fps-supported";
-const char CameraParameters_EXT::KEY_SLOW_MOTION_SUPPORTED[] = "video-slow-motion-supported";
-const char CameraParameters_EXT::KEY_SLOW_MOTION_MULTIPLE[] = "slow-motion-x";
-const char CameraParameters_EXT::KEY_SLOW_MOTION_RES[] = "slow-motion-res";
-const char CameraParameters_EXT::KEY_FASTVIDEO_FPS60_SUPPORTED[] = "video-720p60fps-supported";
-const char CameraParameters_EXT::KEY_CONTIBURST_TAKE[] = "take";
-const char CameraParameters_EXT::KEY_CONTIBURST_SUPPORTED_MODE[] = "contiburst-support-mode";
-const char CameraParameters_EXT::KEY_NON_ZSL_MANUAL_MODE[] = "non-zsl-manual-mode";
+const char CameraParameters_EXT::VIDEO_HFR_6X[] = "180";
+const char CameraParameters_EXT::VIDEO_HFR_7X[] = "210";
+const char CameraParameters_EXT::VIDEO_HFR_8X[] = "240";
+const char CameraParameters_EXT::VIDEO_HFR_9X[] = "270";
 const char CameraParameters_EXT::KEY_VIDEO_MODE[] = "video-mode";
-const char CameraParameters_EXT::KEY_FORCE_USE_AUDIO_ENABLED[] = "force-use-audio-enabled";
-const char CameraParameters_EXT::KEY_SLOW_MOTION_VERSION[] = "slow-motion-version";
-const char CameraParameters_EXT::KEY_SAVE_MIRROR[] = "save-mirror";
-const char CameraParameters_EXT::KEY_SMILEINFO_BYFACE_SUPPORTED[] = "smileinfo-byface-supported";
-const char CameraParameters_EXT::DENOISE_ON[] = "denoise-on";
-const char CameraParameters_EXT::DENOISE_OFF[] = "denoise-off";
 
 #define ORIENTATION_PORTRAIT 1
 #define ORIENTATION_LANDSCAPE 2
