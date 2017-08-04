@@ -1216,7 +1216,7 @@ vendor/firmware/slpi_v2.b14
 vendor/firmware/slpi_v2.cfg
 vendor/firmware/slpi_v2.mdt
 
-#Temporary until I figure out why shims don't work
+# Temporary until I figure out why shims don't work
 lib/liblog.so
 lib64/liblog.so
 lib/libpower.so
