@@ -30,7 +30,7 @@ PRODUCT_AAPT_PREF_CONFIG := xxxhdpi
 
 # Device was launched with M
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.product.first_api_level=23
+    ro.product.first_api_level=25
 
 # Boot animation
 TARGET_SCREEN_HEIGHT := 2560
@@ -104,17 +104,18 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_policy.conf:system/etc/audio_policy.conf \
     $(LOCAL_PATH)/audio/listen_platform_info.xml:system/etc/listen_platform_info.xml \
     $(LOCAL_PATH)/audio/mixer_paths_tavil.xml:system/etc/mixer_paths_tavil.xml \
+    $(LOCAL_PATH)/audio/aanc_tuning_mixer_tavil.txt:system/etc/aanc_tuning_mixer_tavil.txt \
     $(LOCAL_PATH)/audio/sound_trigger_mixer_paths.xml:system/etc/sound_trigger_mixer_paths.xml \
     $(LOCAL_PATH)/audio/sound_trigger_mixer_paths_wcd9340.xml:system/etc/sound_trigger_mixer_paths_wcd9340.xml \
     $(LOCAL_PATH)/audio/sound_trigger_platform_info.xml:system/etc/sound_trigger_platform_info.xml
 
 # Camera
-PRODUCT_PACKAGES += \
-    libshim_camera
+#PRODUCT_PACKAGES += \
+#    libshim_camera
 
 # Snap
-PRODUCT_PACKAGES += \
-    Snap
+#PRODUCT_PACKAGES += \
+#    Snap
 
 # Connectivity Engine support (CNE)
 PRODUCT_PACKAGES += \
@@ -140,6 +141,12 @@ PRODUCT_PACKAGES += \
 # GPS
 PRODUCT_PACKAGES += \
     gps.msm8998 \
+    gps.conf \
+    libgps.utils \
+    libloc_core \
+    libloc_eng \
+    libloc_pla \
+    libloc_stub \
     libcurl \
     libgnsspps
 
@@ -148,9 +155,11 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/gps/etc/gps.conf.default:system/etc/gps.conf.default \
     $(LOCAL_PATH)/gps/etc/gps.conf.sprint:system/etc/gps.conf.sprint \
     $(LOCAL_PATH)/gps/etc/izat.conf:system/etc/izat.conf \
+    $(LOCAL_PATH)/configs/izat.conf:system/vendor/etc/izat.conf \
     $(LOCAL_PATH)/gps/etc/lowi.conf:system/etc/lowi.conf \
     $(LOCAL_PATH)/gps/etc/sap.conf:system/etc/sap.conf \
     $(LOCAL_PATH)/gps/etc/xtwifi.conf:system/etc/xtwifi.conf
+    $(LOCAL_PATH)/configs/xtwifi.conf:system/vendor/etc/xtwifi.conf \
 
 # HTC Logging functions
 PRODUCT_PACKAGES += \
@@ -158,15 +167,13 @@ PRODUCT_PACKAGES += \
 
 # Init
 PRODUCT_PACKAGES += \
-    charger.fstab.qcom \
     fstab.qcom \
     init.qcom.power.rc \
     init.qcom.rc \
     init.qcom.usb.rc \
-    init.recovery.qcom.rc \
     ueventd.qcom.rc \
-    init.qcom.sh \
-    init.qcom.firmware_links.sh
+    init.qcom.syspart_fixup.sh \
+    init.qcom.sh
 
 # Input
 PRODUCT_COPY_FILES += \
@@ -209,11 +216,8 @@ PRODUCT_COPY_FILES += \
 # NFC
 PRODUCT_PACKAGES += \
     com.android.nfc_extras \
-    com.nxp.nfc.nq \
-    libnqnfc-nci \
-    libp61-jcop-kit \
-    nfc_nci.nqx.default \
-    NQNfcNci \
+    nfc_nci.pn54x.default \
+    NfcNci \
     Tag
 
 PRODUCT_COPY_FILES += \
@@ -259,9 +263,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Wifi
 PRODUCT_PACKAGES += \
+    ipacm \
+    ipacm-diag \
+    IPACM_cfg.xml \
+    libqsap_sdk \
+    libQWiFiSoftApCfg \
     libwpa_client \
     hostapd \
-    wlutil \
+    dhcpcd.conf \
     wpa_supplicant \
     wpa_supplicant.conf
 
@@ -270,5 +279,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/hostapd_default.conf:system/etc/hostapd/hostapd_default.conf \
     $(LOCAL_PATH)/configs/hostapd.deny:system/etc/hostapd/hostapd.deny \
     $(LOCAL_PATH)/configs/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf \
-    $(LOCAL_PATH)/configs/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf
+    $(LOCAL_PATH)/configs/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
+    $(LOCAL_PATH)/configs/WCNSS_qcom_cfg.ini:system/etc/wifi/WCNSS_qcom_cfg.ini \
+    $(LOCAL_PATH)/rootdir/etc/init.qcom.wifi.sh:system/etc/init.qcom.wifi.sh
 
+# For android_filesystem_config.h
+PRODUCT_PACKAGES += fs_config_files
