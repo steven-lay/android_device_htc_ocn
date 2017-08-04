@@ -1,6 +1,6 @@
-// EE_UK | MID: 2PZC10000 | CID: ORANG001 
+// EE_UK | MID: 2PZC10000 | CID: EVE_001
 static bool is_variant_eeuk(std::string bootcid) {
-    if (bootcid == "ORANG001") return true;
+    if (bootcid == "EVE__001") return true;
     return false;
 }
 
