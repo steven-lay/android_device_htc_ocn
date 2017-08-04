@@ -51,7 +51,7 @@ static struct light_state_t g_battery;
 
 static bool write_led_error = false;
 
-const char *const INDICATOR_LED_FILE = "/sys/class/leds/indicator/mode_and_lut_params";
+const char *const INDICATOR_LED_FILE = "/sys/class/leds/indicator/ModeRGB";
 const char *const BUTTON_BACKLIGHT_FILE = "/sys/class/leds/button-backlight/brightness";
 const char *const LCD_BACKLIGHT_FILE = "/sys/class/leds/lcd-backlight/brightness";
 
