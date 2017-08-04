@@ -112,10 +112,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     libshim_camera
 
-# DeviceHandler
-PRODUCT_PACKAGES += \
-    DeviceHandler
-
 # Snap
 PRODUCT_PACKAGES += \
     Snap
