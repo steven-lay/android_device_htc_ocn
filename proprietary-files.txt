@@ -75,7 +75,8 @@ vendor/lib/libacdb-fts.so
 vendor/lib/libacdbloader.so
 vendor/lib/libacdbmapper.so
 vendor/lib/libacdbrtac.so
-vendor/lib/libadsprpc.so
+vendor/lib/libadiertac.so
+vendor/lib/libaudioalsa.so
 vendor/lib/libcdsprpc.so
 vendor/lib/libgcs.so
 vendor/lib/libgcs-osal.so
@@ -92,7 +93,8 @@ vendor/lib64/libacdb-fts.so
 vendor/lib64/libacdbloader.so
 vendor/lib64/libacdbmapper.so
 vendor/lib64/libacdbrtac.so
-vendor/lib64/libadsprpc.so
+vendor/lib64/libadiertac.so
+vendor/lib64/libaudioalsa.so
 vendor/lib64/libcdsprpc.so
 vendor/lib64/libgcs.so
 vendor/lib64/libgcs-osal.so
@@ -1063,6 +1065,7 @@ vendor/lib64/libperipheral_client.so
 # Postprocessing
 etc/permissions/com.qti.snapdragon.sdk.display.xml
 vendor/bin/mm-pp-dpps
+vendor/lib/libdisp-aba.so
 vendor/lib64/libdisp-aba.so
 
 # Power
@@ -1087,6 +1090,7 @@ vendor/lib/libqmi_csi.so
 vendor/lib/libqmi_encdec.so
 vendor/lib/libqmi.so
 vendor/lib/libqmiservices.so
+vendor/lib/libqmiservices_ext.so
 vendor/lib/libsmemlog.so
 vendor/lib64/libdiag.so
 vendor/lib64/libdsi_netctrl.so
@@ -1103,6 +1107,7 @@ vendor/lib64/libqmi_csi.so
 vendor/lib64/libqmi_encdec.so
 vendor/lib64/libqmi.so
 vendor/lib64/libqmiservices.so
+vendor/lib64/libqmiservices_ext.so
 vendor/lib64/libsmemlog.so
 
 # Radio
