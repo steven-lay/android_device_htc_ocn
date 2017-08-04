@@ -33,10 +33,16 @@ ro.bt.profiles = 12806147
 ro.bt.stack = Bluedroid
 ro.bt.version = 4.2
 ro.product.bluetooth=4.2
+ro.qc.bluetooth.stack=bluedroid
+qcom.bluetooth.soc=cherokee
+ro.bluetooth.emb_wp_mode=true
+ro.bluetooth.wipower=true
+ro.bluetooth.a4wp=false
 
 # Camera
 persist.ts.rtmakeup=false
 vidc.enc.dcvs.extra-buff-count=2
+persist.camera.gyro.disable=0
 
 # CNE
 persist.cne.feature=1
@@ -93,9 +99,29 @@ ro.qti.sensors.dev_ori=true
 ro.qti.sensors.pmd=true
 ro.qti.sensors.sta_detect=true
 ro.qti.sensors.mot_detect=true
+ro.qti.sensors.dpc=true
+ro.qti.sensors.multishake=true
+ro.qti.sensors.iod=true
 
 # SSC/SLPI sensor daemon
 ro.qualcomm.slpi=true
+
+# TCP
+net.tcp.buffersize.wifi=24288,2097152,4194304,262144,524288,1048576
+net.tcp.buffersize.default=4096,87380,524288,4096,16384,110208
+net.tcp.buffersize.lte=2097152,4194304,8388608,262144,524288,1048576
+net.tcp.buffersize.umts=4094,87380,110208,4096,16384,110208
+net.tcp.buffersize.hspa=4094,87380,1220608,4096,16384,1220608
+net.tcp.buffersize.hsupa=4094,87380,1220608,4096,16384,1220608
+net.tcp.buffersize.hsdpa=4094,87380,1220608,4096,16384,1220608
+net.tcp.buffersize.hspap=4094,87380,1220608,4096,16384,1220608
+net.tcp.buffersize.edge=4093,26280,35040,4096,16384,35040
+net.tcp.buffersize.gprs=4092,8760,11680,4096,8760,11680
+net.tcp.buffersize.evdo=4094,87380,524288,4096,16384,262144
+net.tcp.2g_init_rwnd=10
+
+# Telephony
+ro.telephony.call_ring.multiple=false
 
 # Time-services
 persist.timed.enable=true
