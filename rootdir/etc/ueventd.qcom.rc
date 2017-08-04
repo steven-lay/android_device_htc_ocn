@@ -303,3 +303,7 @@
 
 # set the owner of partition control's block node to media and system for MFG disable camera feature.
 /dev/block/platform/soc/1da4000.ufshc/by-name/control   0660    cameraserver   system
+
+# Nanohub
+/dev/nanohub              0640   system     system
+/dev/nanohub_comms        0640   system     system
