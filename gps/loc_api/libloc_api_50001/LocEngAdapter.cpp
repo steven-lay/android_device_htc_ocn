@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2015, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2011-2016, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,7 +26,7 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#define LOG_NDDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "LocSvc_EngAdapter"
 
 #include <sys/stat.h>
@@ -36,6 +36,7 @@
 #include <LocEngAdapter.h>
 #include "loc_eng_msg.h"
 #include "loc_log.h"
+#include <loc_nmea.h>
 
 #define CHIPSET_SERIAL_NUMBER_MAX_LEN 16
 #define USER_AGENT_MAX_LEN 512
@@ -81,6 +82,7 @@ LocEngAdapter::LocEngAdapter(LOC_API_ADAPTER_EVENT_MASK_T mask,
 {
     memset(&mFixCriteria, 0, sizeof(mFixCriteria));
     mFixCriteria.mode = LOC_POSITION_MODE_INVALID;
+    clearGnssSvUsedListData();
     LOC_LOGD("LocEngAdapter created");
 }
 
@@ -270,6 +272,9 @@ void LocInternalAdapter::setUlpProxy(UlpProxyBase* ulp) {
         virtual void proc() const {
             LOC_LOGV("%s] ulp %p adapter %p", __func__,
                      mUlp, mAdapter);
+            if (mUlp) {
+                mUlp->setCapabilities(ContextBase::getCarrierCapabilities());
+            }
             mAdapter->setUlpProxy(mUlp);
         }
     };
@@ -377,14 +382,14 @@ void LocEngAdapter::reportPosition(UlpLocation &location,
     }
 }
 
-void LocInternalAdapter::reportSv(GnssSvStatus &svStatus,
+void LocInternalAdapter::reportSv(LocGnssSvStatus &svStatus,
                                   GpsLocationExtended &locationExtended,
                                   void* svExt){
     sendMsg(new LocEngReportSv(mLocEngAdapter, svStatus,
                                locationExtended, svExt));
 }
 
-void LocEngAdapter::reportSv(GnssSvStatus &svStatus,
+void LocEngAdapter::reportSv(LocGnssSvStatus &svStatus,
                              GpsLocationExtended &locationExtended,
                              void* svExt)
 {
@@ -423,22 +428,32 @@ void LocEngAdapter::setInSession(bool inSession)
     }
 }
 
-void LocInternalAdapter::reportStatus(GpsStatusValue status)
+void LocInternalAdapter::reportStatus(LocGpsStatusValue status)
 {
     sendMsg(new LocEngReportStatus(mLocEngAdapter, status));
 }
 
-void LocEngAdapter::reportStatus(GpsStatusValue status)
+void LocEngAdapter::reportStatus(LocGpsStatusValue status)
 {
     if (!mUlp->reportStatus(status)) {
         mInternalAdapter->reportStatus(status);
     }
 }
 
-inline
-void LocEngAdapter::reportNmea(const char* nmea, int length)
+void LocInternalAdapter::reportNmea(const char* nmea, int length)
 {
-    sendMsg(new LocEngReportNmea(mOwner, nmea, length));
+    sendMsg(new LocEngReportNmea(mLocEngAdapter->getOwner(), nmea, length));
+}
+
+inline void LocEngAdapter::reportNmea(const char* nmea, int length)
+{
+    if (getEvtMask() & LOC_API_ADAPTER_BIT_NMEA_1HZ_REPORT) {
+        if (loc_nmea_is_debug(nmea, length) ||
+            !mUlp->reportNmea(nmea, length)) {
+            //Report it to HAL
+            mInternalAdapter->reportNmea(nmea, length);
+        }
+    }
 }
 
 inline
@@ -455,7 +470,7 @@ bool LocEngAdapter::reportXtraServer(const char* url1,
 }
 
 inline
-bool LocEngAdapter::requestATL(int connHandle, AGpsType agps_type)
+bool LocEngAdapter::requestATL(int connHandle, LocAGpsType agps_type)
 {
     if (mSupportsAgpsRequests) {
         sendMsg(new LocEngRequestATL(mOwner,
@@ -492,7 +507,7 @@ bool LocEngAdapter::requestTime()
 }
 
 inline
-bool LocEngAdapter::requestNiNotify(GpsNiNotification &notif, const void* data)
+bool LocEngAdapter::requestNiNotify(LocGpsNiNotification &notif, const void* data)
 {
     if (mSupportsAgpsRequests) {
         notif.size = sizeof(notif);
@@ -539,7 +554,7 @@ void LocEngAdapter::handleEngineUpEvent()
     sendMsg(new LocEngUp(mOwner));
 }
 
-enum loc_api_adapter_err LocEngAdapter::setTime(GpsUtcTime time,
+enum loc_api_adapter_err LocEngAdapter::setTime(LocGpsUtcTime time,
                                                 int64_t timeReference,
                                                 int uncertainty)
 {
@@ -582,7 +597,7 @@ enum loc_api_adapter_err LocEngAdapter::setXtraVersionCheck(int check)
     return ret;
 }
 
-void LocEngAdapter::reportGnssMeasurementData(GnssData &gnssMeasurementData)
+void LocEngAdapter::reportGnssMeasurementData(LocGnssData &gnssMeasurementData)
 {
     sendMsg(new LocEngReportGnssMeasurement(mOwner,
                                            gnssMeasurementData));

@@ -1,4 +1,4 @@
-/* Copyright (c) 2014, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -24,23 +24,32 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#include "platform_lib_gettid.h"
+#ifndef LOC_ENG_NMEA_H
+#define LOC_ENG_NMEA_H
 
-#ifdef USE_GLIB
-#include <loc_stub_gettid.h>
+#include <gps_extended.h>
+#include <vector>
+#include <string>
+#define NMEA_SENTENCE_MAX_LENGTH 200
 
-#include <errno.h>
-const char* getprogname() {
-    return program_invocation_short_name;
+void loc_nmea_generate_sv(const LocGnssSvStatus &svStatus,
+                              const GpsLocationExtended &locationExtended,
+                              std::vector<std::string> &nmeaArraystr);
+
+void loc_nmea_generate_pos(const UlpLocation &location,
+                               const GpsLocationExtended &locationExtended,
+                               unsigned char generate_nmea,
+                               std::vector<std::string> &nmeaArraystr);
+
+#define DEBUG_NMEA_MINSIZE 6
+#define DEBUG_NMEA_MAXSIZE 256
+inline bool loc_nmea_is_debug(const char* nmea, int length) {
+    return ((NULL != nmea) &&
+            (length >= DEBUG_NMEA_MINSIZE) && (length <= DEBUG_NMEA_MAXSIZE) &&
+            (nmea[0] == '$') && (nmea[1] == 'P') && (nmea[2] == 'Q') && (nmea[3] == 'W'));
 }
 
-#else
-#include <unistd.h>
-#endif /* USE_GLIB */
-
-pid_t platform_lib_abstraction_gettid()
-{
-    return gettid();
-}
+#endif // LOC_ENG_NMEA_H

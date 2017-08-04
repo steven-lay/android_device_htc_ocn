@@ -27,7 +27,7 @@
  *
  */
 
-#define LOG_NDDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "LocSvc_eng"
 
 #include <stdint.h>
@@ -46,6 +46,7 @@
 #include <time.h>
 #include <new>
 #include <LocEngAdapter.h>
+#include <SystemStatus.h>
 
 
 #include <string.h>
@@ -54,7 +55,7 @@
 #include <loc_eng_dmn_conn.h>
 #include <loc_eng_dmn_conn_handler.h>
 #include <loc_eng_msg.h>
-#include <loc_eng_nmea.h>
+#include <loc_nmea.h>
 #include <msg_q.h>
 #include <loc.h>
 #include <platform_lib_includes.h>
@@ -64,15 +65,8 @@
 #define SUCCESS TRUE
 #define FAILURE FALSE
 
-#ifndef GPS_CONF_FILE
-#define GPS_CONF_FILE            "/etc/gps.conf"   //??? platform independent
-#endif
-
-#ifndef SAP_CONF_FILE
-#define SAP_CONF_FILE            "/etc/sap.conf"
-#endif
-
 #define XTRA1_GPSONEXTRA         "xtra1.gpsonextra.net"
+#define MSA_RECURRING_MIN_TRACKING_INTERVAL_MSEC    (120 * 1000) //120 seconds
 
 using namespace loc_core;
 
@@ -133,7 +127,7 @@ static void loc_default_parameters(void)
    gps_conf.NMEA_PROVIDER = 0;
    gps_conf.GPS_LOCK = 0;
    gps_conf.SUPL_VER = 0x10000;
-   gps_conf.SUPL_MODE = 0x3;
+   gps_conf.SUPL_MODE = 0x1;
    gps_conf.SUPL_ES = 0;
    gps_conf.CAPABILITIES = 0x7;
    /* LTE Positioning Profile configuration is disable by default*/
@@ -186,17 +180,18 @@ static void loc_default_parameters(void)
 // 2nd half of init(), singled out for
 // modem restart to use.
 static int loc_eng_reinit(loc_eng_data_s_type &loc_eng_data);
+static void loc_eng_dsclient_release(loc_eng_data_s_type &loc_eng_data);
 static void loc_eng_agps_reinit(loc_eng_data_s_type &loc_eng_data);
 
 static int loc_eng_set_server(loc_eng_data_s_type &loc_eng_data,
                               LocServerType type, const char *hostname, int port);
 // Internal functions
 static void loc_inform_gps_status(loc_eng_data_s_type &loc_eng_data,
-                                  GpsStatusValue status);
+                                  LocGpsStatusValue status);
 static void loc_eng_report_status(loc_eng_data_s_type &loc_eng_data,
-                                  GpsStatusValue status);
+                                  LocGpsStatusValue status);
 static void loc_eng_process_conn_request(loc_eng_data_s_type &loc_eng_data,
-                                         int connHandle, AGpsType agps_type);
+                                         int connHandle, LocAGpsType agps_type);
 static void loc_eng_agps_close_status(loc_eng_data_s_type &loc_eng_data, int is_succ);
 static void loc_eng_handle_engine_down(loc_eng_data_s_type &loc_eng_data) ;
 static void loc_eng_handle_engine_up(loc_eng_data_s_type &loc_eng_data) ;
@@ -210,7 +205,7 @@ getAgpsStateMachine(loc_eng_data_s_type& logEng, AGpsExtType agpsType);
 static void createAgnssNifs(loc_eng_data_s_type& locEng);
 static int dataCallCb(void *cb_data);
 static void update_aiding_data_for_deletion(loc_eng_data_s_type& loc_eng_data) {
-    if (loc_eng_data.engine_status != GPS_STATUS_ENGINE_ON &&
+    if (loc_eng_data.engine_status != LOC_GPS_STATUS_ENGINE_ON &&
         loc_eng_data.aiding_data_for_deletion != 0)
     {
         loc_eng_data.adapter->deleteAidingData(loc_eng_data.aiding_data_for_deletion);
@@ -228,7 +223,7 @@ static void* noProc(void* data)
  *********************************************************************/
 //        case LOC_ENG_MSG_REQUEST_NI:
 LocEngRequestNi::LocEngRequestNi(void* locEng,
-                                 GpsNiNotification &notif,
+                                 LocGpsNiNotification &notif,
                                  const void* data) :
     LocMsg(), mLocEng(locEng), mNotify(notif), mPayload(data) {
     locallog();
@@ -290,6 +285,7 @@ LocEngStopFix::LocEngStopFix(LocEngAdapter* adapter) :
 inline void LocEngStopFix::proc() const
 {
     loc_eng_data_s_type* locEng = (loc_eng_data_s_type*)mAdapter->getOwner();
+    mAdapter->clearGnssSvUsedListData();
     loc_eng_stop_handler(*locEng);
 }
 inline void LocEngStopFix::locallog() const
@@ -345,11 +341,11 @@ void LocEngGetZpp::send() const {
 
 struct LocEngSetTime : public LocMsg {
     LocEngAdapter* mAdapter;
-    const GpsUtcTime mTime;
+    const LocGpsUtcTime mTime;
     const int64_t mTimeReference;
     const int mUncertainty;
     inline LocEngSetTime(LocEngAdapter* adapter,
-                         GpsUtcTime t, int64_t tf, int unc) :
+                         LocGpsUtcTime t, int64_t tf, int unc) :
         LocMsg(), mAdapter(adapter),
         mTime(t), mTimeReference(tf), mUncertainty(unc)
     {
@@ -523,15 +519,15 @@ struct LocEngSuplVer : public LocMsg {
 };
 
 struct LocEngSuplMode : public LocMsg {
-    UlpProxyBase* mUlp;
+    LocEngAdapter* mAdapter;
 
-    inline LocEngSuplMode(UlpProxyBase* ulp) :
-        LocMsg(), mUlp(ulp)
+    inline LocEngSuplMode(LocEngAdapter* adapter) :
+        LocMsg(), mAdapter(adapter)
     {
         locallog();
     }
     inline virtual void proc() const {
-        mUlp->setCapabilities(ContextBase::getCarrierCapabilities());
+        mAdapter->getUlpProxy()->setCapabilities(ContextBase::getCarrierCapabilities());
     }
     inline  void locallog() const {
     }
@@ -777,77 +773,87 @@ void LocEngReportPosition::proc() const {
     LocEngAdapter* adapter = (LocEngAdapter*)mAdapter;
     loc_eng_data_s_type* locEng = (loc_eng_data_s_type*)adapter->getOwner();
 
-    if (locEng->mute_session_state != LOC_MUTE_SESS_IN_SESSION) {
-        bool reported = false;
-        if (locEng->location_cb != NULL) {
-            if (LOC_SESS_FAILURE == mStatus) {
-                // in case we want to handle the failure case
-                locEng->location_cb(NULL, NULL);
-                reported = true;
+    bool reported = false;
+    if (locEng->location_cb != NULL) {
+        adapter->clearGnssSvUsedListData();
+        if (LOC_SESS_FAILURE == mStatus) {
+            // in case we want to handle the failure case
+            locEng->location_cb(NULL, NULL);
+            reported = true;
+        }
+        // what's in the else if is... (line by line)
+        // 1. this is a final fix; and
+        //   1.1 it is a Satellite fix; or
+        //   1.2 it is a sensor fix
+        // 2. (must be intermediate fix... implicit)
+        //   2.1 we accepte intermediate; and
+        //   2.2 it is NOT the case that
+        //   2.2.1 there is inaccuracy; and
+        //   2.2.2 we care about inaccuracy; and
+        //   2.2.3 the inaccuracy exceeds our tolerance
+        else if ((LOC_SESS_SUCCESS == mStatus &&
+                  ((LOC_POS_TECH_MASK_SATELLITE |
+                    LOC_POS_TECH_MASK_SENSORS   |
+                    LOC_POS_TECH_MASK_HYBRID) &
+                   mTechMask)) ||
+                 (LOC_SESS_INTERMEDIATE == locEng->intermediateFix &&
+                  !((mLocation.gpsLocation.flags &
+                     LOC_GPS_LOCATION_HAS_ACCURACY) &&
+                    (gps_conf.ACCURACY_THRES != 0) &&
+                    (mLocation.gpsLocation.accuracy >
+                     gps_conf.ACCURACY_THRES)))) {
+            if (mLocationExtended.flags & GPS_LOCATION_EXTENDED_HAS_GNSS_SV_USED_DATA)
+            {
+                adapter->setGnssSvUsedListData(mLocationExtended.gnss_sv_used_ids);
             }
-            // what's in the else if is... (line by line)
-            // 1. this is a final fix; and
-            //   1.1 it is a Satellite fix; or
-            //   1.2 it is a sensor fix
-            // 2. (must be intermediate fix... implicit)
-            //   2.1 we accepte intermediate; and
-            //   2.2 it is NOT the case that
-            //   2.2.1 there is inaccuracy; and
-            //   2.2.2 we care about inaccuracy; and
-            //   2.2.3 the inaccuracy exceeds our tolerance
-            else if ((LOC_SESS_SUCCESS == mStatus &&
-                      ((LOC_POS_TECH_MASK_SATELLITE |
-                        LOC_POS_TECH_MASK_SENSORS   |
-                        LOC_POS_TECH_MASK_HYBRID) &
-                       mTechMask)) ||
-                     (LOC_SESS_INTERMEDIATE == locEng->intermediateFix &&
-                      !((mLocation.gpsLocation.flags &
-                         GPS_LOCATION_HAS_ACCURACY) &&
-                        (gps_conf.ACCURACY_THRES != 0) &&
-                        (mLocation.gpsLocation.accuracy >
-                         gps_conf.ACCURACY_THRES)))) {
-                locEng->location_cb((UlpLocation*)&(mLocation),
-                                    (void*)mLocationExt);
-                reported = true;
-            }
+            locEng->location_cb((UlpLocation*)&(mLocation),
+                                (void*)mLocationExt);
+            reported = true;
         }
+    }
 
-        // if we have reported this fix
-        if (reported &&
-            // and if this is a singleshot
-            GPS_POSITION_RECURRENCE_SINGLE ==
-            locEng->adapter->getPositionMode().recurrence) {
-            if (LOC_SESS_INTERMEDIATE == mStatus) {
-                // modem could be still working for a final fix,
-                // although we no longer need it.  So stopFix().
-                locEng->adapter->stopFix();
-            }
-            // turn off the session flag.
-            locEng->adapter->setInSession(false);
+    // if we have reported this fix
+    if (reported &&
+        // and if this is a singleshot
+        LOC_GPS_POSITION_RECURRENCE_SINGLE ==
+        locEng->adapter->getPositionMode().recurrence) {
+        if (LOC_SESS_INTERMEDIATE == mStatus) {
+            // modem could be still working for a final fix,
+            // although we no longer need it.  So stopFix().
+            locEng->adapter->stopFix();
         }
+        // turn off the session flag.
+        locEng->adapter->setInSession(false);
+    }
 
-        LOC_LOGV("LocEngReportPosition::proc() - generateNmea: %d, position source: %d, "
-                 "engine_status: %d, isInSession: %d",
-                        locEng->generateNmea, mLocation.position_source,
-                        locEng->engine_status, locEng->adapter->isInSession());
+    LOC_LOGV("LocEngReportPosition::proc() - generateNmea: %d, position source: %d, "
+             "engine_status: %d, isInSession: %d",
+                    locEng->generateNmea, mLocation.position_source,
+                    locEng->engine_status, locEng->adapter->isInSession());
 
-        if (locEng->generateNmea &&
-            locEng->adapter->isInSession())
-        {
-            unsigned char generate_nmea = reported &&
-                                          (mStatus != LOC_SESS_FAILURE);
-            loc_eng_nmea_generate_pos(locEng, mLocation, mLocationExtended,
-                                      generate_nmea);
+    if (locEng->generateNmea &&
+        locEng->adapter->isInSession())
+    {
+        std::vector<std::string> nmeaArraystr;
+        unsigned char generate_nmea = reported &&
+                                      (mStatus != LOC_SESS_FAILURE);
+        loc_nmea_generate_pos(mLocation, mLocationExtended, generate_nmea, nmeaArraystr);
+        struct timeval tv;
+        gettimeofday(&tv,  NULL);
+        int64_t now = tv.tv_sec * 1000LL + tv.tv_usec / 1000;
+        for(int i = 0; i < nmeaArraystr.size(); i++) {
+            if (locEng->nmea_cb != NULL)
+               locEng->nmea_cb(now, nmeaArraystr[i].c_str(), nmeaArraystr[i].length());
         }
+    }
 
-        // Free the allocated memory for rawData
-        UlpLocation* gp = (UlpLocation*)&(mLocation);
-        if (gp != NULL && gp->rawData != NULL)
-        {
-            delete (char*)gp->rawData;
-            gp->rawData = NULL;
-            gp->rawDataSize = 0;
-        }
+    // Free the allocated memory for rawData
+    UlpLocation* gp = (UlpLocation*)&(mLocation);
+    if (gp != NULL && gp->rawData != NULL)
+    {
+        delete (char*)gp->rawData;
+        gp->rawData = NULL;
+        gp->rawDataSize = 0;
     }
 }
 void LocEngReportPosition::locallog() const {
@@ -863,7 +869,7 @@ void LocEngReportPosition::send() const {
 
 //        case LOC_ENG_MSG_REPORT_SV:
 LocEngReportSv::LocEngReportSv(LocAdapterBase* adapter,
-                               GnssSvStatus &sv,
+                               LocGnssSvStatus &sv,
                                GpsLocationExtended &locExtended,
                                void* svExt) :
     LocMsg(), mAdapter(adapter), mSvStatus(sv),
@@ -878,17 +884,65 @@ void LocEngReportSv::proc() const {
     LocEngAdapter* adapter = (LocEngAdapter*)mAdapter;
     loc_eng_data_s_type* locEng = (loc_eng_data_s_type*)adapter->getOwner();
 
-    if (locEng->mute_session_state != LOC_MUTE_SESS_IN_SESSION)
+    LocGnssSvStatus gnssSvStatus;
+    memcpy(&gnssSvStatus,&mSvStatus,sizeof(LocGnssSvStatus));
+    if (adapter->isGnssSvIdUsedInPosAvail())
     {
-        if (locEng->gnss_sv_status_cb != NULL) {
-            LOC_LOGE("Calling gnss_sv_status_cb");
-            locEng->gnss_sv_status_cb((GnssSvStatus*)&(mSvStatus));
+        GnssSvUsedInPosition gnssSvIdUsedInPosition =
+                            adapter->getGnssSvUsedListData();
+        int numSv = gnssSvStatus.num_svs;
+        int16_t gnssSvId = 0;
+        uint64_t svUsedIdMask = 0;
+        for (int i=0; i < numSv; i++)
+        {
+            gnssSvId = gnssSvStatus.gnss_sv_list[i].svid;
+            switch(gnssSvStatus.gnss_sv_list[i].constellation) {
+            case LOC_GNSS_CONSTELLATION_GPS:
+                svUsedIdMask = gnssSvIdUsedInPosition.gps_sv_used_ids_mask;
+                break;
+            case LOC_GNSS_CONSTELLATION_GLONASS:
+                svUsedIdMask = gnssSvIdUsedInPosition.glo_sv_used_ids_mask;
+                break;
+            case LOC_GNSS_CONSTELLATION_BEIDOU:
+                svUsedIdMask = gnssSvIdUsedInPosition.bds_sv_used_ids_mask;
+                break;
+            case LOC_GNSS_CONSTELLATION_GALILEO:
+                svUsedIdMask = gnssSvIdUsedInPosition.gal_sv_used_ids_mask;
+                break;
+            case LOC_GNSS_CONSTELLATION_QZSS:
+                svUsedIdMask = gnssSvIdUsedInPosition.qzss_sv_used_ids_mask;
+                break;
+            default:
+                svUsedIdMask = 0;
+                break;
+            }
+
+            // If SV ID was used in previous position fix, then set USED_IN_FIX
+            // flag, else clear the USED_IN_FIX flag.
+            if (svUsedIdMask & (1 << (gnssSvId - 1)))
+            {
+                gnssSvStatus.gnss_sv_list[i].flags |= LOC_GNSS_SV_FLAGS_USED_IN_FIX;
+            }
+        }
+    }
+
+    if (locEng->gnss_sv_status_cb != NULL) {
+        locEng->gnss_sv_status_cb((LocGnssSvStatus*)&(gnssSvStatus));
+    }
+
+    if (locEng->generateNmea)
+    {
+        std::vector<std::string> nmeaArraystr;
+        loc_nmea_generate_sv(gnssSvStatus, mLocationExtended, nmeaArraystr);
+        struct timeval tv;
+        gettimeofday(&tv,  NULL);
+        int64_t now = tv.tv_sec * 1000LL + tv.tv_usec / 1000;
+        for(int i = 0; i < nmeaArraystr.size(); i++) {
+            if (locEng->nmea_cb != NULL)
+               locEng->nmea_cb(now, nmeaArraystr[i].c_str(), nmeaArraystr[i].length());
+
         }
 
-        if (locEng->generateNmea)
-        {
-            loc_eng_nmea_generate_sv(locEng, mSvStatus, mLocationExtended);
-        }
     }
 }
 void LocEngReportSv::locallog() const {
@@ -903,7 +957,7 @@ void LocEngReportSv::send() const {
 
 //        case LOC_ENG_MSG_REPORT_STATUS:
 LocEngReportStatus::LocEngReportStatus(LocAdapterBase* adapter,
-                                       GpsStatusValue engineStatus) :
+                                       LocGpsStatusValue engineStatus) :
     LocMsg(),  mAdapter(adapter), mStatus(engineStatus)
 {
     locallog();
@@ -926,9 +980,9 @@ inline void LocEngReportStatus::log() const {
 //        case LOC_ENG_MSG_REPORT_NMEA:
 LocEngReportNmea::LocEngReportNmea(void* locEng,
                                    const char* data, int len) :
-    LocMsg(), mLocEng(locEng), mNmea(new char[len]), mLen(len)
+    LocMsg(), mLocEng(locEng), mNmea(new char[len+1]), mLen(len)
 {
-    memcpy((void*)mNmea, (void*)data, len);
+    strlcpy(mNmea, data, len+1);
     locallog();
 }
 void LocEngReportNmea::proc() const {
@@ -938,8 +992,14 @@ void LocEngReportNmea::proc() const {
     gettimeofday(&tv, (struct timezone *) NULL);
     int64_t now = tv.tv_sec * 1000LL + tv.tv_usec / 1000;
 
-    if (locEng->nmea_cb != NULL)
-        locEng->nmea_cb(now, mNmea, mLen);
+    // extract bug report info - this returns true if consumed by systemstatus
+    bool ret = LocDualContext::getSystemStatus()->setNmeaString(mNmea, mLen);
+    if (ret != true) {
+        // forward NMEA message to upper layer
+        if (locEng->nmea_cb != NULL) {
+            locEng->nmea_cb(now, mNmea, mLen);
+        }
+    }
 }
 inline void LocEngReportNmea::locallog() const {
     LOC_LOGV("LocEngReportNmea");
@@ -1163,7 +1223,7 @@ void LocEngRequestATL::proc() const {
         ATLSubscriber s(mID,
                         sm,
                         locEng->adapter,
-                        AGPS_TYPE_INVALID == mType);
+                        LOC_AGPS_TYPE_INVALID == mType);
         sm->subscribeRsrc((Subscriber*)&s);
     } else {
         locEng->adapter->atlOpenStatus(mID, 0, NULL, -1, mType);
@@ -1297,7 +1357,7 @@ LocEngRequestTime::LocEngRequestTime(void* locEng) :
 }
 void LocEngRequestTime::proc() const {
     loc_eng_data_s_type* locEng = (loc_eng_data_s_type*)mLocEng;
-    if (gps_conf.CAPABILITIES & GPS_CAPABILITY_ON_DEMAND_TIME) {
+    if (gps_conf.CAPABILITIES & LOC_GPS_CAPABILITY_ON_DEMAND_TIME) {
         if (locEng->request_utc_time_cb != NULL) {
             locEng->request_utc_time_cb();
         } else {
@@ -1315,9 +1375,9 @@ inline void LocEngRequestTime::log() const {
 //        case LOC_ENG_MSG_DELETE_AIDING_DATA:
 struct LocEngDelAidData : public LocMsg {
     loc_eng_data_s_type* mLocEng;
-    const GpsAidingData mType;
+    const LocGpsAidingData mType;
     inline LocEngDelAidData(loc_eng_data_s_type* locEng,
-                            GpsAidingData f) :
+                            LocGpsAidingData f) :
         LocMsg(), mLocEng(locEng), mType(f)
     {
         locallog();
@@ -1592,14 +1652,14 @@ struct LocEngInstallAGpsCert : public LocMsg {
     LocEngAdapter* mpAdapter;
     const size_t mNumberOfCerts;
     const uint32_t mSlotBitMask;
-    DerEncodedCertificate* mpData;
+    LocDerEncodedCertificate* mpData;
     inline LocEngInstallAGpsCert(LocEngAdapter* adapter,
-                              const DerEncodedCertificate* pData,
+                              const LocDerEncodedCertificate* pData,
                               size_t numberOfCerts,
                               uint32_t slotBitMask) :
         LocMsg(), mpAdapter(adapter),
         mNumberOfCerts(numberOfCerts), mSlotBitMask(slotBitMask),
-        mpData(new DerEncodedCertificate[mNumberOfCerts])
+        mpData(new LocDerEncodedCertificate[mNumberOfCerts])
     {
         for (int i=0; i < mNumberOfCerts; i++) {
             mpData[i].data = new u_char[pData[i].length];
@@ -1641,10 +1701,10 @@ struct LocEngGnssConstellationConfig : public LocMsg {
         locallog();
     }
     inline virtual void proc() const {
-        mAdapter->mGnssInfo.size = sizeof(GnssSystemInfo);
+        mAdapter->mGnssInfo.size = sizeof(LocGnssSystemInfo);
         if (mAdapter->gnssConstellationConfig()) {
             LOC_LOGV("Modem supports GNSS measurements\n");
-            gps_conf.CAPABILITIES |= GPS_CAPABILITY_MEASUREMENTS;
+            gps_conf.CAPABILITIES |= LOC_GPS_CAPABILITY_MEASUREMENTS;
             mAdapter->mGnssInfo.year_of_hw = 2016;
         } else {
             mAdapter->mGnssInfo.year_of_hw = 2015;
@@ -1661,19 +1721,16 @@ struct LocEngGnssConstellationConfig : public LocMsg {
 
 //        case LOC_ENG_MSG_REPORT_GNSS_MEASUREMENT:
 LocEngReportGnssMeasurement::LocEngReportGnssMeasurement(void* locEng,
-                                                       GnssData &gnssData) :
+                                                       LocGnssData &gnssData) :
     LocMsg(), mLocEng(locEng), mGnssData(gnssData)
 {
     locallog();
 }
 void LocEngReportGnssMeasurement::proc() const {
     loc_eng_data_s_type* locEng = (loc_eng_data_s_type*) mLocEng;
-    if (locEng->mute_session_state != LOC_MUTE_SESS_IN_SESSION)
-    {
-        if (locEng->gnss_measurement_cb != NULL) {
-            LOC_LOGV("Calling gnss_measurement_cb");
-            locEng->gnss_measurement_cb((GnssData*)&(mGnssData));
-        }
+    if (locEng->gnss_measurement_cb != NULL) {
+        LOC_LOGV("Calling gnss_measurement_cb");
+        locEng->gnss_measurement_cb((LocGnssData*)&(mGnssData));
     }
 }
 void LocEngReportGnssMeasurement::locallog() const {
@@ -1681,7 +1738,7 @@ void LocEngReportGnssMeasurement::locallog() const {
         LOC_LOGV("%s:%d]: Received in GPS HAL."
                  "GNSS Measurements count: %d \n",
                  __func__, __LINE__, mGnssData.measurement_count);
-        for (int i =0; i< mGnssData.measurement_count && i < GNSS_MAX_SVS; i++) {
+        for (int i =0; i< mGnssData.measurement_count && i < LOC_GNSS_MAX_SVS; i++) {
                 LOC_LOGV(" GNSS measurement data in GPS HAL: \n"
                          " GPS_HAL => Measurement ID | svid | time_offset_ns | state |"
                          " c_n0_dbhz | pseudorange_rate_mps |"
@@ -1782,17 +1839,17 @@ int loc_eng_init(loc_eng_data_s_type &loc_eng_data, LocCallbacks* callbacks,
         callbacks->sv_ext_parser : noProc;
     loc_eng_data.intermediateFix = gps_conf.INTERMEDIATE_POS;
     // initial states taken care of by the memset above
-    // loc_eng_data.engine_status -- GPS_STATUS_NONE;
-    // loc_eng_data.fix_session_status -- GPS_STATUS_NONE;
-    // loc_eng_data.mute_session_state -- LOC_MUTE_SESS_NONE;
+    // loc_eng_data.engine_status -- LOC_GPS_STATUS_NONE;
+    // loc_eng_data.fix_session_status -- LOC_GPS_STATUS_NONE;
 
     if ((event & LOC_API_ADAPTER_BIT_NMEA_1HZ_REPORT) && (gps_conf.NMEA_PROVIDER == NMEA_PROVIDER_AP))
     {
-        event = event ^ LOC_API_ADAPTER_BIT_NMEA_1HZ_REPORT; // unregister for modem NMEA report
+        // generate NMEA at AP
         loc_eng_data.generateNmea = true;
     }
     else if (gps_conf.NMEA_PROVIDER == NMEA_PROVIDER_MP)
     {
+        // generate NMEA at MP
         loc_eng_data.generateNmea = false;
     }
 
@@ -1800,7 +1857,7 @@ int loc_eng_init(loc_eng_data_s_type &loc_eng_data, LocCallbacks* callbacks,
         new LocEngAdapter(event, &loc_eng_data, context,
                           (LocThread::tCreate)callbacks->create_thread_cb);
 
-    loc_eng_data.adapter->mGnssInfo.size = sizeof(GnssSystemInfo);
+    loc_eng_data.adapter->mGnssInfo.size = sizeof(LocGnssSystemInfo);
     loc_eng_data.adapter->mGnssInfo.year_of_hw = 2015;
     LOC_LOGD("loc_eng_init created client, id = %p\n",
              loc_eng_data.adapter);
@@ -1825,10 +1882,9 @@ static int loc_eng_reinit(loc_eng_data_s_type &loc_eng_data)
     adapter->sendMsg(new LocEngLPPeProtocol(adapter, gps_conf.LPPE_CP_TECHNOLOGY,
                                             gps_conf.LPPE_UP_TECHNOLOGY));
 
-    if (!loc_eng_data.generateNmea)
-    {
-        NmeaSentenceTypesMask typesMask = LOC_NMEA_ALL_SUPPORTED_MASK;
-        LOC_LOGD("loc_eng_init setting nmea types, mask = %u\n",typesMask);
+    if ( adapter->getEvtMask() & LOC_API_ADAPTER_BIT_NMEA_1HZ_REPORT) {
+        NmeaSentenceTypesMask typesMask = loc_eng_data.generateNmea ?
+                LOC_NMEA_MASK_DEBUG_V02 : LOC_NMEA_ALL_SUPPORTED_MASK;
         adapter->sendMsg(new LocEngSetNmeaTypes(adapter,typesMask));
     }
 
@@ -2024,29 +2080,6 @@ static int loc_eng_stop_handler(loc_eng_data_s_type &loc_eng_data)
 }
 
 /*===========================================================================
-FUNCTION    loc_eng_mute_one_session
-
-DESCRIPTION
-   Mutes one session
-
-DEPENDENCIES
-   None
-
-RETURN VALUE
-   0: Success
-
-SIDE EFFECTS
-   N/A
-
-===========================================================================*/
-void loc_eng_mute_one_session(loc_eng_data_s_type &loc_eng_data)
-{
-    ENTRY_LOG();
-    loc_eng_data.mute_session_state = LOC_MUTE_SESS_WAIT;
-    EXIT_LOG(%s, VOID_RET);
-}
-
-/*===========================================================================
 FUNCTION    loc_eng_set_position_mode
 
 DESCRIPTION
@@ -2069,11 +2102,19 @@ int loc_eng_set_position_mode(loc_eng_data_s_type &loc_eng_data,
     INIT_CHECK(loc_eng_data.adapter, return -1);
 
     // The position mode for AUTO/GSS/QCA1530 can only be standalone
-    if (!(gps_conf.CAPABILITIES & GPS_CAPABILITY_MSB) &&
-        !(gps_conf.CAPABILITIES & GPS_CAPABILITY_MSA) &&
+    if (!(gps_conf.CAPABILITIES & LOC_GPS_CAPABILITY_MSB) &&
+        !(gps_conf.CAPABILITIES & LOC_GPS_CAPABILITY_MSA) &&
         (params.mode != LOC_POSITION_MODE_STANDALONE)) {
         params.mode = LOC_POSITION_MODE_STANDALONE;
         LOC_LOGD("Position mode changed to standalone for target with AUTO/GSS/qca1530.");
+    }
+    else if ((params.mode == LOC_POSITION_MODE_MS_ASSISTED) &&
+            (params.recurrence == LOC_GPS_POSITION_RECURRENCE_PERIODIC)) {
+        // For MSA, Recurring, set the min interval to higher value so
+        // we get access to MSA mode but at a rate that is reasonable.
+        if (params.min_interval < MSA_RECURRING_MIN_TRACKING_INTERVAL_MSEC) {
+            params.min_interval = MSA_RECURRING_MIN_TRACKING_INTERVAL_MSEC;
+        }
     }
 
     if(! loc_eng_data.adapter->getUlpProxy()->sendFixMode(params))
@@ -2102,7 +2143,7 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-int loc_eng_inject_time(loc_eng_data_s_type &loc_eng_data, GpsUtcTime time,
+int loc_eng_inject_time(loc_eng_data_s_type &loc_eng_data, LocGpsUtcTime time,
                         int64_t timeReference, int uncertainty)
 {
     ENTRY_LOG_CALLFLOW();
@@ -2160,7 +2201,7 @@ DESCRIPTION
    will happen when gps engine is turned off.
 
 DEPENDENCIES
-   Assumes the aiding data type specified in GpsAidingData matches with
+   Assumes the aiding data type specified in LocGpsAidingData matches with
    LOC API specification.
 
 RETURN VALUE
@@ -2170,7 +2211,7 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-void loc_eng_delete_aiding_data(loc_eng_data_s_type &loc_eng_data, GpsAidingData f)
+void loc_eng_delete_aiding_data(loc_eng_data_s_type &loc_eng_data, LocGpsAidingData f)
 {
     ENTRY_LOG_CALLFLOW();
     INIT_CHECK(loc_eng_data.adapter, return);
@@ -2200,13 +2241,13 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-static void loc_inform_gps_status(loc_eng_data_s_type &loc_eng_data, GpsStatusValue status)
+static void loc_inform_gps_status(loc_eng_data_s_type &loc_eng_data, LocGpsStatusValue status)
 {
     ENTRY_LOG();
 
     if (loc_eng_data.status_cb)
     {
-        GpsStatus gs = { sizeof(gs),status };
+        LocGpsStatus gs = { sizeof(gs),status };
         CALLBACK_LOG_CALLFLOW("status_cb", %s,
                               loc_get_gps_status_name(gs.status));
         loc_eng_data.status_cb(&gs);
@@ -2222,6 +2263,7 @@ static int loc_eng_get_zpp_handler(loc_eng_data_s_type &loc_eng_data)
    UlpLocation location;
    LocPosTechMask tech_mask = LOC_POS_TECH_MASK_DEFAULT;
    GpsLocationExtended locationExtended;
+   memset(&location, 0, sizeof(location));
    memset(&locationExtended, 0, sizeof (GpsLocationExtended));
    locationExtended.size = sizeof(locationExtended);
 
@@ -2252,12 +2294,12 @@ static int dataCallCb(void *cb_data)
     if(cb_data != NULL) {
         dsCbData *cbData = (dsCbData *)cb_data;
         LocEngAdapter *locAdapter = (LocEngAdapter *)cbData->mAdapter;
-        if(cbData->action == GPS_REQUEST_AGPS_DATA_CONN) {
-            LOC_LOGD("dataCallCb GPS_REQUEST_AGPS_DATA_CONN\n");
+        if(cbData->action == LOC_GPS_REQUEST_AGPS_DATA_CONN) {
+            LOC_LOGD("dataCallCb LOC_GPS_REQUEST_AGPS_DATA_CONN\n");
             ret =  locAdapter->openAndStartDataCall();
         }
-        else if(cbData->action == GPS_RELEASE_AGPS_DATA_CONN) {
-            LOC_LOGD("dataCallCb GPS_RELEASE_AGPS_DATA_CONN\n");
+        else if(cbData->action == LOC_GPS_RELEASE_AGPS_DATA_CONN) {
+            LOC_LOGD("dataCallCb LOC_GPS_RELEASE_AGPS_DATA_CONN\n");
             locAdapter->stopDataCall();
         }
     }
@@ -2308,6 +2350,39 @@ static void loc_eng_agps_reinit(loc_eng_data_s_type &loc_eng_data)
     }
     EXIT_LOG(%s, VOID_RET);
 }
+
+/*===========================================================================
+FUNCTION    loc_eng_dsclient_release
+
+DESCRIPTION
+   Stop/Close/Release DS client when modem SSR happens.
+
+DEPENDENCIES
+   NONE
+
+RETURN VALUE
+   0
+
+SIDE EFFECTS
+   N/A
+
+===========================================================================*/
+static void loc_eng_dsclient_release(loc_eng_data_s_type &loc_eng_data)
+{
+    ENTRY_LOG();
+    int result = 1;
+    LocEngAdapter* adapter = loc_eng_data.adapter;
+    if (NULL != adapter && gps_conf.USE_EMERGENCY_PDN_FOR_EMERGENCY_SUPL)
+    {
+        // stop and close the ds client
+        adapter->stopDataCall();
+        adapter->closeDataCall();
+        adapter->releaseDataServiceClient();
+    }
+    EXIT_LOG(%s, VOID_RET);
+}
+
+
 /*===========================================================================
 FUNCTION    loc_eng_agps_init
 
@@ -2350,7 +2425,7 @@ void loc_eng_agps_init(loc_eng_data_s_type &loc_eng_data, AGpsExtCallbacks* call
 }
 
 static void deleteAidingData(loc_eng_data_s_type &logEng) {
-    if (logEng.engine_status != GPS_STATUS_ENGINE_ON &&
+    if (logEng.engine_status != LOC_GPS_STATUS_ENGINE_ON &&
         logEng.aiding_data_for_deletion != 0) {
         logEng.adapter->deleteAidingData(logEng.aiding_data_for_deletion);
         logEng.aiding_data_for_deletion = 0;
@@ -2359,26 +2434,26 @@ static void deleteAidingData(loc_eng_data_s_type &logEng) {
 
 // must be called under msg handler context
 static void createAgnssNifs(loc_eng_data_s_type& locEng) {
-    bool agpsCapable = ((gps_conf.CAPABILITIES & GPS_CAPABILITY_MSA) ||
-                        (gps_conf.CAPABILITIES & GPS_CAPABILITY_MSB));
+    bool agpsCapable = ((gps_conf.CAPABILITIES & LOC_GPS_CAPABILITY_MSA) ||
+                        (gps_conf.CAPABILITIES & LOC_GPS_CAPABILITY_MSB));
     LocEngAdapter* adapter = locEng.adapter;
     if (NULL != adapter && adapter->mSupportsAgpsRequests) {
         if (NULL == locEng.internet_nif) {
             locEng.internet_nif= new AgpsStateMachine(servicerTypeAgps,
                                                        (void *)locEng.agps_status_cb,
-                                                       AGPS_TYPE_WWAN_ANY,
+                                                       LOC_AGPS_TYPE_WWAN_ANY,
                                                        false);
         }
         if (agpsCapable) {
             if (NULL == locEng.agnss_nif) {
                 locEng.agnss_nif = new AgpsStateMachine(servicerTypeAgps,
                                                          (void *)locEng.agps_status_cb,
-                                                         AGPS_TYPE_SUPL,
+                                                         LOC_AGPS_TYPE_SUPL,
                                                          false);
             }
             if (NULL == locEng.ds_nif &&
                 gps_conf.USE_EMERGENCY_PDN_FOR_EMERGENCY_SUPL &&
-                0 == adapter->initDataServiceClient()) {
+                0 == adapter->initDataServiceClient(false)) {
                 locEng.ds_nif = new DSStateMachine(servicerTypeExt,
                                                      (void *)dataCallCb,
                                                      locEng.adapter);
@@ -2392,12 +2467,12 @@ static AgpsStateMachine*
 getAgpsStateMachine(loc_eng_data_s_type &locEng, AGpsExtType agpsType) {
     AgpsStateMachine* stateMachine;
     switch (agpsType) {
-    case AGPS_TYPE_INVALID:
-    case AGPS_TYPE_SUPL: {
+    case LOC_AGPS_TYPE_INVALID:
+    case LOC_AGPS_TYPE_SUPL: {
         stateMachine = locEng.agnss_nif;
         break;
     }
-    case AGPS_TYPE_SUPL_ES: {
+    case LOC_AGPS_TYPE_SUPL_ES: {
         if (gps_conf.USE_EMERGENCY_PDN_FOR_EMERGENCY_SUPL) {
             if (NULL == locEng.ds_nif) {
                 createAgnssNifs(locEng);
@@ -2711,11 +2786,11 @@ void loc_eng_agps_ril_update_network_availability(loc_eng_data_s_type &loc_eng_d
 }
 
 int loc_eng_agps_install_certificates(loc_eng_data_s_type &loc_eng_data,
-                                      const DerEncodedCertificate* certificates,
+                                      const LocDerEncodedCertificate* certificates,
                                       size_t numberOfCerts)
 {
     ENTRY_LOG_CALLFLOW();
-    int ret_val = AGPS_CERTIFICATE_OPERATION_SUCCESS;
+    int ret_val = LOC_AGPS_CERTIFICATE_OPERATION_SUCCESS;
 
     uint32_t slotBitMask = gps_conf.AGPS_CERT_WRITABLE_MASK;
     uint32_t slotCount = 0;
@@ -2729,26 +2804,26 @@ int loc_eng_agps_install_certificates(loc_eng_data_s_type &loc_eng_data,
 
     if (numberOfCerts == 0) {
         LOC_LOGE("No certs to install, since numberOfCerts is zero");
-        ret_val = AGPS_CERTIFICATE_OPERATION_SUCCESS;
+        ret_val = LOC_AGPS_CERTIFICATE_OPERATION_SUCCESS;
     } else if (!adapter) {
         LOC_LOGE("adapter is null!");
-        ret_val = AGPS_CERTIFICATE_ERROR_GENERIC;
+        ret_val = LOC_AGPS_CERTIFICATE_ERROR_GENERIC;
     } else if (slotCount < numberOfCerts) {
         LOC_LOGE("Not enough cert slots (%u) to install %u certs!",
                  slotCount, numberOfCerts);
-        ret_val = AGPS_CERTIFICATE_ERROR_TOO_MANY_CERTIFICATES;
+        ret_val = LOC_AGPS_CERTIFICATE_ERROR_TOO_MANY_CERTIFICATES;
     } else {
         for (int i=0; i < numberOfCerts; ++i)
         {
-            if (certificates[i].length > AGPS_CERTIFICATE_MAX_LENGTH) {
+            if (certificates[i].length > LOC_AGPS_CERTIFICATE_MAX_LENGTH) {
                 LOC_LOGE("cert#(%u) length of %u is too big! greater than %u",
-                        certificates[i].length, AGPS_CERTIFICATE_MAX_LENGTH);
-                ret_val = AGPS_CERTIFICATE_ERROR_GENERIC;
+                        certificates[i].length, LOC_AGPS_CERTIFICATE_MAX_LENGTH);
+                ret_val = LOC_AGPS_CERTIFICATE_ERROR_GENERIC;
                 break;
             }
         }
 
-        if (ret_val == AGPS_CERTIFICATE_OPERATION_SUCCESS) {
+        if (ret_val == LOC_AGPS_CERTIFICATE_OPERATION_SUCCESS) {
             adapter->sendMsg(new LocEngInstallAGpsCert(adapter,
                                                        certificates,
                                                        numberOfCerts,
@@ -2783,7 +2858,7 @@ void loc_eng_configuration_update (loc_eng_data_s_type &loc_eng_data,
                                                             gps_conf.A_GLONASS_POS_PROTOCOL_SELECT));
             }
             if (gps_conf_tmp.SUPL_MODE != gps_conf.SUPL_MODE) {
-                adapter->sendMsg(new LocEngSuplMode(adapter->getUlpProxy()));
+                adapter->sendMsg(new LocEngSuplMode(adapter));
             }
             // we always update lock mask, this is because if this is dsds device, we would not
             // know if modem has switched dds, if so, lock mask may also need to be updated.
@@ -2821,51 +2896,28 @@ SIDE EFFECTS
    N/A
 
 ===========================================================================*/
-static void loc_eng_report_status (loc_eng_data_s_type &loc_eng_data, GpsStatusValue status)
+static void loc_eng_report_status (loc_eng_data_s_type &loc_eng_data, LocGpsStatusValue status)
 {
     ENTRY_LOG();
-    // Switch from WAIT to MUTE, for "engine on" or "session begin" event
-    if (status == GPS_STATUS_SESSION_BEGIN || status == GPS_STATUS_ENGINE_ON)
-    {
-        if (loc_eng_data.mute_session_state == LOC_MUTE_SESS_WAIT)
-        {
-            LOC_LOGD("loc_eng_report_status: mute_session_state changed from WAIT to IN SESSION");
-            loc_eng_data.mute_session_state = LOC_MUTE_SESS_IN_SESSION;
-        }
-    }
-
-    // Switch off MUTE session
-    if (loc_eng_data.mute_session_state == LOC_MUTE_SESS_IN_SESSION &&
-        (status == GPS_STATUS_SESSION_END || status == GPS_STATUS_ENGINE_OFF))
-    {
-        LOC_LOGD("loc_eng_report_status: mute_session_state changed from IN SESSION to NONE");
-        loc_eng_data.mute_session_state = LOC_MUTE_SESS_NONE;
-    }
 
     // Session End is not reported during Android navigating state
     boolean navigating = loc_eng_data.adapter->isInSession();
-    if (status != GPS_STATUS_NONE &&
-        !(status == GPS_STATUS_SESSION_END && navigating) &&
-        !(status == GPS_STATUS_SESSION_BEGIN && !navigating))
+    if (status != LOC_GPS_STATUS_NONE &&
+        !(status == LOC_GPS_STATUS_SESSION_END && navigating) &&
+        !(status == LOC_GPS_STATUS_SESSION_BEGIN && !navigating))
     {
-        if (loc_eng_data.mute_session_state != LOC_MUTE_SESS_IN_SESSION)
-        {
-            // Inform GpsLocationProvider about mNavigating status
-            loc_inform_gps_status(loc_eng_data, status);
-        }
-        else {
-            LOC_LOGD("loc_eng_report_status: muting the status report.");
-        }
+        // Inform GpsLocationProvider about mNavigating status
+        loc_inform_gps_status(loc_eng_data, status);
     }
 
     // Only keeps ENGINE ON/OFF in engine_status
-    if (status == GPS_STATUS_ENGINE_ON || status == GPS_STATUS_ENGINE_OFF)
+    if (status == LOC_GPS_STATUS_ENGINE_ON || status == LOC_GPS_STATUS_ENGINE_OFF)
     {
         loc_eng_data.engine_status = status;
     }
 
     // Only keeps SESSION BEGIN/END in fix_session_status
-    if (status == GPS_STATUS_SESSION_BEGIN || status == GPS_STATUS_SESSION_END)
+    if (status == LOC_GPS_STATUS_SESSION_BEGIN || status == LOC_GPS_STATUS_SESSION_END)
     {
         loc_eng_data.fix_session_status = status;
     }
@@ -2895,7 +2947,7 @@ void loc_eng_handle_engine_down(loc_eng_data_s_type &loc_eng_data)
 {
     ENTRY_LOG();
     loc_eng_ni_reset_on_engine_restart(loc_eng_data);
-    loc_eng_report_status(loc_eng_data, GPS_STATUS_ENGINE_OFF);
+    loc_eng_report_status(loc_eng_data, LOC_GPS_STATUS_ENGINE_OFF);
     EXIT_LOG(%s, VOID_RET);
 }
 
@@ -2912,6 +2964,12 @@ void loc_eng_handle_engine_up(loc_eng_data_s_type &loc_eng_data)
         if (loc_eng_data.internet_nif)
             loc_eng_data.internet_nif->dropAllSubscribers();
 
+        // reinitialize DS client in SSR mode
+        loc_eng_dsclient_release(loc_eng_data);
+        if (loc_eng_data.adapter->mSupportsAgpsRequests &&
+              gps_conf.USE_EMERGENCY_PDN_FOR_EMERGENCY_SUPL) {
+            loc_eng_data.adapter->initDataServiceClient(true);
+        }
         loc_eng_agps_reinit(loc_eng_data);
     }
 
@@ -2950,8 +3008,8 @@ int loc_eng_read_config(void)
       loc_default_parameters();
       // We only want to parse the conf file once. This is a good place to ensure that.
       // In fact one day the conf file should go into context.
-      UTIL_READ_CONF(GPS_CONF_FILE, gps_conf_table);
-      UTIL_READ_CONF(SAP_CONF_FILE, sap_conf_table);
+      UTIL_READ_CONF(LOC_PATH_GPS_CONF, gps_conf_table);
+      UTIL_READ_CONF(LOC_PATH_SAP_CONF, sap_conf_table);
       configAlreadyRead = true;
     } else {
       LOC_LOGV("GPS Config file has already been read\n");
@@ -2978,28 +3036,28 @@ SIDE EFFECTS
 
 ===========================================================================*/
 int loc_eng_gps_measurement_init(loc_eng_data_s_type &loc_eng_data,
-                                 GpsMeasurementCallbacks* callbacks)
+                                 LocGpsMeasurementCallbacks* callbacks)
 {
     ENTRY_LOG_CALLFLOW();
 
     STATE_CHECK((NULL == loc_eng_data.gnss_measurement_cb),
                 "gnss measurement already initialized",
-                return GPS_MEASUREMENT_ERROR_ALREADY_INIT);
+                return LOC_GPS_MEASUREMENT_ERROR_ALREADY_INIT);
     STATE_CHECK((callbacks != NULL),
                 "callbacks can not be NULL",
-                return GPS_MEASUREMENT_ERROR_GENERIC);
+                return LOC_GPS_MEASUREMENT_ERROR_GENERIC);
     STATE_CHECK(loc_eng_data.adapter,
-                "GpsInterface must be initialized first",
-                return GPS_MEASUREMENT_ERROR_GENERIC);
+                "LocGpsInterface must be initialized first",
+                return LOC_GPS_MEASUREMENT_ERROR_GENERIC);
 
     // updated the mask
     LOC_API_ADAPTER_EVENT_MASK_T event = LOC_API_ADAPTER_BIT_GNSS_MEASUREMENT;
     loc_eng_data.adapter->updateEvtMask(event, LOC_REGISTRATION_MASK_ENABLED);
     // set up the callback
-    loc_eng_data.gnss_measurement_cb = callbacks->gnss_measurement_callback;
+    loc_eng_data.gnss_measurement_cb = callbacks->loc_gnss_measurement_callback;
     LOC_LOGD ("%s, event masks updated successfully", __func__);
 
-    return GPS_MEASUREMENT_OPERATION_SUCCESS;
+    return LOC_GPS_MEASUREMENT_OPERATION_SUCCESS;
 }
 
 /*===========================================================================

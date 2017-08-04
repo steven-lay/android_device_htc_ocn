@@ -56,7 +56,7 @@
 
 /* Logging */
 #define LOG_TAG "LocSvc_api_rpc_glue"
-#define LOG_NDDEBUG 0
+#define LOG_NDEBUG 0
 #ifndef USE_GLIB
 #include <utils/Log.h>
 #endif /* USE_GLIB */

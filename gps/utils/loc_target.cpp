@@ -34,7 +34,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <hardware/gps.h>
 #include <cutils/properties.h>
 #include "loc_target.h"
 #include "loc_log.h"
@@ -53,6 +52,9 @@
 #define STR_SURF        "Surf"
 #define STR_MTP         "MTP"
 #define STR_APQ         "apq"
+#define STR_SDC         "sdc"  // alternative string for APQ targets
+#define STR_MSM         "msm"
+#define STR_SDM         "sdm"  // alternative string for MSM targets
 #define STR_APQ_NO_WGR  "baseband_apq_nowgr"
 #define STR_AUTO        "auto"
 #define IS_STR_END(c) ((c) == '\0' || (c) == '\n' || (c) == '\r')
@@ -199,7 +201,7 @@ unsigned int loc_get_target(void)
     static const char hw_platform_dep[]  =
         "/sys/devices/system/soc/soc0/hw_platform";
     static const char id_dep[]           = "/sys/devices/system/soc/soc0/id";
-    static const char mdm[]              = "/dev/mdm"; // No such file or directory
+    static const char mdm[]              = "/target"; // mdm target we are using
 
     char rd_hw_platform[LINE_LEN];
     char rd_id[LINE_LEN];
@@ -239,7 +241,8 @@ unsigned int loc_get_target(void)
         goto detected;
     }
 
-    if( !memcmp(baseband, STR_APQ, LENGTH(STR_APQ)) ){
+    if( !memcmp(baseband, STR_APQ, LENGTH(STR_APQ)) ||
+            !memcmp(baseband, STR_SDC, LENGTH(STR_SDC)) ){
 
         if( !memcmp(rd_id, MPQ8064_ID_1, LENGTH(MPQ8064_ID_1))
             && IS_STR_END(rd_id[LENGTH(MPQ8064_ID_1)]) )
@@ -258,11 +261,17 @@ unsigned int loc_get_target(void)
             if (!read_a_line( mdm, rd_mdm, LINE_LEN))
                 gTarget = TARGET_MDM;
         }
+
         else if( (!memcmp(rd_id, MSM8930_ID_1, LENGTH(MSM8930_ID_1))
                    && IS_STR_END(rd_id[LENGTH(MSM8930_ID_1)])) ||
                   (!memcmp(rd_id, MSM8930_ID_2, LENGTH(MSM8930_ID_2))
                    && IS_STR_END(rd_id[LENGTH(MSM8930_ID_2)])) )
              gTarget = TARGET_MSM_NO_SSC;
+
+        else if ( !memcmp(baseband, STR_MSM, LENGTH(STR_MSM)) ||
+                    !memcmp(baseband, STR_SDM, LENGTH(STR_SDM)) )
+             gTarget = TARGET_DEFAULT;
+
         else
              gTarget = TARGET_UNKNOWN;
     }

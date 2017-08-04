@@ -28,11 +28,11 @@ libloc_api_rpcgen_la_SOURCES = $(c_sources) $(h_sources)
 
 if USE_GLIB
 libloc_api_rpcgen_la_CFLAGS = -DUSE_GLIB $(AM_CFLAGS) @GLIB_CFLAGS@
-libloc_api_rpcgen_la_LDFLAGS = -lstdc++ -lpthread @GLIB_LIBS@ -shared -version-info 1:0:0
+libloc_api_rpcgen_la_LDFLAGS = -lstdc++ -Wl,-z,defs -lpthread @GLIB_LIBS@ -shared -version-info 1:0:0
 libloc_api_rpcgen_la_CPPFLAGS = -DUSE_GLIB $(AM_CFLAGS) $(AM_CPPFLAGS) @GLIB_CFLAGS@
 else
 libloc_api_rpcgen_la_CFLAGS = $(AM_CFLAGS)
-libloc_api_rpcgen_la_LDFLAGS = -lpthread -shared -version-info 1:0:0
+libloc_api_rpcgen_la_LDFLAGS = -Wl,-z,defs -lpthread -shared -version-info 1:0:0
 libloc_api_rpcgen_la_CPPFLAGS = $(AM_CFLAGS) $(AM_CPPFLAGS)
 endif
 

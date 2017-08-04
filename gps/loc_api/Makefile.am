@@ -4,9 +4,14 @@ AM_CFLAGS = \
      -I./libloc_api_50001 \
      -I../utils \
      $(LOCPLA_CFLAGS) \
+     $(GPSUTILS_CFLAGS) \
      -fno-short-enums \
      -D__func__=__PRETTY_FUNCTION__ \
-     -DTARGET_USES_QCOM_BSP
+     -DTARGET_USES_QCOM_BSP \
+     -std=c++11
+
+AM_CPPFLAGS = \
+     -std=c++11
 
 libloc_eng_so_la_h_sources = \
      loc_eng_dmn_conn_glue_msg.h \
@@ -16,12 +21,12 @@ libloc_eng_so_la_h_sources = \
      loc_eng_dmn_conn_thread_helper.h
 
 libloc_eng_so_la_SOURCES = \
+    libloc_api_50001/loc.cpp \
     libloc_api_50001/loc_eng.cpp \
     libloc_api_50001/loc_eng_agps.cpp \
     libloc_api_50001/loc_eng_xtra.cpp \
     libloc_api_50001/loc_eng_ni.cpp \
     libloc_api_50001/loc_eng_log.cpp \
-    libloc_api_50001/loc_eng_nmea.cpp \
     libloc_api_50001/LocEngAdapter.cpp \
     libloc_api_50001/loc_eng_dmn_conn.cpp \
     libloc_api_50001/loc_eng_dmn_conn_handler.cpp \
@@ -33,33 +38,15 @@ libloc_eng_so_la_SOURCES += libloc_eng_so_la_h_sources
 
 if USE_GLIB
 libloc_eng_so_la_CFLAGS = -DUSE_GLIB $(AM_CFLAGS) @GLIB_CFLAGS@
-libloc_eng_so_la_LDFLAGS = -lstdc++ -lpthread @GLIB_LIBS@ -shared -version-info 1:0:0
+libloc_eng_so_la_LDFLAGS = -lstdc++ -Wl,-z,defs -lpthread @GLIB_LIBS@ -shared -version-info 1:0:0
 libloc_eng_so_la_CPPFLAGS = -DUSE_GLIB $(AM_CFLAGS) $(AM_CPPFLAGS) @GLIB_CFLAGS@
 else
 libloc_eng_so_la_CFLAGS = $(AM_CFLAGS)
-libloc_eng_so_la_LDFLAGS = -lpthread -shared -version-info 1:0:0
+libloc_eng_so_la_LDFLAGS = -Wl,-z,defs -lpthread -shared -version-info 1:0:0
 libloc_eng_so_la_CPPFLAGS = $(AM_CFLAGS) $(AM_CPPFLAGS)
 endif
 
-libloc_eng_so_la_LIBADD = -lstdc++ -ldl -llog $(LOCPLA_LIBS) ../utils/libgps_utils_so.la ../core/libloc_core.la
-
-
-libgps_default_so_la_SOURCES = \
-      libloc_api_50001/loc.cpp \
-      libloc_api_50001/gps.c
-
-if USE_GLIB
-libgps_default_so_la_CFLAGS = -DUSE_GLIB $(AM_CFLAGS) @GLIB_CFLAGS@
-libgps_default_so_la_LDFLAGS = -lstdc++ -lpthread @GLIB_LIBS@ -shared -version-info 1:0:0
-libgps_default_so_la_CPPFLAGS = -DUSE_GLIB $(AM_CFLAGS) $(AM_CPPFLAGS) @GLIB_CFLAGS@
-else
-libgps_default_so_la_CFLAGS = $(AM_CFLAGS)
-libgps_default_so_la_LDFLAGS = -lpthread -shared -version-info 1:0:0
-libgps_default_so_la_CPPFLAGS = $(AM_CFLAGS) $(AM_CPPFLAGS)
-endif
-
-libgps_default_so_la_LIBADD = -lstdc++ -llog $(LOCPLA_LIBS) ../utils/libgps_utils_so.la ../core/libloc_core.la -ldl libloc_eng_so.la
-
+libloc_eng_so_la_LIBADD = -lstdc++ -ldl -llog $(LOCPLA_LIBS) $(GPSUTILS_LIBS) ../core/libloc_core.la
 
 libloc_ds_api_CFLAGS = \
      $(QMIF_CFLAGS) \
@@ -72,18 +59,17 @@ libloc_ds_api_la_SOURCES = \
 
 if USE_GLIB
 libloc_ds_api_la_CFLAGS = -DUSE_GLIB $(AM_CFLAGS) $(libloc_ds_api_CFLAGS) @GLIB_CFLAGS@
-libloc_ds_api_la_LDFLAGS = -lstdc++ -lpthread @GLIB_LIBS@ -shared -version-info 1:0:0
+libloc_ds_api_la_LDFLAGS = -lstdc++ -Wl,-z,defs -lpthread @GLIB_LIBS@ -shared -version-info 1:0:0
 libloc_ds_api_la_LDFLAGS += -Wl,--export-dynamic
 libloc_ds_api_la_CPPFLAGS = -DUSE_GLIB $(AM_CFLAGS) $(libloc_ds_api_CFLAGS) $(AM_CPPFLAGS) @GLIB_CFLAGS@
 else
 libloc_ds_api_la_CFLAGS = $(AM_CFLAGS) $(libloc_ds_api_CFLAGS)
-libloc_ds_api_la_LDFLAGS = -lstdc++ -lpthread -Wl,--export-dynamic -shared -version-info 1:0:0
+libloc_ds_api_la_LDFLAGS = -lstdc++ -Wl,-z,defs -lpthread -Wl,--export-dynamic -shared -version-info 1:0:0
 libloc_ds_api_la_LDFLAGS += -Wl,--export-dynamic
 libloc_ds_api_la_CPPFLAGS = $(AM_CFLAGS) $(AM_CPPFLAGS) $(libloc_ds_api_CFLAGS)
 endif
 
-libloc_ds_api_la_LIBADD = -lstdc++ $(QMIF_LIBS) -lqmiservices -ldsi_netctrl $(LOCPLA_LIBS) ../utils/libgps_utils_so.la
-#libloc_ds_api_la_LIBADD = -lstdc++ $(QMIF_LIBS) -lqmiservices $(LOCPLA_LIBS) ../utils/libgps_utils_so.la
+libloc_ds_api_la_LIBADD = -lstdc++ $(QMIF_LIBS) -lqmiservices -ldsi_netctrl $(GPSUTILS_LIBS) $(LOCPLA_LIBS)
 
 libloc_api_v02_CFLAGS = \
      $(QMIF_CFLAGS) \
@@ -99,16 +85,16 @@ libloc_api_v02_la_SOURCES = \
 
 if USE_GLIB
 libloc_api_v02_la_CFLAGS = -DUSE_GLIB $(AM_CFLAGS) $(libloc_api_v02_CFLAGS) @GLIB_CFLAGS@
-libloc_api_v02_la_LDFLAGS = -lstdc++ -lpthread @GLIB_LIBS@ -shared -version-info 1:0:0
+libloc_api_v02_la_LDFLAGS = -lstdc++ -Wl,-z,defs -lpthread @GLIB_LIBS@ -shared -version-info 1:0:0
 libloc_api_v02_la_CPPFLAGS = -DUSE_GLIB $(AM_CFLAGS) $(libloc_api_v02_CFLAGS) $(AM_CPPFLAGS) @GLIB_CFLAGS@
 else
 libloc_api_v02_la_CFLAGS = $(AM_CFLAGS) $(libloc_api_v02_CFLAGS)
-libloc_api_v02_la_LDFLAGS = -lstdc++ -lpthread -shared -version-info 1:0:0
+libloc_api_v02_la_LDFLAGS = -lstdc++ -Wl,-z,defs -lpthread -shared -version-info 1:0:0
 libloc_api_v02_la_CPPFLAGS = $(AM_CFLAGS) $(AM_CPPFLAGS) $(libloc_api_v02_CFLAGS)
 endif
 
 libloc_api_v02_la_CXXFLAGS = -std=c++0x
-libloc_api_v02_la_LIBADD = -lstdc++ -lqmi_cci -lqmi_common_so $(QMIF_LIBS) $(LOCPLA_LIBS) ../core/libloc_core.la ../utils/libgps_utils_so.la libloc_ds_api.la
+libloc_api_v02_la_LIBADD = -lstdc++ -lqmi_cci -lqmi_common_so $(QMIF_LIBS) $(LOCPLA_LIBS) ../core/libloc_core.la $(GPSUTILS_LIBS) libloc_ds_api.la
 
 library_include_HEADERS = \
    libloc_api_50001/LocEngAdapter.h \
@@ -130,4 +116,4 @@ library_include_HEADERS = \
 library_includedir = $(pkgincludedir)
 
 #Create and Install libraries
-lib_LTLIBRARIES = libloc_eng_so.la libgps_default_so.la libloc_ds_api.la libloc_api_v02.la
+lib_LTLIBRARIES = libloc_eng_so.la libloc_ds_api.la libloc_api_v02.la

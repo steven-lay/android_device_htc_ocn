@@ -30,7 +30,6 @@
 #define LOC_API_ENG_ADAPTER_H
 
 #include <ctype.h>
-#include <hardware/gps.h>
 #include <loc.h>
 #include <loc_eng_log.h>
 #include <LocAdapterBase.h>
@@ -54,15 +53,16 @@ public:
                                 void* locationExt,
                                 enum loc_sess_status status,
                                 LocPosTechMask loc_technology_mask);
-    virtual void reportSv(GnssSvStatus &svStatus,
+    virtual void reportSv(LocGnssSvStatus &svStatus,
                           GpsLocationExtended &locationExtended,
                           void* svExt);
-    virtual void reportStatus(GpsStatusValue status);
+    virtual void reportStatus(LocGpsStatusValue status);
     virtual void setPositionModeInt(LocPosMode& posMode);
     virtual void startFixInt();
     virtual void stopFixInt();
     virtual void getZppInt();
     virtual void setUlpProxy(UlpProxyBase* ulp);
+    virtual void reportNmea(const char* nmea, int length);
 };
 
 typedef void (*loc_msg_sender)(void* loc_eng_data_p, void* msgp);
@@ -79,12 +79,14 @@ class LocEngAdapter : public LocAdapterBase {
     unsigned int mPowerVote;
     static const unsigned int POWER_VOTE_RIGHT = 0x20;
     static const unsigned int POWER_VOTE_VALUE = 0x10;
-
+    /** Gnss sv used in position data */
+    GnssSvUsedInPosition mGnssSvIdUsedInPosition;
+    bool mGnssSvIdUsedInPosAvail;
 public:
     bool mSupportsAgpsRequests;
     bool mSupportsPositionInjection;
     bool mSupportsTimeInjection;
-    GnssSystemInfo mGnssInfo;
+    LocGnssSystemInfo mGnssInfo;
 
     LocEngAdapter(LOC_API_ADAPTER_EVENT_MASK_T mask,
                   void* owner, ContextBase* context,
@@ -110,6 +112,25 @@ public:
     }
     inline const MsgTask* getMsgTask() { return mMsgTask; }
 
+    inline void clearGnssSvUsedListData() {
+        mGnssSvIdUsedInPosAvail = false;
+        memset(&mGnssSvIdUsedInPosition, 0, sizeof (GnssSvUsedInPosition));
+    }
+
+    inline void setGnssSvUsedListData(GnssSvUsedInPosition gnssSvUsedIds) {
+        mGnssSvIdUsedInPosAvail = true;
+        memcpy(&mGnssSvIdUsedInPosition, &gnssSvUsedIds,
+                                    sizeof(GnssSvUsedInPosition));
+    }
+
+    inline GnssSvUsedInPosition getGnssSvUsedListData() {
+        return mGnssSvIdUsedInPosition;
+    }
+
+    inline bool isGnssSvIdUsedInPosAvail() {
+        return mGnssSvIdUsedInPosAvail;
+    }
+
     inline enum loc_api_adapter_err
         startFix()
     {
@@ -121,7 +142,7 @@ public:
         return mLocApi->stopFix();
     }
     inline enum loc_api_adapter_err
-        deleteAidingData(GpsAidingData f)
+        deleteAidingData(LocGpsAidingData f)
     {
         return mLocApi->deleteAidingData(f);
     }
@@ -151,7 +172,7 @@ public:
         return mLocApi->requestXtraServer();
     }
     inline enum loc_api_adapter_err
-        atlOpenStatus(int handle, int is_succ, char* apn, AGpsBearerType bearer, AGpsType agpsType)
+        atlOpenStatus(int handle, int is_succ, char* apn, AGpsBearerType bearer, LocAGpsType agpsType)
     {
         return mLocApi->atlOpenStatus(handle, is_succ, apn, bearer, agpsType);
     }
@@ -180,7 +201,7 @@ public:
         return mLocApi->setServer(ip, port, type);
     }
     inline enum loc_api_adapter_err
-        informNiResponse(GpsUserResponseType userResponse, const void* passThroughData)
+        informNiResponse(LocGpsUserResponseType userResponse, const void* passThroughData)
     {
         return mLocApi->informNiResponse(userResponse, passThroughData);
     }
@@ -239,9 +260,9 @@ public:
     {
         return mLocApi->setLPPeProtocol(lppeCP, lppeUP);
     }
-    inline virtual int initDataServiceClient()
+    inline virtual int initDataServiceClient(bool isDueToSsr)
     {
-        return mLocApi->initDataServiceClient();
+        return mLocApi->initDataServiceClient(isDueToSsr);
     }
     inline virtual int openAndStartDataCall()
     {
@@ -255,16 +276,20 @@ public:
     {
         mLocApi->closeDataCall();
     }
+    inline virtual void releaseDataServiceClient()
+    {
+        mLocApi->releaseDataServiceClient();
+    }
     inline enum loc_api_adapter_err
-        getZpp(GpsLocation &zppLoc, LocPosTechMask &tech_mask)
+        getZpp(LocGpsLocation &zppLoc, LocPosTechMask &tech_mask)
     {
         return mLocApi->getBestAvailableZppFix(zppLoc, tech_mask);
     }
-    enum loc_api_adapter_err setTime(GpsUtcTime time,
+    enum loc_api_adapter_err setTime(LocGpsUtcTime time,
                                      int64_t timeReference,
                                      int uncertainty);
     enum loc_api_adapter_err setXtraVersionCheck(int check);
-    inline virtual void installAGpsCert(const DerEncodedCertificate* pData,
+    inline virtual void installAGpsCert(const LocDerEncodedCertificate* pData,
                                         size_t length,
                                         uint32_t slotBitMask)
     {
@@ -277,24 +302,24 @@ public:
                                 void* locationExt,
                                 enum loc_sess_status status,
                                 LocPosTechMask loc_technology_mask);
-    virtual void reportSv(GnssSvStatus &svStatus,
+    virtual void reportSv(LocGnssSvStatus &svStatus,
                           GpsLocationExtended &locationExtended,
                           void* svExt);
     virtual void reportSvMeasurement(GnssSvMeasurementSet &svMeasurementSet);
     virtual void reportSvPolynomial(GnssSvPolynomial &svPolynomial);
-    virtual void reportStatus(GpsStatusValue status);
+    virtual void reportStatus(LocGpsStatusValue status);
     virtual void reportNmea(const char* nmea, int length);
     virtual bool reportXtraServer(const char* url1, const char* url2,
                                   const char* url3, const int maxlength);
     virtual bool requestXtraData();
     virtual bool requestTime();
-    virtual bool requestATL(int connHandle, AGpsType agps_type);
+    virtual bool requestATL(int connHandle, LocAGpsType agps_type);
     virtual bool releaseATL(int connHandle);
-    virtual bool requestNiNotify(GpsNiNotification &notify, const void* data);
+    virtual bool requestNiNotify(LocGpsNiNotification &notify, const void* data);
     virtual bool requestSuplES(int connHandle);
     virtual bool reportDataCallOpened();
     virtual bool reportDataCallClosed();
-    virtual void reportGnssMeasurementData(GnssData &gnssMeasurementData);
+    virtual void reportGnssMeasurementData(LocGnssData &gnssMeasurementData);
 
     inline const LocPosMode& getPositionMode() const
     {return mFixCriteria;}
