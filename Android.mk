@@ -192,4 +192,16 @@ $(WCNSS_MAC_SYMLINK): $(LOCAL_INSTALLED_MODULE)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(WCNSS_INI_SYMLINK) $(WCNSS_MAC_SYMLINK)
 
+WCD_IMAGES := \
+    wcd9320_anc.bin wcd9320_mad_audio.bin wcd9320_mbhc.bin
+
+WCD_SYMLINKS := $(addprefix $(TARGET_OUT_ETC)/firmware/wcd9320/,$(notdir $(WCD_IMAGES)))
+$(WCD_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
+	@echo "WCD9320 firmware link: $@"
+	@mkdir -p $(dir $@)
+	@rm -rf $@
+	$(hide) ln -sf /data/misc/audio/$(notdir $@) $@
+
+ALL_DEFAULT_INSTALLED_MODULES += $(WCD_SYMLINKS)
+
 endif
