@@ -2759,7 +2759,7 @@
     </path>
 
     <path name="voice-handset">
-        <path name="handset" />
+        <path name="earpiece" />
     </path>
 
     <path name="voice-handset-tmus">
@@ -2767,7 +2767,7 @@
     </path>
 
     <path name="voice-speaker">
-        <path name="speaker-mono" />
+        <path name="handset" />
     </path>
 
     <path name="voice-speaker-fluid">

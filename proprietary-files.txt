@@ -132,6 +132,8 @@ etc/acdbdata/Speaker_cal.acdb
 etc/acdbdata/Codec_cal.acdb
 etc/acdbdata/Headset_cal.acdb
 etc/acdbdata/Handset_cal.acdb
+system/lib/libbthost_if.so
+system/lib64/libbthost_if.so
 
 # Audio amplifier
 etc/firmware/tas2557s_uCDSP.bin

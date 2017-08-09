@@ -38,6 +38,12 @@ qcom.bluetooth.soc=cherokee
 ro.bluetooth.emb_wp_mode=true
 ro.bluetooth.wipower=true
 ro.bluetooth.a4wp=false
+ro.bluetooth.dun=true
+ro.bluetooth.hfp.ver=1.6
+ro.bluetooth.remote.autoconnect=true
+ro.bluetooth.request.master=true
+ro.bluetooth.sap=true
+ro.bt.ble_tag=1
 
 # Camera
 persist.ts.rtmakeup=false
