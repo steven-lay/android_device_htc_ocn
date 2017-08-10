@@ -219,7 +219,9 @@ lib/libmm-qcamera.so
 lib/libmorpho_video_refiner.so
 lib/libqomx_core.so
 lib/libhtc_facebeauty.so
+lib/sensors.hal.tof.so
 lib64/libawb_calibration.so
+lib64/sensors.hal.tof.so
 vendor/lib/libchromaflash.so
 vendor/lib/libcppf.so
 vendor/lib/libedge_smooth_hvx_stub.so
@@ -552,6 +554,12 @@ vendor/lib/libmm-qdcm.so
 vendor/lib/libmmrtpdecoder.so
 vendor/lib/libmmrtpencoder.so
 vendor/lib64/libmmcamera_dbg.so
+vendor/lib64/libmmcamera2_is.so
+vendor/lib64/libmmcamera2_q3a_core.so
+vendor/lib64/libmmcamera2_stats_algorithm.so
+vendor/lib64/libmmcamera2_stats_lib.so
+vendor/lib64/libmmcamera_tintless_algo.so
+vendor/lib64/libmmcamera_tintless_bg_pca_algo.so
 vendor/lib64/libfastcvopt.so
 vendor/lib64/libubifocus.so
 vendor/lib64/liboptizoom.so
@@ -851,6 +859,7 @@ vendor/lib/egl/libGLESv1_CM_adreno.so
 vendor/lib/egl/libGLESv2_adreno.so
 vendor/lib/egl/libQTapGLES.so
 vendor/lib/egl/libq3dtools_adreno.so
+vendor/lib/egl/libq3dtools_esx.so
 vendor/lib/hw/vulkan.msm8998.so
 vendor/lib/libC2D2.so
 vendor/lib/libCB.so
@@ -877,6 +886,7 @@ vendor/lib64/egl/libGLESv1_CM_adreno.so
 vendor/lib64/egl/libGLESv2_adreno.so
 vendor/lib64/egl/libQTapGLES.so
 vendor/lib64/egl/libq3dtools_adreno.so
+vendor/lib64/egl/libq3dtools_esx.so
 vendor/lib64/hw/vulkan.msm8998.so
 vendor/lib64/libC2D2.so
 vendor/lib64/libCB.so
