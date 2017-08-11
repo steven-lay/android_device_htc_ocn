@@ -86,6 +86,7 @@ public:
     static const char VIDEO_HFR_8X[];
     static const char VIDEO_HFR_9X[];
     static const char KEY_VIDEO_MODE[];
+    static const char KEY_SMILEINFO_BYFACE_SUPPORTED[];
 
 private:
     CameraParameters *mParams;

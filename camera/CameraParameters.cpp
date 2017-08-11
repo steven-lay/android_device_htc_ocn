@@ -107,7 +107,6 @@ const char CameraParameters::WHITE_BALANCE_DAYLIGHT[] = "daylight";
 const char CameraParameters::WHITE_BALANCE_CLOUDY_DAYLIGHT[] = "cloudy-daylight";
 const char CameraParameters::WHITE_BALANCE_TWILIGHT[] = "twilight";
 const char CameraParameters::WHITE_BALANCE_SHADE[] = "shade";
-const char CameraParameters::WHITE_BALANCE_MANUAL_CCT[] = "manual-cct";
 
 // Values for effect settings.
 const char CameraParameters::EFFECT_NONE[] = "none";
@@ -178,7 +177,10 @@ const char CameraParameters::LIGHTFX_HDR[] = "high-dynamic-range";
 
 // HTC settings
 const char CameraParameters::SCENE_MODE_TEXT[] = "text";
-const char CameraParameters::KEY_SMILEINFO_BYFACE_SUPPORTED[] = "smileinfo-byface-supported";
+
+#ifdef CAMERA_PARAMETERS_EXTRA_C
+CAMERA_PARAMETERS_EXTRA_C
+#endif
 
 CameraParameters::CameraParameters()
     : CameraParameters_EXT(this), mMap()

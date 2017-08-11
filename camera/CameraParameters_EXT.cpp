@@ -50,6 +50,7 @@ const char CameraParameters_EXT::VIDEO_HFR_7X[] = "210";
 const char CameraParameters_EXT::VIDEO_HFR_8X[] = "240";
 const char CameraParameters_EXT::VIDEO_HFR_9X[] = "270";
 const char CameraParameters_EXT::KEY_VIDEO_MODE[] = "video-mode";
+const char CameraParameters_EXT::KEY_SMILEINFO_BYFACE_SUPPORTED[] = "smileinfo-byface-supported";
 
 #define ORIENTATION_PORTRAIT 1
 #define ORIENTATION_LANDSCAPE 2
