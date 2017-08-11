@@ -132,8 +132,8 @@ etc/acdbdata/Speaker_cal.acdb
 etc/acdbdata/Codec_cal.acdb
 etc/acdbdata/Headset_cal.acdb
 etc/acdbdata/Handset_cal.acdb
-system/lib/libbthost_if.so
-system/lib64/libbthost_if.so
+lib/libbthost_if.so
+lib64/libbthost_if.so
 
 # Audio amplifier
 etc/firmware/tas2557s_uCDSP.bin
@@ -219,7 +219,9 @@ lib/libmm-qcamera.so
 lib/libmorpho_video_refiner.so
 lib/libqomx_core.so
 lib/libhtc_facebeauty.so
+lib/libhtcsecure.so
 lib/sensors.hal.tof.so
+lib64/libhtcsecure.so
 lib64/libawb_calibration.so
 lib64/sensors.hal.tof.so
 vendor/lib/libchromaflash.so
@@ -997,8 +999,8 @@ etc/firmware/keymaste.b07
 etc/firmware/keymaste.mdt
 
 # Keystore
-vendor/lib/hw/keystore.default.so:vendor/lib/hw/keystore.msm8998.so
-vendor/lib64/hw/keystore.default.so:vendor/lib64/hw/keystore.msm8998.so
+lib/hw/keystore.default.so:lib/hw/keystore.msm8998.so
+lib64/hw/keystore.default.so:lib64/hw/keystore.msm8998.so
 
 # Listen
 vendor/lib/hw/sound_trigger.primary.msm8998.so
