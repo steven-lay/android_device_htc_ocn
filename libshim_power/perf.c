@@ -23,3 +23,8 @@ int release_cpu_perf_lock(void)
 {
      return 0;
 }
+
+int acquire_interactive_perf_lock(void)
+{
+     return 0;
+}
