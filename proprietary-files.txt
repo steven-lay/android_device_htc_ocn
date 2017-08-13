@@ -884,10 +884,11 @@ vendor/lib/libllvm-qcom.so
 vendor/lib/libllvm-qgl.so
 vendor/lib/libmm-disp-apis.so
 vendor/lib/libmm-qdcm.so
+vendor/lib/libqseed3.so
 vendor/lib/librs_adreno.so
 vendor/lib/librs_adreno_sha1.so
 -vendor/lib/libsd_sdk_display.so
--vendor/lib/libsdm-disp-apis.so
+-vendor/lib/libsdm-disp-apis.so|b440d84a6c29ce9cddfca427ad8efc6fc8148581
 vendor/lib64/egl/eglSubDriverAndroid.so
 vendor/lib64/egl/libEGL_adreno.so
 vendor/lib64/egl/libGLESv1_CM_adreno.so
@@ -911,13 +912,14 @@ vendor/lib64/libllvm-qcom.so
 vendor/lib64/libllvm-qgl.so
 vendor/lib64/libmm-disp-apis.so
 vendor/lib64/libmm-qdcm.so
+vendor/lib64/libqseed3.so
 vendor/lib64/librs_adreno.so
 vendor/lib64/librs_adreno_sha1.so
 -vendor/lib64/libsd_sdk_display.so
-vendor/lib64/libsdm-color.so
-vendor/lib64/libsdm-diag.so
--vendor/lib64/libsdm-disp-apis.so
-vendor/lib64/libsdmextension.so
+vendor/lib64/libsdm-color.so|b323b4189be49c94bf2043eaebafde32a4f41c74
+vendor/lib64/libsdm-diag.so|85ff6ea73d0d28185eaa0d4b3bd58be1749d15f4
+-vendor/lib64/libsdm-disp-apis.so|892ef853cb370463107b41847978d2be27e339f9
+vendor/lib64/libsdmextension.so|593fbc5f0dfcd5c069fa514f77ba8dd8edd0efba
 
 # Graphics firmware
 etc/firmware/a225p5_pm4.fw
