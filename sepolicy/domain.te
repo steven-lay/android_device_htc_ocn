@@ -1,0 +1,8 @@
+get_prop(domain, camera_prop)
+
+dontaudit domain self:capability sys_module;
+dontaudit domain kernel:system module_request;
+
+dontaudit domain firmware_file:dir search;
+allow domain debugfs_ion:dir search;
+allow domain debugfs_kgsl:dir search;

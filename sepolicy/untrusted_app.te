@@ -1,0 +1,4 @@
+allow untrusted_app sysfs:file r_file_perms;
+
+# fb messenger
+allow untrusted_app proc_stat:file r_file_perms;

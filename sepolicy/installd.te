@@ -1,0 +1,1 @@
+allow installd kernel:key search;

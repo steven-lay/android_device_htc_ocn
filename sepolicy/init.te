@@ -1,0 +1,24 @@
+allow init vfat:file { read open };
+
+allow init app_data_file:dir { getattr search read open };
+allow init app_data_file:file r_file_perms;
+allow init app_data_file:lnk_file getattr;
+allow init blkid_exec:file getattr;
+allow init clatd_exec:file getattr;
+allow init debugfs:file write;
+allow init dex2oat_exec:file getattr;
+allow init dnsmasq_exec:file getattr;
+allow init firmware_file:dir r_file_perms;
+allow init hostapd_exec:file getattr;
+allow init idmap_exec:file getattr;
+allow init input_device:chr_file getattr;
+allow init ppp_exec:file getattr;
+allow init proc_touchpanel:file write;
+allow init profman_exec:file getattr;
+allow init runas_exec:file getattr;
+allow init sdcardd_exec:file getattr;
+allow init sgdisk_exec:file getattr;
+allow init socket_device:sock_file { create setattr unlink };
+allow init userinit_exec:file getattr;
+
+allow init pstorefs:dir mounton;

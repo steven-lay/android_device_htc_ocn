@@ -1,0 +1,1 @@
+allow rfs_access rfs_shared_hlos_file:lnk_file { getattr setattr };
