@@ -1035,16 +1035,6 @@ vendor/lib/libOmxQcelp13Dec.so
 vendor/lib/libvpphvx.so
 vendor/lib/libvqzip.so
 
-# Misc - To sort.
-vendor/bin/esepmdaemon
-bin/mlogger
-bin/htc_ebdlogd
-bin/dun-server
-bin/wfdservice
-bin/spdaemon
-vendor/lib/libspcom.so
-vendor/lib64/libspcom.so
-
 # Mixed
 lib/libprojector.so
 lib64/libprojector.so
@@ -1096,6 +1086,7 @@ vendor/lib/libdisp-aba.so
 vendor/lib64/libdisp-aba.so
 
 # Power
+vendor/bin/esepmdaemon
 etc/powerhint.xml
 
 # QMI
@@ -1242,6 +1233,11 @@ vendor/firmware/slpi_v2.b13
 vendor/firmware/slpi_v2.b14
 vendor/firmware/slpi_v2.cfg
 vendor/firmware/slpi_v2.mdt
+
+# Spdaemon
+bin/spdaemon
+vendor/lib/libspcom.so
+vendor/lib64/libspcom.so
 
 # Temporary until I figure out why shims don't work
 lib/liblog.so
