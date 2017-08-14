@@ -74,6 +74,14 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/com.nxp.mifare.xml:system/etc/permissions/com.nxp.mifare.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
 
+# Permissions (HTC)
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/permissions/com.htc.sensor.edgesense.xml:/system/etc/permissions/com.htc.sensor.edgesense.xml \
+    $(LOCAL_PATH)/configs/permissions/com.htc.sensor.hallsensor.xml:/system/etc/permissions/com.htc.sensor.hallsensor.xml \
+    $(LOCAL_PATH)/configs/permissions/com.htc.sensor.sensorhub.xml:/system/etc/permissions/com.htc.sensor.sensorhub.xml \
+    $(LOCAL_PATH)/configs/permissions/com.htc.software.market.xml:/system/etc/permissions/com.htc.software.market.xml
+
+
 # ANT+
 PRODUCT_PACKAGES += \
     AntHalService \
