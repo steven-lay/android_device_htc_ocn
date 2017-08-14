@@ -1241,12 +1241,6 @@ bin/spdaemon
 vendor/lib/libspcom.so
 vendor/lib64/libspcom.so
 
-# Temporary until I figure out why shims don't work
-lib/liblog.so
-lib64/liblog.so
-lib/libpower.so
-lib64/libpower.so
-
 # Thermal
 etc/thermal-engine.conf
 vendor/bin/thermal-engine

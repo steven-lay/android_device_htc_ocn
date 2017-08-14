@@ -175,7 +175,7 @@ TARGET_PROVIDES_KEYMASTER := true
 TARGET_PROVIDES_LIBLIGHT := true
 
 # Linker
-LINKER_FORCED_SHIM_LIBS := /system/vendor/bin/slim_daemon|liblog_htc.so:liblog.so|liblog_htc.so
+LINKER_FORCED_SHIM_LIBS := /system/bin/pm-service|liblog_htc.so:/system/bin/imsdatadaemon|liblog_htc.so:/system/bin/cnss-daemon|liblog_htc.so:/system/bin/ims_rtp_daemon|liblog_htc.so
 
 # Media
 TARGET_USES_MEDIA_EXTENSIONS := true

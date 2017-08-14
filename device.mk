@@ -246,7 +246,6 @@ PRODUCT_PACKAGES += \
     libhtcril_db \
     libprotobuf-cpp-full \
     librmnetctl \
-    libshim_ril \
     libxml2
 
 # Tethering
@@ -274,4 +273,5 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/WCNSS_qcom_cfg.ini:system/etc/wifi/WCNSS_qcom_cfg.ini
 
 # For android_filesystem_config.h
-PRODUCT_PACKAGES += fs_config_files
+PRODUCT_PACKAGES += fs_config_files \
+                    fs_config_dirs
