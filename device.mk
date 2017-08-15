@@ -151,7 +151,6 @@ PRODUCT_PACKAGES += \
 # GPS
 PRODUCT_PACKAGES += \
     gps.msm8998 \
-    gps.conf \
     libgps.utils \
     libloc_core \
     libloc_eng \
