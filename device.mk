@@ -181,7 +181,8 @@ PRODUCT_PACKAGES += \
     init.qcom.rc \
     init.qcom.usb.rc \
     ueventd.qcom.rc \
-    init.qcom.sh
+    init.qcom.sh \
+    init.class_main.sh
 
 # Input
 PRODUCT_COPY_FILES += \

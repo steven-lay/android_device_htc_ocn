@@ -760,6 +760,11 @@ service loc_launcher /system/bin/loc_launcher
     class late_start
     group gps inet qcom_diag wifi
 
+service qcom-c_main-sh /system/bin/sh /init.class_main.sh
+    class main
+    user root
+    oneshot
+
 service qcom-sh /system/bin/sh /init.qcom.sh
     class late_start
     user root
@@ -885,6 +890,14 @@ service qseecomd /system/bin/qseecomd
     class core
     user root
     group root
+
+service ril-daemon2 /system/bin/rild -c 2
+    class main
+    socket rild2 stream 660 root radio
+    socket rild-debug2 stream 660 radio system
+    user root
+    disabled
+    group radio cache inet misc audio log readproc wakelock qcom_diag carrier system
 
 service spdaemon /system/bin/spdaemon
     class core
