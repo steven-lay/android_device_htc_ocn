@@ -97,8 +97,6 @@ on init
     chown nfc nfc /dev/pn544
 
 on late-init
-    setprop sys.usb.config charged,adb
-    setprop sys.usb.configfs 1
     setprop ro.hardware.fingerprint fpc
 
 on fs
