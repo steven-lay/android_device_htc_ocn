@@ -1163,6 +1163,13 @@ bin/ims_rtp_daemon
 bin/imscmservice
 bin/imsdatadaemon
 bin/imsqmidaemon
+etc/permissions/imscm.xml
+etc/permissions/qti-vzw-ims-internal.xml
+framework/imscmlibrary.jar|a34741b1d1d8a2d1baef15ec580de86a0ed2d974
+framework/rcsimssettings.jar|566a0f637344ca3182aca33753e404977fc77ecc
+vendor/framework/qti-vzw-ims-internal.jar|2bd19b6f454bb8ccd4c1ec583df14fba7fe14299
+-vendor/app/ims/ims.apk|0a5b5ca34fd72fb6879db237b22021a9a62af846
+-vendor/app/imssettings/imssettings.apk|51b29335c85b54f633711b4cc2175f78ba52b1c1
 vendor/lib64/lib-dplmedia.so
 vendor/lib64/lib-ims-rcscmjni.so
 vendor/lib64/lib-imsSDP.so

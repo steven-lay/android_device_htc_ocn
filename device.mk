@@ -174,6 +174,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     liblog_htc
 
+# IMS
+PRODUCT_PACKAGES += \
+    com.android.ims.rcsmanager
+
 # Init
 PRODUCT_PACKAGES += \
     fstab.qcom \
