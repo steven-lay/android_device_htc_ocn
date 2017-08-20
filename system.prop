@@ -67,6 +67,12 @@ ro.sf.lcd_density=640
 # GPS
 persist.igps.sensor=on
 
+# IMS
+persist.ims.disableDebugLogs=1
+persist.ims.disableADBLogs=1
+persist.ims.disableQXDMLogs=1
+persist.ims.disableIMSLogs=1
+
 # Media
 media.stagefright.enable-player=true
 media.stagefright.enable-http=true
