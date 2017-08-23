@@ -640,6 +640,11 @@ service iprenew_wlan0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
+service kernel_loggy /system/bin/sh /loggy.sh kernel
+    class main
+    user root
+    oneshot
+
 service loc_launcher /system/bin/loc_launcher
     #loc_launcher will start as root and set its uid to gps
     class late_start
@@ -732,6 +737,11 @@ service start_hci_filter /system/bin/wcnss_filter
     user bluetooth
     group bluetooth qcom_diag system wakelock
     disabled
+
+service system_loggy /system/bin/sh /loggy.sh system
+    class main
+    user root
+    oneshot
 
 service tftp_server /system/bin/tftp_server
     class core

@@ -214,6 +214,9 @@ PRODUCT_PACKAGES += \
     init.qcom.usb.rc \
     ueventd.qcom.rc
 
+PRODUCT_PACKAGES += \
+    loggy.sh
+
 # Input
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/idc/hsml_touchscreen.idc:system/usr/idc/hsml_touchscreen.idc
