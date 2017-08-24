@@ -2645,7 +2645,7 @@
     </path>
 
     <path name="handset-mic">
-        <path name="dmic3" />
+        <path name="line-voice" />
     </path>
 
     <path name="handset-mic-db">
