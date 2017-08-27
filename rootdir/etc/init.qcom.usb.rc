@@ -35,15 +35,6 @@ on property:ro.boot.configfs=*
 on fs
     mkdir /dev/usb-ffs 0770 shell shell
     mkdir /dev/usb-ffs/adb 0770 shell shell
-    # Set up sysfs entries for usb(used if configfs is not present)
-    write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor 0bb4
-    write /sys/class/android_usb/android0/idProduct 0c81
-    write /sys/class/android_usb/android0/f_ffs/aliases adb
-    write /sys/class/android_usb/android0/functions adb
-    write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
-    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
-    write /sys/class/android_usb/android0/iSerial ${ro.serialno}
     mount functionfs adb /dev/usb-ffs/adb uid=2000,gid=2000
 
 on property:ro.boot.usbcontroller=*
@@ -59,14 +50,11 @@ on property:sys.usb.ffs.ready=1
     write /config/usb_gadget/g1/idVendor 0x0bb4
     write /config/usb_gadget/g1/idProduct 0x0c81
     symlink /config/usb_gadget/g1/functions/ffs.adb /config/usb_gadget/g1/configs/b.1/f1
-    write /sys/class/android_usb/android0/enable 1
     write /config/usb_gadget/g1/UDC ${sys.usb.controller}
 
 on property:service.adb.root=1
     write /config/usb_gadget/g1/UDC "none"
-    write /sys/class/android_usb/android0/enable 0
     restart adbd
-    write /sys/class/android_usb/android0/enable 1
 
 on property:sys.usb.config=none && property:sys.usb.configfs=1
     write /config/usb_gadget/g1/UDC "none"
