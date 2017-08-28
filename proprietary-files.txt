@@ -1083,6 +1083,7 @@ vendor/lib64/libperipheral_client.so
 
 # Postprocessing
 etc/permissions/com.qti.snapdragon.sdk.display.xml
+framework/com.qti.snapdragon.sdk.display.jar|e6387246d96376fd832fdcf14b65e149b6333bb2
 vendor/bin/mm-pp-dpps
 vendor/lib/libdisp-aba.so
 vendor/lib64/libdisp-aba.so
@@ -1094,6 +1095,7 @@ etc/powerhint.xml
 # QMI
 bin/irsc_util
 etc/permissions/qti_permissions.xml
+framework/qti-telephony-common.jar|b6c94f544cfcbd5706b1ca8bd14e490e78c6307a
 vendor/bin/pd-mapper
 vendor/lib/libdiag.so
 vendor/lib/libdsi_netctrl.so
