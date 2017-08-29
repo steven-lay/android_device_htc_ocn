@@ -783,6 +783,9 @@ on property:init.svc.zygote=restarting
 on property:persist.radio.multisim.config=dsds
     start ril-daemon2
 
+on property:ro.use_data_netmgrd=true
+    start netmgrd
+
 on property:sys.boot_completed=1
     write /dev/kmsg "Boot completed "
     #WDSP FW boot sysfs node used by STHAL
