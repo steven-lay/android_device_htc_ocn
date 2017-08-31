@@ -59,6 +59,8 @@ TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/htc/msm8998
 TARGET_KERNEL_CONFIG := ocn_defconfig
 
+BOARD_ROOT_EXTRA_FOLDERS := bt_firmware firmware firmware/radio persist
+
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-uart"
 
