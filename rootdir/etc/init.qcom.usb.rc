@@ -1,7 +1,3 @@
-service adbd /sbin/adbd --root_seclabel=u:r:su:s0 --device_banner=HTC_U11
-    disabled
-    socket adbd stream 660 system system
-    seclabel u:r:adbd:s0
 
 # Always start adbd on userdebug and eng builds
 on property:ro.debuggable=1
