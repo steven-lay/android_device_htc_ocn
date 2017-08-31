@@ -628,12 +628,6 @@ vendor/lib64/libscveTextReco_stub.so
 vendor/lib64/libscveVideoSummary.so
 vendor/lib64/libscveVideoSummary_stub.so
 
-# Camera Hack - Temporary
-lib/libcameraservice.so
-lib64/libcameraservice.so
-lib/libcamera_client.so
-lib64/libcamera_client.so
-
 # CNE
 bin/cnd
 etc/cne/andsfCne.xml
