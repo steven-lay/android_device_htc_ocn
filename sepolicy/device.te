@@ -1,1 +1,3 @@
 type fpc1020_device, dev_type;
+type modem_block_device, dev_type;
+type carrier_block_device, dev_type;

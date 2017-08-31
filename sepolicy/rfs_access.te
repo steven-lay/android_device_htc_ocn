@@ -1,1 +1,3 @@
 allow rfs_access rfs_shared_hlos_file:lnk_file { getattr setattr };
+allow rfs_access rfs_system_file:dir { search lock getattr read open ioctl };
+allow rfs_access rfs_system_file:file { open lock getattr ioctl read };

@@ -1,0 +1,1 @@
+allow bt_firmware_file bt_firmware_file:filesystem associate;

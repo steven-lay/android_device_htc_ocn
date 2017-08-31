@@ -1,9 +1,12 @@
 # Block devices
 /dev/block/bootdevice/by-name/userdata           u:object_r:userdata_block_device:s0
+/dev/block/bootdevice/by-name/bluetooth          u:object_r:modem_block_device:s0
+/dev/block/bootdevice/by-name/carrier            u:object_r:carrier_block_device:s0
+/dev/block/sde8                                  u:object_r:carrier_block_device:s0
+/dev/block/sde5                                  u:object_r:persist_block_device:s0
 
 # Carrier
 /carrier(/.*)?                                   u:object_r:carrier_file:s0
-/dev/block/bootdevice/by-name/carrier            u:object_r:block_device:s0
 
 # debugfs
 /sys/kernel/debug/msm_core(/.*)?                 u:object_r:debugfs_msm_core:s0

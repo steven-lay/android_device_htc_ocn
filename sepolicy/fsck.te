@@ -1,0 +1,2 @@
+allow fsck carrier_block_device:blk_file { getattr write read ioctl open lock append };
+allow fsck persist_block_device:blk_file { getattr write read ioctl open lock append };

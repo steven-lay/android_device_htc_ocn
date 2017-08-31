@@ -1,0 +1,1 @@
+allow sysfs_kgsl sysfs_kgsl:filesystem associate;

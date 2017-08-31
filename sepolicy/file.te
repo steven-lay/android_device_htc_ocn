@@ -12,4 +12,3 @@ type proc_stat, fs_type;
 type debugfs_msm_core, debugfs_type, fs_type;
 type debugfs_rmts, debugfs_type, fs_type;
 type debugfs_ion, debugfs_type, fs_type;
-type debugfs_kgsl, debugfs_type, fs_type;

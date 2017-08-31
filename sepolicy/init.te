@@ -20,5 +20,24 @@ allow init sdcardd_exec:file getattr;
 allow init sgdisk_exec:file getattr;
 allow init socket_device:sock_file { create setattr unlink };
 allow init userinit_exec:file getattr;
+allow init sysfs_kgsl:dir { open search setattr read };
+allow init sysfs_kgsl:file { open setattr read };
+allow init rfs_system_file:blk_file relabelto;
+allow init rfs_system_file:chr_file relabelto;
+allow init rfs_system_file:dir { add_name relabelto search create getattr read open write ioctl setattr relabelfrom remove_name rmdir };
+allow init rfs_system_file:fifo_file { relabelto getattr create read open unlink setattr relabelfrom };
+allow init rfs_system_file:file { relabelto getattr create read open write unlink setattr relabelfrom };
+allow init rfs_system_file:lnk_file { relabelto getattr create unlink setattr relabelfrom };
+allow init rfs_system_file:sock_file { relabelto getattr create read open unlink setattr relabelfrom };
+
+allow init carrier_block_device:blk_file write;
+allow init carrier_block_device:chr_file { read setattr open };
+allow init modem_block_device:chr_file { open setattr read };
+allow init debugfs_tracing:dir { search getattr read open setattr relabelfrom };
+allow init debugfs_tracing:file { lock getattr read open write append setattr relabelfrom };
+allow init debugfs_tracing:lnk_file { relabelfrom getattr };
+allow init debugfs_trace_marker:file r_file_perms ;
 
 allow init pstorefs:dir mounton;
+allow init carrier_file:dir mounton;
+allow init bt_firmware_file:dir mounton;
