@@ -4,3 +4,4 @@ allow cameraserver diag_prop:property_service set;
 allow cameraserver persist_file:file rw_file_perms;
 allow cameraserver persist_file:file setattr;
 allow cameraserver shell_exec:file { read open execute };
+allow cameraserver proc:file { read open getattr }; 
