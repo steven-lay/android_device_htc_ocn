@@ -59,7 +59,7 @@ BOARD_RAMDISK_OFFSET     := 0x01000000
 TARGET_KERNEL_APPEND_DTB := true
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/htc/msm8998
-TARGET_KERNEL_CONFIG := ocn_defconfig
+TARGET_KERNEL_CONFIG := slim_ocean_defconfig
 
 BOARD_ROOT_EXTRA_FOLDERS := bt_firmware firmware firmware/radio persist
 
