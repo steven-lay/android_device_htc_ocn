@@ -39,36 +39,6 @@ vendor/lib/rfsa/adsp/libvpp_frc.so
 vendor/lib/rfsa/adsp/libvpp_svc_skel.so
 
 # Audio
-lib/soundfx/libadaptsoundsehw.so
-lib/soundfx/libadaptsoundse.so
-lib/soundfx/libaudiopreprocessing.so
-lib/soundfx/libbundlewrapper.so
-lib/soundfx/libdownmix.so
-lib/soundfx/libeffectproxy.so
-lib/soundfx/libldnhncr.so
-lib/soundfx/liblimitercopphw.so
-lib/soundfx/liblimitercopp.so
-lib/soundfx/libqcompostprocbundle.so
-lib/soundfx/libqcomvisualizer.so
-lib/soundfx/libqcomvoiceprocessing.so
-lib/soundfx/libreverbwrapper.so
-lib/soundfx/libvisualizer.so
-lib/soundfx/libvolumelistener.so
-lib64/soundfx/libadaptsoundsehw.so
-lib64/soundfx/libadaptsoundse.so
-lib64/soundfx/libaudiopreprocessing.so
-lib64/soundfx/libbundlewrapper.so
-lib64/soundfx/libdownmix.so
-lib64/soundfx/libeffectproxy.so
-lib64/soundfx/libldnhncr.so
-lib64/soundfx/liblimitercopphw.so
-lib64/soundfx/liblimitercopp.so
-lib64/soundfx/libqcompostprocbundle.so
-lib64/soundfx/libqcomvisualizer.so
-lib64/soundfx/libqcomvoiceprocessing.so
-lib64/soundfx/libreverbwrapper.so
-lib64/soundfx/libvisualizer.so
-lib64/soundfx/libvolumelistener.so
 vendor/lib/libadm.so
 vendor/lib/libaudcal.so
 vendor/lib/libacdb-fts.so
