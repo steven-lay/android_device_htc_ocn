@@ -85,8 +85,8 @@ on late-init
 on fs
     mount_all fstab.qcom
     swapon_all fstab.qcom
-    wait /dev/block/platform/soc/1da4000.ufshc
-    symlink /dev/block/platform/soc/1da4000.ufshc /dev/block/bootdevice
+    wait /dev/block/platform/soc/${ro.boot.bootdevice}
+    symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
     wait /dev/device-mapper
     restorecon_recursive /persist
 
