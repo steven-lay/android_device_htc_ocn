@@ -640,13 +640,11 @@ vendor/lib64/libwqe.so
 vendor/lib64/libxml.so
 
 # DPM
-bin/dpm
 etc/dpm/dpm.conf
 etc/dpm/nsrm/NsrmConfiguration.xml
 etc/permissions/com.qti.dpmframework.xml
 etc/permissions/dpmapi.xml
 framework/com.qti.dpmframework.jar
-framework/dpm.jar
 framework/dpmapi.jar
 framework/tcmclient.jar
 framework/tcmiface.jar
@@ -1247,6 +1245,5 @@ vendor/firmware/Data.msc
 vendor/firmware/modemuw.jsn
 
 # Widevine
-vendor/lib/mediadrm/libwvdrmengine.so
 vendor/lib/mediadrm/libdrmclearkeyplugin.so
 vendor/lib/liboemcrypto.so
