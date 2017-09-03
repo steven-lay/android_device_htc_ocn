@@ -62,6 +62,8 @@ on init
     chown system log /sys/fs/pstore/console-ramoops
     chmod 0440 /sys/fs/pstore/console-ramoops
 
+    write /sys/module/qpnp_rtc/parameters/poweron_alarm 1
+
     # Create cgroup mount point for memory
     mount tmpfs none /sys/fs/cgroup mode=0750,uid=0,gid=1000
     mkdir /sys/fs/cgroup/memory 0750 root system
@@ -505,6 +507,7 @@ service charger /charger
     class charger
     group system graphics
     seclabel u:r:healthd:s0
+    writepid /dev/cpuset/system-background/tasks
 
 service cnd /system/bin/cnd
     class main
@@ -597,6 +600,7 @@ service iop /system/bin/iop
     group root
     disabled
     socket iop seqpacket 0666 root system
+    writepid /dev/cpuset/system-background/tasks
 
 service irsc_util /system/bin/irsc_util "/etc/sec_config"
     class core
@@ -608,6 +612,7 @@ service ipacm /system/bin/ipacm
     user net_admin
     group net_admin inet
     disabled
+    writepid /dev/cpuset/system-background/tasks
 
 service iprenew_bt-pan /system/bin/dhcpcd -n
     class late_start
@@ -628,17 +633,20 @@ service loc_launcher /system/bin/loc_launcher
     #loc_launcher will start as root and set its uid to gps
     class late_start
     group gps inet qcom_diag wifi
+    writepid /dev/cpuset/system-background/tasks
 
 service msm_irqbalance /system/bin/msm_irqbalance -f /system/vendor/etc/msm_irqbalance.conf
     class core
     user root
     group root
     disabled
+    writepid /dev/cpuset/system-background/tasks
 
 service netmgrd /system/bin/netmgrd
     class main
     group radio
     disabled
+    writepid /dev/cpuset/system-background/tasks
 
 service p2p_supplicant /system/bin/wpa_supplicant \
     -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
@@ -674,6 +682,7 @@ service perfd /system/vendor/bin/perfd
     group root readproc
     disabled
     socket perfd seqpacket 0666 root system
+    writepid /dev/cpuset/system-background/tasks
 
 service pd_mapper /system/vendor/bin/pd-mapper
     class core
@@ -694,12 +703,14 @@ service qseeproxydaemon /system/vendor/bin/qseeproxydaemon
     class late_start
     user system
     group system
+    writepid /dev/cpuset/system-background/tasks
 
 service qti /system/vendor/bin/qti
     class main
     user radio
     group radio net_raw qcom_diag usb net_admin
     disabled
+    writepid /dev/cpuset/system-background/tasks
 
 service ril-daemon2 /system/bin/rild -c 2
     class main
@@ -712,6 +723,8 @@ service ril-daemon2 /system/bin/rild -c 2
 service rmt_storage /system/bin/rmt_storage
     class core
     user root
+    group root system wakelock
+    writepid /dev/cpuset/system-background/tasks
 
 service spdaemon /system/bin/spdaemon
     class core
@@ -727,6 +740,7 @@ service start_hci_filter /system/bin/wcnss_filter
 service tftp_server /system/bin/tftp_server
     class core
     user root
+    writepid /dev/cpuset/system-background/tasks
 
 service thermal-engine /system/vendor/bin/thermal-engine
     class main
