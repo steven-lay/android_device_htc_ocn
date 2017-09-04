@@ -50,6 +50,7 @@ ro.bt.ble_tag=1
 persist.ts.rtmakeup=false
 vidc.enc.dcvs.extra-buff-count=2
 persist.camera.gyro.disable=0
+persist.camera.tuning_spec=htc
 
 # CNE
 persist.cne.feature=1
