@@ -59,12 +59,11 @@ on init
     write /proc/sys/kernel/sched_spill_nr_run 5
     write /proc/sys/kernel/sched_restrict_cluster_spill 1
 
-    write /dev/cpuset/cpu_exclusive 0
     write /dev/cpuset/top-app/cpus 0-7
     write /dev/cpuset/foreground/cpus 0-7
     write /dev/cpuset/foreground/boost/cpus 0-7
-    write /dev/cpuset/background/cpus 0-1
-    write /dev/cpuset/system-background/cpus 0-2
+    write /dev/cpuset/background/cpus 0-7
+    write /dev/cpuset/system-background/cpus 0-7
 
     chown root system /sys/devices/system/cpu/cpu1/online
     chmod 0664 /sys/devices/system/cpu/cpu1/online
@@ -84,6 +83,13 @@ on init
 on enable-low-power
     # disable thermal bcl hotplug to switch governor
     write /sys/module/msm_thermal/core_control/enabled 0
+
+    write /dev/cpuset/cpu_exclusive 0
+    write /dev/cpuset/top-app/cpus 0-7
+    write /dev/cpuset/foreground/cpus 0-7
+    write /dev/cpuset/foreground/boost/cpus 0-7
+    write /dev/cpuset/background/cpus 0-1
+    write /dev/cpuset/system-background/cpus 0-2
 
     # online CPU0
     write /sys/devices/system/cpu/cpu0/online 1
