@@ -511,7 +511,6 @@ service audiod /system/bin/audiod
 service charger /charger
     class charger
     group system graphics
-    seclabel u:r:healthd:s0
     writepid /dev/cpuset/system-background/tasks
 
 service cnd /system/bin/cnd
