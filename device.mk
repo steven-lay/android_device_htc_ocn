@@ -303,7 +303,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libjson
 
+# RIL
 PRODUCT_PACKAGES += \
+    android.hardware.broadcastradio@1.0-impl \
     libhtcril_db \
     libprotobuf-cpp-full \
     librmnetctl \
