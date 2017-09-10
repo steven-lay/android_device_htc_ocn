@@ -31,5 +31,7 @@
 
 extern "C" unsigned int __system_property_wait_any(unsigned int old_serial)
 {
-    return __system_property_wait_any(old_serial);
+    uint32_t new_serial;
+    __system_property_wait(nullptr, old_serial, &new_serial, nullptr);
+    return new_serial;
 }
