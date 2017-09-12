@@ -169,7 +169,7 @@ PRODUCT_PACKAGES += \
 
 # GPS
 PRODUCT_PACKAGES += \
-    android.hardware.gnss@1.0 \
+    android.hardware.gnss@1.0-impl \
     gps.msm8998 \
     libgps.utils \
     libloc_core \
