@@ -188,10 +188,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/gps/etc/xtwifi.conf:system/etc/xtwifi.conf
     $(LOCAL_PATH)/configs/xtwifi.conf:system/vendor/etc/xtwifi.conf \
 
-# HIDL
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/manifest.xml:system/vendor/manifest.xml
-
 # HTC Logging functions
 PRODUCT_PACKAGES += \
     liblog_htc
