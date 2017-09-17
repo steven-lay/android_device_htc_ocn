@@ -91,6 +91,13 @@ persist.mm.enable.prefetch=true
 ro.vendor.extension_library=libqti-perfd-client.so
 ro.sys.fw.bg_apps_limit=60
 
+#property for vendor specific library
+ro.vendor.at_library=libqti-at.so
+
+#min/max cpu in core control
+ro.core_ctl_min_cpu=2
+ro.core_ctl_max_cpu=4
+
 # Radio
 DEVICE_PROVISIONED=1
 rild.libpath=/vendor/lib64/libril-qc-qmi-1.so
