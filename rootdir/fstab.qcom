@@ -7,7 +7,7 @@
 
 #<src>                                    <mnt_point>       <type> <mnt_flags and options>                          <fs_mgr_flags>
 /dev/block/bootdevice/by-name/system      /system           ext4   ro,barrier=1                                     wait
-/dev/block/bootdevice/by-name/userdata    /data             ext4   nosuid,nodev,noatime,nodiratime,noauto_da_alloc,nobarrier,journal_async_commit                    wait,check,encryptable=/dev/block/bootdevice/by-name/extra
+/dev/block/bootdevice/by-name/userdata    /data             ext4   nosuid,nodev,noatime,nodiratime,noauto_da_alloc,nobarrier,journal_async_commit                    wait,check,encryptable=/dev/block/bootdevice/by-name/extra,quota
 /dev/block/bootdevice/by-name/frp         /persistent       emmc   defaults                                         defaults
 /dev/block/bootdevice/by-name/boot        /boot             emmc   defaults                                         defaults
 /dev/block/bootdevice/by-name/recovery    /recovery         emmc   defaults                                         defaults
