@@ -313,4 +313,7 @@
        carrier provisioning. If false: hard disabled. If true: then depends on carrier
        provisioning, availability etc -->
     <bool name="config_carrier_vt_available">true</bool>
+
+    <!-- doze always on -->
+    <bool name="config_enableDozeAlwaysOn">false</bool>
 </resources>
