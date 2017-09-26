@@ -103,7 +103,7 @@
         <version>2.0</version>
         <interface>
             <name>IAllocator</name>
-            <instance>msm8998</instance>
+            <instance>default</instance>
         </interface>
     </hal>
     <hal format="hidl">
@@ -121,7 +121,7 @@
         <version>2.1</version>
         <interface>
             <name>IComposer</name>
-            <instance>msm8998</instance>
+            <instance>default</instance>
         </interface>
     </hal>
     <hal format="hidl">
