@@ -176,6 +176,7 @@ PRODUCT_PACKAGES += \
     hwcomposer.msm8998 \
     libhwc2on1adapter \
     memtrack.msm8998 \
+    libdisplayconfig \
     libgenlock \
     liboverlay \
     libtinyxml \
