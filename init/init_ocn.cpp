@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <android-base/properties.h>
+
 #include "vendor_init.h"
 #include "property_service.h"
 #include "log.h"
@@ -44,13 +46,15 @@
 #include "htc-indiads.h"
 #include "htc-unlocked.h"
 
+using android::base::GetProperty;
+
 static void load_properties(const char *original_data)
 {
     char *data;
     char *key, *value, *eol, *sol, *tmp;
 
     if ((data = (char *) malloc(strlen(original_data)+1)) == NULL) {
-        ERROR("Out of memory!");
+        LOG(ERROR) << "Out of memory!" <<std::endl;
         return;
     }
 
@@ -89,14 +93,14 @@ void vendor_load_properties()
     std::string bootmid;
     std::string bootcid;
 
-    platform = property_get("ro.board.platform");
+    platform = GetProperty("ro.board.platform","");
     if (platform != ANDROID_TARGET)
         return;
 
-    bootmid = property_get("ro.boot.mid");
-    bootcid = property_get("ro.boot.cid");
+    bootmid = GetProperty("ro.boot.mid","");
+    bootcid = GetProperty("ro.boot.cid","");
 
-    INFO("Found bootcid %s, bootmid %s\n", bootcid.c_str(), bootmid.c_str());
+    LOG(INFO) << "Found bootcid " << bootcid << " bootmid " << bootmid << std::endl;
 
     if (bootmid == "2PZC10000" || bootmid == "2PZC50000") {
         if (is_variant_emea(bootcid)) {
