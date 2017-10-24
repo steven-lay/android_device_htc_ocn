@@ -566,6 +566,12 @@ service flash-nanohub-fw /system/bin/nanoapp_cmd download
     user root
     group system
 
+service hci_filter_root /system/bin/wcnss_filter
+    class late_start
+    user bluetooth
+    group bluetooth diag system
+    disabled
+
 service hostapd /system/bin/hostapd -dd /data/hostapd/hostapd.conf
     class late_start
     user root
@@ -819,7 +825,8 @@ on property:wc_transport.start_hci=true
 on property:wc_transport.start_hci=false
     stop start_hci_filter
 
+on property:wc_transport.start_root=true
+    start hci_filter_root
 
-
-
-
+on property:wc_transport.start_root=false
+    stop hci_filter_root
