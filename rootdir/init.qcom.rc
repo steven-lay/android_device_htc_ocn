@@ -701,13 +701,14 @@ service qti /system/vendor/bin/qti
     disabled
     writepid /dev/cpuset/system-background/tasks
 
-service ril-daemon2 /system/bin/rild -c 2
+service ril-daemon2 /vendor/bin/hw/rild -c 2
     class main
     socket rild2 stream 660 root radio
     socket rild-debug2 stream 660 radio system
-    user root
+    user radio
     disabled
-    group radio cache inet misc audio log readproc wakelock qcom_diag carrier syste
+    group radio cache inet misc audio log readproc wakelock qcom_diag carrier system
+    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW
 
 service rmt_storage /system/bin/rmt_storage
     class core
