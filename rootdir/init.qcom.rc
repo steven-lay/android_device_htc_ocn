@@ -778,6 +778,9 @@ on property:init.svc.surfaceflinger=running
 on property:init.svc.surfaceflinger=restarting
     stop ppd
 
+on property:init.svc.wificond=running
+    write /sys/kernel/boot_wlan/boot_wlan 1
+
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
 
