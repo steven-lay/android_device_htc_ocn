@@ -17,16 +17,19 @@
 #ifndef ANDROID_HARDWARE_CAMERA_PARAMETERS_EXT_H
 #define ANDROID_HARDWARE_CAMERA_PARAMETERS_EXT_H
 
-#include <camera/CameraParameters.h>
+#include <utils/KeyedVector.h>
 
 namespace android {
 
-class CameraParameters_EXT : public CameraParameters
+class CameraParameters;
+struct Size;
+
+class CameraParameters_EXT
 {
 public:
     CameraParameters_EXT();
     CameraParameters_EXT(CameraParameters *p);
-    virtual ~CameraParameters_EXT();
+    ~CameraParameters_EXT();
 
     int get_from_attr(const char *path, char *buf, size_t len);
     bool check_flashlight_restriction();
@@ -84,6 +87,9 @@ public:
     static const char VIDEO_HFR_9X[];
     static const char KEY_VIDEO_MODE[];
     static const char KEY_SMILEINFO_BYFACE_SUPPORTED[];
+
+private:
+    CameraParameters *mParams;
 };
 
 }
