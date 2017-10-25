@@ -68,10 +68,6 @@
         <item>255</item>
     </integer-array>
 
-    <!-- Allow user to adjust button brightness from settings -->
-    <integer name="config_buttonBrightnessSettingDefault">110</integer>
-    <bool name="config_deviceHasVariableButtonBrightness">true</bool>
-
     <!-- If this is true, the screen will come on when you unplug usb/power/whatever. -->
     <bool name="config_unplugTurnsOnScreen">true</bool>
 
@@ -295,9 +291,6 @@
     <!-- Use ERI text for network name on CDMA LTE -->
     <bool name="config_LTE_eri_for_network_name">false</bool>
 
-    <!-- Whether notify fingerprint client of successful cancelled authentication -->
-    <bool name="config_notifyClientOnFingerprintCancelSuccess">true</bool>
-
     <!-- Flag specifying whether VoLTE is available on device -->
     <bool name="config_device_volte_available">true</bool>
 
@@ -314,6 +307,4 @@
        provisioning, availability etc -->
     <bool name="config_carrier_vt_available">true</bool>
 
-    <!-- doze always on -->
-    <bool name="config_enableDozeAlwaysOn">false</bool>
 </resources>
