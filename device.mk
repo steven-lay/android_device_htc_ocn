@@ -135,8 +135,8 @@ PRODUCT_PACKAGES += \
     services-ext
 
 # DeviceHandler
-PRODUCT_PACKAGES += \
-    DeviceHandler
+#PRODUCT_PACKAGES += \
+#    DeviceHandler
 
 # Display
 PRODUCT_PACKAGES += \
