@@ -23,6 +23,7 @@ LOCAL_SHARED_LIBRARIES := libcutils libsqlite
 LOCAL_MODULE := libhtcril_db
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_LDLIBS := -llog
 
 include $(BUILD_SHARED_LIBRARY)
 
