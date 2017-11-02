@@ -83,10 +83,10 @@ on late-init
     setprop ro.hardware.fingerprint fpc
 
 on fs
-    mount_all fstab.qcom
-    swapon_all fstab.qcom
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+    mount_all fstab.qcom
+    swapon_all fstab.qcom
     wait /dev/device-mapper
     restorecon_recursive /persist
 
