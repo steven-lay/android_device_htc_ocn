@@ -16,6 +16,5 @@
 def FullOTA_InstallEnd(info):
   info.script.AppendExtra('mount("ext4", "EMMC", "/dev/block/bootdevice/by-name/system", "/system", "");')
   info.script.AppendExtra('ifelse(getprop("ro.boot.cid") == "SPCS_001", rename("/system/etc/gps.conf.sprint", "/system/etc/gps.conf"), rename("/system/etc/gps.conf.default", "/system/etc/gps.conf"));')
-  info.script.AppendExtra('ifelse(getprop("ro.boot.cid") == "SPCS_001" || getprop("ro.boot.cid") == "VZW__001", symlink("/system/vendor/lib64/libril-qc-qmi-1-cdma.so", "/system/vendor/lib64/libril-qc-qmi-1.so"), symlink("/system/vendor/lib64/libril-qc-qmi-1-default.so", "/system/vendor/lib64/libril-qc-qmi-1.so"));')
   info.script.AppendExtra('unmount("/system");')
 
