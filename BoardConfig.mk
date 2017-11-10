@@ -179,7 +179,7 @@ TARGET_PROVIDES_KEYMASTER := true
 TARGET_PROVIDES_LIBLIGHT := true
 
 # Linker
-LINKER_FORCED_SHIM_LIBS := /system/bin/pm-service|liblog_htc.so:/system/bin/imsdatadaemon|liblog_htc.so:/system/bin/cnss-daemon|liblog_htc.so:/system/bin/ims_rtp_daemon|liblog_htc.so
+LINKER_FORCED_SHIM_LIBS := /system/bin/wcnss_filter|liblog_htc.so:/system/bin/pm-service|liblog_htc.so:/system/bin/imsdatadaemon|liblog_htc.so:/system/bin/cnss-daemon|liblog_htc.so:/system/bin/ims_rtp_daemon|liblog_htc.so
 
 # Media
 TARGET_USES_MEDIA_EXTENSIONS := true
