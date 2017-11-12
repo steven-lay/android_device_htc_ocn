@@ -833,7 +833,7 @@ vendor/lib/hw/vulkan.msm8998.so
 vendor/lib/libC2D2.so
 vendor/lib/libCB.so
 vendor/lib/libOpenCL.so
-vendor/lib/libRSDriver_adreno.so
+vendor/lib/libRSDriver_adreno.so|185c79c55b5fae56284b10b789255717bc21f3fb
 vendor/lib/libadreno_utils.so
 vendor/lib/libbccQTI.so
 vendor/lib/libc2d30-a5xx.so
@@ -860,7 +860,7 @@ vendor/lib64/hw/vulkan.msm8998.so
 vendor/lib64/libC2D2.so
 vendor/lib64/libCB.so
 vendor/lib64/libOpenCL.so
-vendor/lib64/libRSDriver_adreno.so
+vendor/lib64/libRSDriver_adreno.so|a29db6edebce7f37c53b824d52fdf4f63bebb813
 vendor/lib64/libadreno_utils.so
 vendor/lib64/libbccQTI.so
 vendor/lib64/libc2d30-a5xx.so
