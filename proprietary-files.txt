@@ -997,6 +997,32 @@ vendor/lib64/vendor.qti.hardware.radio.uim_remote_server@1.0_vendor.so
 vendor/lib64/vendor.qti.imsrtpservice@1.0-service-Impl.so
 vendor/lib64/vendor.qti.imsrtpservice@1.0_vendor.so
 vendor/lib64/vendor.qti.voiceprint@1.0.so
+vendor/lib/com.htc.radio@1.0.so
+vendor/lib/com.qualcomm.qti.ant@1.0_vendor.so
+vendor/lib/com.qualcomm.qti.bluetooth_audio@1.0_vendor.so
+vendor/lib/com.qualcomm.qti.dpm.api@1.0_vendor.so
+vendor/lib/com.qualcomm.qti.imscmservice@1.0_vendor.so
+vendor/lib/com.qualcomm.qti.wifidisplayhal@1.0-halimpl.so
+vendor/lib/com.qualcomm.qti.wifidisplayhal@1.0-impl.so
+vendor/lib/com.qualcomm.qti.wifidisplayhal@1.0_vendor.so
+vendor/lib/com.quicinc.cne.api@1.0.so
+vendor/lib/com.quicinc.cne.constants@1.0.so
+vendor/lib/com.quicinc.cne.constants@2.0.so
+vendor/lib/com.quicinc.cne.server@1.0.so
+vendor/lib/com.quicinc.cne.server@2.0.so
+vendor/lib64/com.htc.radio@1.0.so
+vendor/lib64/com.qualcomm.qti.ant@1.0_vendor.so
+vendor/lib64/com.qualcomm.qti.bluetooth_audio@1.0_vendor.so
+vendor/lib64/com.qualcomm.qti.dpm.api@1.0_vendor.so
+vendor/lib64/com.qualcomm.qti.imscmservice@1.0_vendor.so
+vendor/lib64/com.qualcomm.qti.wifidisplayhal@1.0-halimpl.so
+vendor/lib64/com.qualcomm.qti.wifidisplayhal@1.0-impl.so
+vendor/lib64/com.qualcomm.qti.wifidisplayhal@1.0_vendor.so
+vendor/lib64/com.quicinc.cne.api@1.0.so
+vendor/lib64/com.quicinc.cne.constants@1.0.so
+vendor/lib64/com.quicinc.cne.constants@2.0.so
+vendor/lib64/com.quicinc.cne.server@1.0.so
+vendor/lib64/com.quicinc.cne.server@2.0.so
 
 # Radio
 vendor/bin/netmgrd
@@ -1094,6 +1120,9 @@ vendor/firmware/slpi_v2.b13
 vendor/firmware/slpi_v2.b14
 vendor/firmware/slpi_v2.cfg
 vendor/firmware/slpi_v2.mdt
+
+# Temp
+lib64/android.system.net.netd@1.0.so
 
 # Thermal
 vendor/etc/thermal-engine.conf
