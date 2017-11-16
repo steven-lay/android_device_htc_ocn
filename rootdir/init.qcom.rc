@@ -44,8 +44,6 @@ on early-init
     write /proc/sys/net/unix/max_dgram_qlen 12000
 
 on init
-    export LD_PRELOAD "liblog_htc.so"
-    export LD_SHIM_LIBS "/system/lib/libpower.so|/system/vendor/lib/libshim_power.so:/system/lib64/libpower.so|/system/vendor/lib64/libshim_power.so:/system/vendor/lib64/libril-qc-qmi-1.so|libshims_system_properties.so"
 
     chmod 0644 /proc/cmdline
 
