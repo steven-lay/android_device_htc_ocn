@@ -28,7 +28,7 @@ TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
-TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT := cortex-a73
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv7-a-neon
@@ -41,8 +41,6 @@ TARGET_BOARD_PLATFORM_GPU := qcom-adreno540
 
 TARGET_USES_UEFI := true
 TARGET_USES_64_BIT_BINDER := true
-ENABLE_CPUSETS := true
-ENABLE_SCHEDBOOST := true
 
 # Bootloader
 TARGET_BOOTLOADER_BOARD_NAME := MSM8998
@@ -50,17 +48,18 @@ TARGET_NO_BOOTLOADER := true
 
 # Kernel
 BOARD_KERNEL_BASE := 0x00000000
-BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 user_debug=31 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 sched_enable_hmp=1 sched_enable_power_aware=1 service_locator.enable=1 swiotlb=2048 androidboot.configfs=true androidboot.usbcontroller=a800000.dwc3 androidboot.hardware=qcom androidkey.dummy=1
+BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 user_debug=31 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 sched_enable_hmp=1 sched_enable_power_aware=1 service_locator.enable=1 swiotlb=2048 androidboot.configfs=true androidboot.usbcontroller=a800000.dwc3 androidboot.hardware=qcom androidkey.dummy=1 androidboot.fpsensor=fpc1145
 BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_IMAGE_NAME := Image.lz4-dtb
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_RAMDISK_OFFSET     := 0x01000000
 TARGET_KERNEL_ARCH := arm64
+TARGET_COMPILE_WITH_MSM_KERNEL := true
 TARGET_KERNEL_SOURCE := kernel/htc/msm8998
 TARGET_KERNEL_CONFIG := slim_ocean_defconfig
 
-BOARD_ROOT_EXTRA_FOLDERS := bt_firmware firmware firmware/radio persist
+BOARD_ROOT_EXTRA_FOLDERS := bt_firmware firmware persist firmware/image
 
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-uart"
@@ -96,21 +95,23 @@ AUDIO_USE_LL_AS_PRIMARY_OUTPUT := true
 BOARD_USES_ALSA_AUDIO := true
 
 USE_CUSTOM_AUDIO_POLICY := 1
+USE_XML_AUDIO_POLICY_CONF := 1
+BOARD_ROOT_EXTRA_SYMLINKS := /vendor/lib/dsp:/dsp
 
 # Bluetooth
+BOARD_HAS_QCA_BT_ROME := true
 BOARD_HAVE_BLUETOOTH := true
 BOARD_HAVE_BLUETOOTH_QCOM := true
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
-BOARD_HAS_QCA_BT_ROME := true
 QCOM_BT_USE_BTNV := true
 QCOM_BT_USE_SMD_TTY := true
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
 
 # Camera
 BOARD_QTI_CAMERA_32BIT_ONLY := true
-TARGET_CAMERASERVICE_CLOSES_NATIVE_HANDLES := true
 TARGET_USES_MEDIA_EXTENSIONS := true
 TARGET_USES_QTI_CAMERA2CLIENT := true
 USE_DEVICE_SPECIFIC_CAMERA := true
+TARGET_CAMERASERVICE_CLOSES_NATIVE_HANDLES := true
 TARGET_SPECIFIC_CAMERA_PARAMETER_LIBRARY := libcamera_parameters_ext
 
 # CNE and DPM
@@ -118,6 +119,8 @@ BOARD_USES_QCNE := true
 
 # Display
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
+TARGET_USES_HWC2 := true
+TARGET_USES_GRALLOC1 := true
 TARGET_USES_C2D_COMPOSITION := true
 TARGET_USES_ION := true
 TARGET_USES_OVERLAY := true
@@ -149,7 +152,7 @@ BOARD_BOOTIMAGE_PARTITION_SIZE := 67108864
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 67108864
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 4009754624
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 58737033216
-TARGET_FS_CONFIG_GEN += $(DEVICE_PATH)/config.fs
+TARGET_FS_CONFIG_GEN += $(DEVICE_PATH)/configs/config.fs
 
 # Fingerprint
 PRODUCT_SKIP_FINGERPRINT_FROM_FILE := true
@@ -160,15 +163,15 @@ USE_DEVICE_SPECIFIC_GPS := true
 BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := $(TARGET_BOARD_PLATFORM)
 
 # HIDL
-DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/manifest.xml
-DEVICE_MATRIX_FILE := $(DEVICE_PATH)/compatibility_matrix.xml
+DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/manifest.xml
+DEVICE_MATRIX_FILE := $(DEVICE_PATH)/configs/compatibility_matrix.xml
 
 # Init
 #TARGET_PLATFORM_DEVICE_BASE := /devices/soc.0/
 TARGET_UNIFIED_DEVICE := true
 TARGET_INIT_VENDOR_LIB := libinit_ocn
 TARGET_RECOVERY_DEVICE_MODULES := libinit_ocn
-TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/fstab.qcom
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/fstab.recovery
 
 # Keymaster
 TARGET_PROVIDES_KEYMASTER := true
@@ -176,14 +179,11 @@ TARGET_PROVIDES_KEYMASTER := true
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
 
-# Linker
-LINKER_FORCED_SHIM_LIBS := /system/bin/wcnss_filter|liblog_htc.so:/system/bin/pm-service|liblog_htc.so:/system/bin/imsdatadaemon|liblog_htc.so:/system/bin/cnss-daemon|liblog_htc.so:/system/bin/ims_rtp_daemon|liblog_htc.so
-
 # Media
 TARGET_USES_MEDIA_EXTENSIONS := true
 
 # NFC
-BOARD_NFC_CHIPSET := pn548
+BOARD_NFC_CHIPSET := PN553
 BOARD_NFC_HAL_SUFFIX := $(TARGET_BOARD_PLATFORM)
 
 # Power
@@ -201,26 +201,28 @@ TARGET_RIL_VARIANT := caf
 PROTOBUF_SUPPORTED := true
 
 # SELinux
-#include device/qcom/sepolicy/sepolicy.mk
+include device/qcom/sepolicy/sepolicy.mk
 #BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 
 # Sensors
 USE_SENSOR_MULTI_HAL := true
 
 # Wifi
+# Wifi
 BOARD_HAS_QCOM_WLAN := true
 BOARD_HAS_QCOM_WLAN_SDK := true
 BOARD_WLAN_DEVICE := qcwcn
-BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_HOSTAPD_DRIVER := NL80211
-WIFI_DRIVER_DEFAULT := qca_cld3
-WPA_SUPPLICANT_VERSION := VER_0_8_X
-WIFI_DRIVER_FW_PATH_STA := "sta"
-WIFI_DRIVER_FW_PATH_AP  := "ap"
-WIFI_DRIVER_FW_PATH_P2P := "p2p"
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
-WIFI_HIDL_FEATURE_AWARE := true
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
+WIFI_DRIVER_FW_PATH_AP := "ap"
+WIFI_DRIVER_FW_PATH_STA := "sta"
+WIFI_DRIVER_FW_PATH_P2P := "p2p"
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+WIFI_DRIVER_STATE_CTRL_PARAM := "/sys/kernel/boot_wlan/boot_wlan"
+WIFI_DRIVER_STATE_ON := 1
+WIFI_DRIVER_STATE_OFF := 0
 
 # inherit from the proprietary version
 -include vendor/htc/ocn/BoardConfigVendor.mk

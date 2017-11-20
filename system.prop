@@ -71,8 +71,17 @@ persist.data.netmgrd.qos.enable=true
 persist.data.mode=concurrent
 
 # Display
+sdm.debug.disable_skip_validate=1
 ro.opengles.version=196610
 ro.sf.lcd_density=640
+debug.sf.enable_hwc_vds=1
+debug.sf.hw=1
+debug.sf.latch_unsignaled=1
+debug.gralloc.enable_fb_ubwc=1
+dalvik.vm.heapsize=36m
+dev.pm.dyn_samplingrate=1
+persist.demo.hdmirotationlock=false
+ro.product.display_resolution = 5.5 inch WQHD resolution
 
 # Factory Reset Protection
 
@@ -96,8 +105,6 @@ media.aac_51_output_enabled=true
 mm.enable.smoothstreaming=true
 mm.enable.qcom_parser=13631487
 persist.mm.enable.prefetch=true
-persist.media.treble_omx=false
-media.settings.xml=/vendor/etc/media_profiles_vendor.xml
 
 # Perf
 ro.vendor.extension_library=libqti-perfd-client.so
@@ -166,6 +173,7 @@ ro.telephony.call_ring.multiple=false
 
 # Time-services
 persist.timed.enable=true
+persist.delta_time.enable=true
 persist.backup.ntpServer="0.pool.ntp.org"
 
 #VoLTE

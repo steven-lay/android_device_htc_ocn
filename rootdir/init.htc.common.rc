@@ -1,0 +1,146 @@
+########################
+# # init.htc.common.rc #
+########################
+
+import /vendor/etc/init/hw/init.htc.usb.rc
+
+on fs
+#SSD_DISP start
+    chown system graphics /sys/class/leds/lcd-backlight/cabc_level_ctl
+    chown system graphics /sys/class/leds/lcd-backlight/color_temp_ctl
+    chown system graphics /sys/class/leds/lcd-backlight/color_profile_ctl
+    chown system graphics /sys/class/leds/lcd-backlight/disp_cali_enable
+    chown system graphics /sys/class/leds/lcd-backlight/bklt_cali_enable
+    chown system system /sys/class/leds/lcd-backlight/burst_switch
+    chown system system /sys/class/leds/lcd-backlight/sre_enable
+
+    # AOD/Subscreen
+    chown system graphics /sys/class/graphics/fb0/aod_ctrl
+    chown system system   /sys/class/leds/sub-backlight/brightness
+    chown system graphics /sys/class/leds/sub-backlight/bl_sync
+
+    # nits will be deprecated
+    chown system system /sys/class/leds/lcd-backlight-nits/brightness
+#SSD_DISP end
+
+# maintain the list of processes name for kernel monitoring usage
+    chown system /sys/process/task_comm_list
+
+on boot
+    # Assign androidboot.ddrsize to ro.product.ram
+    setprop ro.product.ram ${ro.boot.ddrsize}
+    # remove /dev/mem and /dev/kmem
+    rm /dev/mem
+    rm /dev/kmem
+
+# + SSD_RIL: set radio_feedback permissions
+    chown radio radio /dev/radio_feedback
+    chmod 0660 /dev/radio_feedback
+# - SSD_RIL
+
+# NFC ++
+# permissions for NFC
+    chmod 0600 /dev/pn544
+    chown nfc nfc /dev/pn544
+
+service htc-post-boot /vendor/bin/init.htc.post_boot.sh
+    class late_start
+    user root
+    disabled
+    oneshot
+
+on property:init.svc.qcom-post-boot=stopped
+    start htc-post-boot
+
+on property:sys.qseecomd.stage=2
+    start wv-prov
+
+service wv-prov /system/bin/hcheck-v2
+    class late_start
+    user root
+    disabled
+    oneshot
+
+# HTC HRDUMP - BEGIN
+on post-fs-data
+    start hrdump
+    start hrdump_v2
+
+service hrdump /system/bin/hrdump -s
+    disabled
+    oneshot
+    ioprio idle 0
+    cgroup bg
+
+on property:ro.boot.htc.hrdump=detected
+        setprop debug.htc.hrdump "detected"
+
+service hrdump_v2 /system/bin/hrdump_v2 -s
+    disabled
+    oneshot
+    ioprio idle 0
+    cgroup bg
+
+# HTC HRDUMP - END
+
+# HTC minidump for TellHTC - BEGIN
+service minidump-sh /vendor/bin/sh /vendor/bin/init.minidump.sh
+    class late_start
+    user root
+    oneshot
+# HTC minidump for TellHTC - END
+
+# hang_detector - BEGIN
+service hang_start_moni /system/bin/hang_detector -b
+    user root
+    disabled
+    oneshot
+
+on property:init.svc.zygote=restarting
+    start hang_start_moni
+
+service hang_end_moni /system/bin/hang_detector -e
+    user root
+    disabled
+    oneshot
+
+on property:sys.boot_completed=1
+    start hang_end_moni
+
+service hang_daemon /system/bin/hang_detector -d
+    user root
+    socket hang_detector stream 0666 system system
+    disabled
+
+on post-fs-data
+    start hang_daemon
+# hang_detector - END
+
+# when temperature protection is disabled, bg anr is disabled as well
+on property:ro.boot.temp_protect=0
+    setprop profiler.debug.hide_bg_anr "1"
+
+on property:sys.vm.max_map_count=*
+    write /proc/sys/vm/max_map_count ${sys.vm.max_map_count}
+
+service usbdiag_init /vendor/bin/init.usbdiag.sh
+    class main
+    oneshot
+
+# HTC_BT [F201708241604] Add policy for Bluetooth utsnoop - BEGIN
+
+on property:bluetooth.utsnoop=true
+    start utsnoop
+
+on property:bluetooth.utsnoop=false
+    stop utsnoop
+
+service utsnoop /vendor/bin/htc_utsnoop
+   user bluetooth
+   group bluetooth net_bt_admin sdcard_rw sdcard_r media_rw inet
+   class late_start
+   disabled
+   seclabel u:r:utsnoop:s0
+   oneshot
+
+# HTC_BT [F201708241604] Add policy for Bluetooth utsnoop - END
