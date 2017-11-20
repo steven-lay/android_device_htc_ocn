@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- Version: 899820170519 V30 -->
+<!-- Version: 899820171012 V33 -->
 <mixer>
     <!-- These are the initial mixer settings -->
     <!-- Qualcomm default ctl start -->
@@ -156,6 +156,7 @@
     <ctl name="USB_AUDIO_RX Audio Mixer MultiMedia15" value="0" />
     <ctl name="USB_AUDIO_RX Audio Mixer MultiMedia16" value="0" />
     <ctl name="MultiMedia1 Mixer USB_AUDIO_TX" value="0" />
+    <ctl name="MultiMedia2 Mixer USB_AUDIO_TX" value="0" />
     <ctl name="MultiMedia5 Mixer USB_AUDIO_TX" value="0" />
     <ctl name="MultiMedia8 Mixer USB_AUDIO_TX" value="0" />
     <ctl name="MultiMedia6 Mixer SLIM_0_TX" value="0" />
@@ -193,6 +194,7 @@
     <ctl name="SLIMBUS_0_RX Port Mixer SLIM_7_TX" value="0" />
     <ctl name="AUDIO_REF_EC_UL1 MUX" value="None" />
     <ctl name="AFE_PCM_RX Audio Mixer MultiMedia1" value="0" />
+    <ctl name="AFE_PCM_RX Audio Mixer MultiMedia2" value="0" />
     <ctl name="AFE_PCM_RX Audio Mixer MultiMedia4" value="0" />
     <ctl name="AFE_PCM_RX Audio Mixer MultiMedia7" value="0" />
     <ctl name="AFE_PCM_RX Audio Mixer MultiMedia10" value="0" />
@@ -468,6 +470,7 @@
     <ctl name="QUAT_MI2S_RX_Voice Mixer VoiceMMode2" value="0" />
     <ctl name="QUAT_MI2S_RX_Voice Mixer Voip" value="0" />
     <ctl name="QUAT_MI2S_RX_Voice Mixer VoWLAN" value="0" />
+    <ctl name="QUAT_MI2S_RX Port Mixer SLIM_8_TX" value="0" />
     <!-- HTC ctl end -->
     <ctl name="RX1 Mix Digital Volume" value="84" />
     <ctl name="RX2 Mix Digital Volume" value="84" />
@@ -2062,6 +2065,14 @@
     <path name="usb-headset-audio-voip">
     </path>
 
+    <path name="speaker-bt-sco">
+        <path name="speaker-generic" />
+    </path>
+
+    <path name="speaker-bt-sco-wb">
+        <path name="speaker-generic" />
+    </path>
+
     <!-- HTC DEV-IN -->
     <path name="line">
         <path name="main-mic" />
@@ -2487,6 +2498,171 @@
     <path name="compress-voip-call speaker-headset">
         <ctl name="SLIM_6_RX_Voice Mixer Voip" value="1" />
         <ctl name="Voip_Tx Mixer SLIM_0_TX_Voip" value="1" />
+    </path>
+
+    <path name="deep-buffer-playback speaker-bt-sco">
+        <path name="deep-buffer-playback bt-sco" />
+        <path name="deep-buffer-playback" />
+    </path>
+
+    <path name="low-latency-playback speaker-bt-sco">
+        <path name="low-latency-playback bt-sco" />
+        <path name="low-latency-playback" />
+    </path>
+
+    <path name="audio-ull-playback speaker-bt-sco">
+        <path name="audio-ull-playback bt-sco" />
+        <path name="audio-ull-playback" />
+    </path>
+
+    <path name="compress-offload-playback speaker-bt-sco">
+        <path name="compress-offload-playback bt-sco" />
+        <path name="compress-offload-playback" />
+    </path>
+
+    <path name="compress-offload-playback2 speaker-bt-sco">
+        <path name="compress-offload-playback2 bt-sco" />
+        <path name="compress-offload-playback2" />
+    </path>
+
+    <path name="compress-offload-playback3 speaker-bt-sco">
+        <path name="compress-offload-playback3 bt-sco" />
+        <path name="compress-offload-playback3" />
+    </path>
+
+    <path name="compress-offload-playback4 speaker-bt-sco">
+        <path name="compress-offload-playback4 bt-sco" />
+        <path name="compress-offload-playback4" />
+    </path>
+
+    <path name="compress-offload-playback5 speaker-bt-sco">
+        <path name="compress-offload-playback5 bt-sco" />
+        <path name="compress-offload-playback5" />
+    </path>
+
+    <path name="compress-offload-playback6 speaker-bt-sco">
+        <path name="compress-offload-playback6 bt-sco" />
+        <path name="compress-offload-playback6" />
+    </path>
+
+    <path name="compress-offload-playback7 speaker-bt-sco">
+        <path name="compress-offload-playback7 bt-sco" />
+        <path name="compress-offload-playback7" />
+    </path>
+
+    <path name="compress-offload-playback8 speaker-bt-sco">
+        <path name="compress-offload-playback8 bt-sco" />
+        <path name="compress-offload-playback8" />
+    </path>
+
+    <path name="compress-offload-playback9 speaker-bt-sco">
+        <path name="compress-offload-playback9 bt-sco" />
+        <path name="compress-offload-playback9" />
+    </path>
+
+    <path name="voicemmode1-call speaker-bt-sco">
+        <path name="voicemmode1-call bt-sco" />
+        <path name="voicemmode1-call" />
+    </path>
+
+    <path name="voicemmode2-call speaker-bt-sco">
+        <path name="voicemmode2-call bt-sco" />
+        <path name="voicemmode2-call" />
+    </path>
+
+    <path name="compress-voip-call speaker-bt-sco">
+        <path name="compress-voip-call bt-sco" />
+        <path name="compress-voip-call" />
+    </path>
+
+    <path name="deep-buffer-playback speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="deep-buffer-playback bt-sco" />
+        <path name="deep-buffer-playback" />
+    </path>
+
+    <path name="low-latency-playback speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="low-latency-playback bt-sco" />
+        <path name="low-latency-playback" />
+    </path>
+
+    <path name="audio-ull-playback speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="audio-ull-playback bt-sco" />
+        <path name="audio-ull-playback" />
+    </path>
+
+    <path name="compress-offload-playback speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-offload-playback bt-sco" />
+        <path name="compress-offload-playback" />
+    </path>
+
+    <path name="compress-offload-playback2 speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-offload-playback2 bt-sco" />
+        <path name="compress-offload-playback2" />
+    </path>
+
+    <path name="compress-offload-playback3 speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-offload-playback3 bt-sco" />
+        <path name="compress-offload-playback3" />
+    </path>
+
+    <path name="compress-offload-playback4 speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-offload-playback4 bt-sco" />
+        <path name="compress-offload-playback4" />
+    </path>
+
+    <path name="compress-offload-playback5 speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-offload-playback5 bt-sco" />
+        <path name="compress-offload-playback5" />
+    </path>
+
+    <path name="compress-offload-playback6 speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-offload-playback6 bt-sco" />
+        <path name="compress-offload-playback6" />
+    </path>
+
+    <path name="compress-offload-playback7 speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-offload-playback7 bt-sco" />
+        <path name="compress-offload-playback7" />
+    </path>
+
+    <path name="compress-offload-playback8 speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-offload-playback8 bt-sco" />
+        <path name="compress-offload-playback8" />
+    </path>
+
+    <path name="compress-offload-playback9 speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-offload-playback9 bt-sco" />
+        <path name="compress-offload-playback9" />
+    </path>
+
+    <path name="voicemmode1-call speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="voicemmode1-call bt-sco" />
+        <path name="voicemmode1-call" />
+    </path>
+
+    <path name="voicemmode2-call speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="voicemmode2-call bt-sco" />
+        <path name="voicemmode2-call" />
+    </path>
+
+    <path name="compress-voip-call speaker-bt-sco-wb">
+        <ctl name="BT SampleRate" value="KHZ_16" />
+        <path name="compress-voip-call bt-sco" />
+        <path name="compress-voip-call" />
     </path>
 
     <!-- htc device end -->
@@ -3247,5 +3423,25 @@
     </path>
 
     <!-- Qualcomm default dev end -->
+    <path name="hifi-playback display-port">
+        <ctl name="DISPLAY_PORT Mixer MultiMedia2" value="1" />
+    </path>
+
+    <path name="hifi-playback afe-proxy">
+        <ctl name="AFE_PCM_RX Audio Mixer MultiMedia2" value="1" />
+    </path>
+
+    <path name="hifi-playback usb-headset">
+        <ctl name="USB_AUDIO_RX Audio Mixer MultiMedia2" value="1" />
+    </path>
+
+    <path name="hifi-playback usb-headphones">
+        <ctl name="USB_AUDIO_RX Audio Mixer MultiMedia2" value="1" />
+    </path>
+
+    <path name="hifi-record usb-headset-mic">
+        <ctl name="MultiMedia2 Mixer USB_AUDIO_TX" value="1" />
+    </path>
+
 
 </mixer>
