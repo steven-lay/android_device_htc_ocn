@@ -170,7 +170,9 @@ PRODUCT_PACKAGES += \
     libgenlock \
     libjni_livedisplay \
     liboverlay \
-    libtinyxml
+    libtinyxml \
+    libqdMetaData \
+    libqdMetaData.system
 
 PRODUCT_PACKAGES += \
     qdcm_calib_data_WQHD_JDI_S6D1HA2_5.5_command_mode_panel.xml
