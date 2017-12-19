@@ -30,12 +30,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <android-base/logging.h>
 #include <android-base/properties.h>
 
 #include "vendor_init.h"
 #include "property_service.h"
-#include "log.h"
-#include "util.h"
 
 /* Device specific properties */
 #include "htc-sprint.h"
@@ -47,6 +46,7 @@
 #include "htc-unlocked.h"
 
 using android::base::GetProperty;
+using android::init::property_set;
 
 static void load_properties(const char *original_data)
 {
