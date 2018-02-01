@@ -9,6 +9,7 @@
         <library name="visualizer_sw" path="libvisualizer.so"/>
         <library name="visualizer_hw" path="libqcomvisualizer.so"/>
         <library name="downmix" path="libdownmix.so"/>
+        <library name="dynamics_processing" path="libdynproc.so"/>
         <library name="loudness_enhancer" path="libldnhncr.so"/>
         <library name="proxy" path="libeffectproxy.so"/>
         <library name="offload_bundle" path="libqcompostprocbundle.so"/>
@@ -63,6 +64,7 @@
         <effect name="notification_helper" library="volume_listener" uuid="0b776dde-0590-11e5-81ba-0025b32654a0"/>
         <effect name="audiosphere" library="audiosphere" uuid="184e62ab-2d19-4364-9d1b-c0a40733866c"/>
         <effect name="shoebox" library="shoebox" uuid="1eab784c-1a36-4b2a-b7fc-e34c44cab89e"/>
+        <effect name="dynamics_processing" library="dynamics_processing" uuid="e0e6539b-1781-7261-676f-6d7573696340"/>
     </effects>
     <postprocess>
         <stream type="music">
