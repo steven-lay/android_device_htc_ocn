@@ -21,6 +21,9 @@
     <globalConfiguration speaker_drc_enabled="false"/>
 
     <modules>
+        <!-- A2DP Audio HAL -->
+        <xi:include href="/vendor/etc/a2dp_audio_policy_configuration.xml"/>
+
         <!-- Primary Audio HAL -->
         <xi:include href="/vendor/etc/primary_audio_policy_configuration.xml"/>
 
