@@ -109,8 +109,6 @@ vendor/etc/acdbdata/Speaker_cal.acdb
 vendor/etc/acdbdata/Codec_cal.acdb
 vendor/etc/acdbdata/Headset_cal.acdb
 vendor/etc/acdbdata/Handset_cal.acdb
-vendor/lib/libbthost_if.so
-vendor/lib64/libbthost_if.so
 
 # Audio amplifier
 vendor/firmware/tas2557s_uCDSP.bin
