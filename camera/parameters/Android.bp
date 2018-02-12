@@ -1,5 +1,0 @@
-cc_library_static {
-    name: "libcamera_parameters_ext",
-    include_dirs: ["device/htc/ocn/include"],
-    srcs: ["CameraParameters.cpp", "CameraParameters_EXT.cpp"],
-}
