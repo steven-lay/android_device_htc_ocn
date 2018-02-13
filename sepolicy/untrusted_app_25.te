@@ -1,0 +1,1 @@
+allow untrusted_app_25 hal_memtrack_default:binder call;

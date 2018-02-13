@@ -1,30 +1,29 @@
-# Block devices
-/dev/block/bootdevice/by-name/userdata           u:object_r:userdata_block_device:s0
-/dev/block/bootdevice/by-name/bluetooth          u:object_r:modem_block_device:s0
-/dev/block/bootdevice/by-name/carrier            u:object_r:carrier_block_device:s0
-/dev/block/sde8                                  u:object_r:carrier_block_device:s0
-/dev/block/sde5                                  u:object_r:persist_block_device:s0
-
-# Carrier
-/carrier(/.*)?                                   u:object_r:carrier_file:s0
-
-# debugfs
-/sys/kernel/debug/msm_core(/.*)?                 u:object_r:debugfs_msm_core:s0
-/sys/kernel/debug/rmt_storage/rmts               u:object_r:debugfs_rmts:s0
-/sys/kernel/debug/ion(/.*)?                      u:object_r:debugfs_ion:s0
-
-# Fingerprint
-/dev/fpc1020                                                    u:object_r:fpc1020_device:s0
-/data/fpc(/.*)?                                                 u:object_r:fpc_data_file:s0
-/data/fpc_images(/.*)?                                          u:object_r:fpc_images_file:s0
-/sys/devices/soc/soc:fpc_fpc1020/irq                            u:object_r:sysfs_fpc_irq:s0
-/sys/devices/soc/soc:fpc_fpc1020/proximity_state                u:object_r:sysfs_fpc_proximity:s0
-
 # FRP partition
 /dev/block/bootdevice/by-name/frp                               u:object_r:frp_block_device:s0
 
-# Gesture
-/sys/devices/virtual/htc_sensorhub/sensor_hub/gesture_motion    u:object_r:sysfs_gesture:s0
+# Persist partition
+/dev/block/bootdevice/by-name/persist                           u:object_r:persist_block_device:s0
+
+# Power
+/sys/power/ktop_accu                                            u:object_r:sysfs_ktop_file:s0
+
+# ril
+/system/vendor/radio/qcril_database/qcril.db                    u:object_r:nv_data_file:s0
+
+# sys
+/sys/devices/soc/soc:fpc_fpc1020/irq                            u:object_r:sysfs_fpc_irq:s0
+/sys/devices/soc/soc:fpc_fpc1020/report_home                    u:object_r:sysfs_fpc_key:s0
+/sys/devices/soc/soc:fpc_fpc1020/report_key                     u:object_r:sysfs_fpc_key:s0
+/sys/devices/soc/soc:fpc_fpc1020/screen_state                   u:object_r:sysfs_fpc_screen:s0
+/sys/devices/soc/soc:fpc_fpc1020/proximity_state                u:object_r:sysfs_fpc_proximity:s0
+/sys/kernel/boot_wlan(/.*)?                                     u:object_r:sysfs_wifi:s0
+
+# graphics
+/sys/devices/soc/8c0000.qcom,msm-cam/video4linux/(/.*)?         u:object_r:graphics_device:s0
+
+# leds
+/sys/class/leds(/.*)?                                           u:object_r:sysfs_leds:s0
+/sys/devices/soc/800f000.qcom,spmi/spmi-0/spmi0-02/800f000.qcom,spmi:qcom,pmi8998@2:gpio-leds/leds(/.*)? u:object_r:sysfs_leds:s0
 
 # Nanohub
 /dev/nanohub                                     u:object_r:sensors_device:s0
@@ -32,14 +31,12 @@
 /system/bin/nanoapp_cmd                          u:object_r:nanoapp_cmd_exec:s0
 /sys/devices/virtual/nanohub/nanohub(/.*)?       u:object_r:sysfs_nanoapp_cmd:s0
 
-# Netmgr
-/data/misc/netmgr(/.*)?                          u:object_r:net_data_file:s0
-
-# Power
-/sys/power/ktop_accu                             u:object_r:sysfs_ktop_file:s0
-
-# Radio
-/dev/radio(/.*)?                                 u:object_r:radio_data_file:s0
+# power supply
+/sys/devices/soc/.*ssusb/power_supply/usb(/.*)?                 u:object_r:sysfs_usb_supply:s0
+/sys/devices/soc/800f000.qcom,spmi/spmi-0/spmi0-02/800f000.qcom,spmi:qcom,pmi8998@2:qcom,qpnp-smb2/power_supply/usb(/.*)?    u:object_r:sysfs_usb_supply:s0
+/sys/devices/soc/800f000.qcom,spmi/spmi-0/spmi0-02/800f000.qcom,spmi:qcom,pmi8998@2:qcom,qpnp-smb2/power_supply/battery(/.*)?    u:object_r:sysfs_battery_supply:s0
+/sys/devices/soc/800f000.qcom,spmi/spmi-0/spmi0-02/800f000.qcom,spmi:qcom,pmi8998@2:qpnp,fg/power_supply/bms(/.*)?    u:object_r:sysfs_battery_supply:s0
 
 # Sensors
 /persist/sensorcal.json                          u:object_r:sensors_persist_file:s0
+/data/vendor/sensor/sensorcal_saved.json         u:object_r:sensors_persist_file:s0

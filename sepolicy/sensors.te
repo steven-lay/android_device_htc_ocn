@@ -1,1 +1,1 @@
-set_prop(sensors, diag_prop)
+allow sensors proc:file { r_file_perms };

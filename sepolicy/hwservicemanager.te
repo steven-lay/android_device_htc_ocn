@@ -1,0 +1,4 @@
+allow hwservicemanager thermal-engine:binder transfer;
+allow hwservicemanager thermal-engine:dir search;
+allow hwservicemanager thermal-engine:file { open read };
+allow hwservicemanager thermal-engine:process getattr;

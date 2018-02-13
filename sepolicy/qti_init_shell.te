@@ -1,8 +1,8 @@
-allow qti_init_shell kmsg_device:chr_file { write open };
-allow qti_init_shell diag_prop:property_service set;
-allow qti_init_shell self:socket create_socket_perms;
-allow qti_init_shell configfs:file rw_file_perms;
-allow qti_init_shell carrier_file:file getattr;
-allow qti_init_shell sysfs_kgsl:file r_file_perms;
+allow qti_init_shell sysfs:file { rw_file_perms };
+allow qti_init_shell sysfs_cpu_boost:file { rw_file_perms };
 
-qmux_socket(qti_init_shell)
+allow qti_init_shell kmsg_device:chr_file { rw_file_perms };
+
+allow qti_init_shell nv_data_file:file { getattr };
+
+allow qti_init_shell proc_modules:file { r_file_perms };

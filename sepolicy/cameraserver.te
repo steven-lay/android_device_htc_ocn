@@ -1,7 +1,13 @@
-allow cameraserver cameraserver:process execmem;
-allow cameraserver diag_prop:file { read open getattr };
-allow cameraserver diag_prop:property_service set;
-allow cameraserver persist_file:file rw_file_perms;
-allow cameraserver persist_file:file setattr;
-allow cameraserver shell_exec:file { read open execute };
-allow cameraserver proc:file { read open getattr }; 
+type dumpsys, domain;
+
+# Allow access to persist
+allow cameraserver persist_file:file { rw_file_perms setattr };
+
+allow cameraserver self:process { execmem };
+
+allow cameraserver shell_exec:file { r_file_perms };
+
+allow cameraserver hal_perf_default:binder { call };
+allow cameraserver hal_perf_hwservice:hwservice_manager { find };
+
+allow cameraserver nfc_data_file:dir { search };
