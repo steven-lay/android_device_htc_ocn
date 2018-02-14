@@ -98,6 +98,7 @@ vendor/etc/TAS2557_B.ftcfg
 etc/TFA_default_vol_level.conf
 vendor/firmware/Data.msc
 vendor/firmware/wdspver.cfg
+vendor/lib/hw/sound_trigger.primary.msm8998.so
 
 # Audio ACBD
 vendor/etc/acdbdata/Hdmi_cal.acdb
