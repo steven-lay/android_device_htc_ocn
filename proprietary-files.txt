@@ -99,6 +99,7 @@ etc/TFA_default_vol_level.conf
 vendor/firmware/Data.msc
 vendor/firmware/wdspver.cfg
 vendor/lib/hw/sound_trigger.primary.msm8998.so
+vendor/lib/libsmwrapper.so
 
 # Audio ACBD
 vendor/etc/acdbdata/Hdmi_cal.acdb
