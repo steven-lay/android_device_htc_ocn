@@ -244,6 +244,7 @@ PRODUCT_PACKAGES += \
     init.qcom.sh \
     init.qcom.usb.sh \
     init.qcom.early_boot.sh \
+    init.qcom.post_boot.sh \
     init.qti.qseecomd.sh
 
 # Input
