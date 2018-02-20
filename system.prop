@@ -84,6 +84,7 @@ persist.demo.hdmirotationlock=false
 ro.product.display_resolution = 5.5 inch WQHD resolution
 
 # Factory Reset Protection
+ro.frp.pst=/dev/block/bootdevice/by-name/frp
 
 # GPS
 persist.igps.sensor=on
