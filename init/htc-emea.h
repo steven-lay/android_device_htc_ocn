@@ -6,6 +6,7 @@ static bool is_variant_emea(std::string bootcid) {
     if (bootcid == "HTC__034") return true;
     if (bootcid == "HTC__J15") return true;
     if (bootcid == "HTC__A07") return true;
+    if (bootcid == "11111111") return true;
     return false;
 }
 
@@ -38,7 +39,7 @@ static const char *htc_emea_properties =
     "ro.product.model=MSM8998 for arm64\n"
     "ro.product.device=htc_ocnuhl\n"
     "ro.build.product=htc_ocnuhl\n"
-    "ro.build.fingerprint=htc/ocnuhl_00401/htc_ocnuhl:7.1.1/NMF26X/923215.6:user/release-keys\n"
+    "ro.build.fingerprint=htc/ocnuhl_00401/htc_ocnuhl:8.0.0/OPR6.170623.013/1002308.10:user/release-keys\n"
     "persist.rild.nitz_plmn=\n"
     "persist.rild.nitz_long_ons_0=\n"
     "persist.rild.nitz_long_ons_1=\n"
@@ -52,7 +53,6 @@ static const char *htc_emea_properties =
     "telephony.lteOnCdmaDevice=1\n"
     "persist.radio.VT_CAM_INTERFACE=2\n"
     "telephony.lteOnCdmaDevice=0\n"
-    "persist.radio.fill_eons=1\n"
     "persist.radio.fill_eons=1\n"
     "persist.igps.sensor=on\n"
     "persist.radio.apm_sim_not_pwdn=0\n"

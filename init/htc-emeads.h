@@ -6,6 +6,7 @@ static bool is_variant_emeads(std::string bootcid) {
     if (bootcid == "HTC__A07") return true;
     if (bootcid == "HTC__034") return true;
     if (bootcid == "HTC__002") return true;
+    if (bootcid == "11111111") return true;
     return false;
 }
 
@@ -38,7 +39,7 @@ static const char *htc_emeads_properties =
     "ro.product.model=MSM8998 for arm64\n"
     "ro.product.device=htc_ocndugl\n"
     "ro.build.product=htc_ocndugl\n"
-    "ro.build.fingerprint=htc/ocndugl_00400/htc_ocndugl:7.1.1/NMF26X/923215.4:user/release-keys\n"
+    "ro.build.fingerprint=htc/ocndugl_00709/htc_ocndugl:8.0.0/OPR6.170623.013/999597.1:user/release-keys\n"
     "persist.rild.nitz_plmn=\n"
     "persist.rild.nitz_long_ons_0=\n"
     "persist.rild.nitz_long_ons_1=\n"
