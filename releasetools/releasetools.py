@@ -14,7 +14,7 @@
 #
 
 def FullOTA_InstallEnd(info):
-  info.script.AppendExtra('if (getprop("ro.boot.mid") == "2PZC30000") then')
+  info.script.AppendExtra('if (getprop("ro.boot.mid") == "2PZC30000" || getprop("ro.boot.mid") == "2PZC40000") then')
   info.script.Print("This is a DS device - renaming radio props")
   info.script.AppendExtra('mount("ext4", "EMMC", "/dev/block/bootdevice/by-name/system", "/system", "");')
   info.script.AppendExtra('rename("/system/vendor/lib64/libril-qc-ltedirectdisc.so.dugl", "/system/vendor/lib64/libril-qc-ltedirectdisc.so");')
