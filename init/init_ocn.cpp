@@ -43,6 +43,7 @@
 #include "htc-emeads.h"
 #include "htc-asiads.h"
 #include "htc-indiads.h"
+#include "htc-chinads.h"
 #include "htc-unlocked.h"
 
 using android::base::GetProperty;
@@ -112,13 +113,15 @@ void vendor_load_properties()
         } else if (is_variant_unlocked(bootcid)) {
            load_properties(htc_unlocked_properties);
         }
-    } else if (bootmid == "2PZC30000") {
+    } else if (bootmid == "2PZC30000" || bootmid == "2PZC50000") {
         if (is_variant_emeads(bootcid)) {
            load_properties(htc_emeads_properties);
         } else if (is_variant_asiads(bootcid)) {
            load_properties(htc_asiads_properties);
         } else if (is_variant_indiads(bootcid)) {
            load_properties(htc_indiads_properties);
+        } else if (is_variant_chinads(bootcid)) {
+           load_properties(htc_chinads_properties);
         }
     } else {
            load_properties(htc_emea_properties);
