@@ -15,10 +15,6 @@
 
 # sys
 /sys/devices/soc/soc:fpc_fpc1020/irq                            u:object_r:sysfs_fpc_irq:s0
-/sys/devices/soc/soc:fpc_fpc1020/report_home                    u:object_r:sysfs_fpc_key:s0
-/sys/devices/soc/soc:fpc_fpc1020/report_key                     u:object_r:sysfs_fpc_key:s0
-/sys/devices/soc/soc:fpc_fpc1020/screen_state                   u:object_r:sysfs_fpc_screen:s0
-/sys/devices/soc/soc:fpc_fpc1020/proximity_state                u:object_r:sysfs_fpc_proximity:s0
 /sys/kernel/boot_wlan(/.*)?                                     u:object_r:sysfs_wifi:s0
 
 # graphics
