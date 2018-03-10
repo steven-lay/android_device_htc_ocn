@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 SlimRoms Limited 
+# Copyright (C) 2017 The LineageOS Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ BOARD_RAMDISK_OFFSET     := 0x01000000
 TARGET_KERNEL_ARCH := arm64
 TARGET_COMPILE_WITH_MSM_KERNEL := true
 TARGET_KERNEL_SOURCE := kernel/htc/msm8998
-TARGET_KERNEL_CONFIG := slim_ocean_defconfig
+TARGET_KERNEL_CONFIG := lineage_ocean_defconfig
 
 BOARD_ROOT_EXTRA_FOLDERS := bt_firmware firmware persist firmware/image
 
