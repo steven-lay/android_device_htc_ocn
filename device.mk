@@ -78,7 +78,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/permissions/com.htc.sensor.edgesense.xml:/system/etc/permissions/com.htc.sensor.edgesense.xml \
     $(LOCAL_PATH)/configs/permissions/com.htc.sensor.hallsensor.xml:/system/etc/permissions/com.htc.sensor.hallsensor.xml \
     $(LOCAL_PATH)/configs/permissions/com.htc.sensor.sensorhub.xml:/system/etc/permissions/com.htc.sensor.sensorhub.xml \
-    $(LOCAL_PATH)/configs/permissions/com.htc.software.market.xml:/system/etc/permissions/com.htc.software.market.xml
+    $(LOCAL_PATH)/configs/permissions/com.htc.software.market.xml:/system/etc/permissions/com.htc.software.market.xml \
+    $(LOCAL_PATH)/configs/permissions/privapp-permissions-ocn.xml:/system/etc/permissions/privapp-permissions-ocn.xml
 
 
 # ANT+

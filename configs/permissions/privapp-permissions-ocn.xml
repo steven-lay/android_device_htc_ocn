@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <privapp-permissions package="android.ext.services">
+        <permission name="android.permission.PROVIDE_RESOLVER_RANKER_SERVICE"/>
+    </privapp-permissions>
+
+    <privapp-permissions package="com.android.camera2">
+        <permission name="android.permission.BIND_WALLPAPER"/>
+        <permission name="android.permission.PREVENT_POWER_KEY"/>
+        <permission name="android.permission.WRITE_MEDIA_STORAGE"/>
+    </privapp-permissions>
+
+    <!-- Additional permissions on top of privapp-permissions-platform.xml -->
+    <privapp-permissions package="com.android.systemui">
+        <permission name="com.android.permission.WRITE_EMBEDDED_SUBSCRIPTIONS"/>
+    </privapp-permissions>
+
+    <privapp-permissions package="com.lineageos.settings.device">
+        <permission name="android.permission.WRITE_SECURE_SETTINGS"/>
+    </privapp-permissions>
+
+    <privapp-permissions package="com.qualcomm.location">
+        <permission name="android.permission.CONTROL_LOCATION_UPDATES"/>
+    </privapp-permissions>
+
+    <privapp-permissions package="com.quicinc.cne.CNEService">
+        <permission name="android.permission.INTERACT_ACROSS_USERS"/>
+        <permission name="android.permission.PACKET_KEEPALIVE_OFFLOAD"/>
+    </privapp-permissions>
+
+    <!-- Additional permissions on top of privapp-permissions-platform.xml -->
+    <privapp-permissions package="org.lineageos.setupwizard">
+        <permission name="android.permission.READ_PRIVILEGED_PHONE_STATE"/>
+    </privapp-permissions>
+</permissions>
