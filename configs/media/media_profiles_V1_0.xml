@@ -82,6 +82,42 @@
                    channels="1" />
         </EncoderProfile>
 
+        <EncoderProfile quality="2160p" fileFormat="mp4" duration="30">
+          <Video codec="hevc"
+                bitRate="42000000"
+                width="3840"
+                height="2160"
+                frameRate="30" />
+          <Audio codec="aac"
+                bitRate="156000"
+                sampleRate="48000"
+                channels="2" />
+        </EncoderProfile>
+
+        <EncoderProfile quality="highspeed720p" fileFormat="mp4" duration="30">
+            <Video codec="h264"
+                   bitRate="24000000"
+                   width="1280"
+                   height="720"
+                   frameRate="240" />
+            <Audio codec="aac"
+                   bitRate="156000"
+                   sampleRate="48000"
+                   channels="2" />
+        </EncoderProfile>
+
+        <EncoderProfile quality="highspeed1080p" fileFormat="mp4" duration="30">
+            <Video codec="h264"
+                   bitRate="34000000"
+                   width="1920"
+                   height="1080"
+                   frameRate="120" />
+            <Audio codec="aac"
+                   bitRate="156000"
+                   sampleRate="48000"
+                   channels="2" />
+        </EncoderProfile>
+
         <EncoderProfile quality="timelapseqcif" fileFormat="mp4" duration="30">
             <Video codec="h264"
                    bitRate="192000"
@@ -147,6 +183,19 @@
                    channels="1" />
         </EncoderProfile>
 
+        <EncoderProfile quality="timelapse2160p" fileFormat="mp4" duration="30">
+             <Video codec="hevc"
+                   bitRate="42000000"
+                    width="3840"
+                   height="2160"
+                   frameRate="30" />
+            <!-- audio setting is ignored -->
+              <Audio codec="aac"
+                    bitRate="156000"
+                    sampleRate="48000"
+                    channels="2" />
+		</EncoderProfile>
+
         <ImageEncoding quality="95" />
         <ImageEncoding quality="80" />
         <ImageEncoding quality="70" />
@@ -203,6 +252,19 @@
                    sampleRate="48000"
                    channels="1" />
         </EncoderProfile>
+        
+        <EncoderProfile quality="1080p" fileFormat="mp4" duration="30">
+          <Video codec="h264"
+                 bitRate="20000000"
+                 width="1920"
+                 height="1080"
+                 frameRate="30" />
+    
+          <Audio codec="aac"
+                 bitRate="156000"
+                 sampleRate="48000"
+                 channels="2" />
+		</EncoderProfile>
 
         <EncoderProfile quality="timelapseqcif" fileFormat="mp4" duration="30">
             <Video codec="h264"
@@ -256,6 +318,19 @@
                    channels="1" />
         </EncoderProfile>
 
+        <EncoderProfile quality="timelapse1080p" fileFormat="mp4" duration="30">
+            <Video codec="h264"
+                   bitRate="20000000"
+                   width="1920"
+                   height="1080"
+                   frameRate="30" />
+            <!-- audio setting is ignored -->
+            <Audio codec="aac"
+                   bitRate="96000"
+                   sampleRate="48000"
+                   channels="1" />
+        </EncoderProfile>
+
         <ImageEncoding quality="95" />
         <ImageEncoding quality="80" />
         <ImageEncoding quality="70" />
@@ -271,6 +346,12 @@
          In other words, the applications won't be able to use the codec
          or query the capabilities of the codec at all if it is disabled
     -->
+     <VideoEncoderCap name="hevc" enabled="true"
+        minBitRate="64000" maxBitRate="100000000"
+        minFrameWidth="176" maxFrameWidth="4096"
+        minFrameHeight="144" maxFrameHeight="2160"
+        minFrameRate="15" maxFrameRate="30"
+		maxHFRMode="0" />
     <VideoEncoderCap name="h264" enabled="true"
         minBitRate="64000" maxBitRate="40000000"
         minFrameWidth="176" maxFrameWidth="1920"
