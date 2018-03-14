@@ -1,5 +1,7 @@
 type dumpsys, domain;
 
+set_prop(cameraserver, camera_prop)
+
 # Allow access to persist
 allow cameraserver persist_file:file { rw_file_perms setattr };
 

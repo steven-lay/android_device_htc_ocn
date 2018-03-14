@@ -1,2 +1,8 @@
+set_prop(thermal-engine, hwservicemanager_prop)
 allow thermal-engine sysfs_batteryinfo:file r_file_perms;
 allow thermal-engine sysfs_kgsl:file r_file_perms;
+allow thermal-engine proc_stat:file { getattr open read };
+allow thermal-engine sysfs_rmtfs:dir search;
+allow thermal-engine sysfs_rmtfs:file r_file_perms;
+allow thermal-engine hal_perf_default:binder call;
+allow thermal-engine hwservicemanager:binder call;

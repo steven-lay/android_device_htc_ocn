@@ -12,3 +12,4 @@ allow hal_camera_default permission_service:service_manager { find };
 allow hal_camera_default nfc_data_file:dir { search };
 allow hal_camera_default persist_file:file { rw_file_perms setattr };
 
+allow hal_camera_default cameraserver:file read;
