@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="org.lineageos.settings.device"
+      android:sharedUserId="android.uid.system">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+
+    <application
+        android:label="GestureHandler"
+        android:persistent="true">
+
+        <receiver android:name="org.lineageos.settings.device.BootCompletedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="org.lineageos.settings.device.HtcGestureService"
+            android:permission="HtcGestureService">
+        </service>
+
+        <activity
+            android:name=".TouchscreenGestureSettingsActivity"
+            android:label="@string/touchscreen_gesture_settings_title"
+            android:theme="@style/Theme.Main">
+            <intent-filter>
+                <action android:name="org.lineageos.settings.device.GESTURE_SETTINGS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

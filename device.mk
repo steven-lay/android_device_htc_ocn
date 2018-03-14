@@ -144,9 +144,9 @@ PRODUCT_PACKAGES += \
     com.quicinc.cne \
     services-ext
 
-# Gesture Handler
-#PRODUCT_PACKAGES += \
-#GestureHandler
+# Gestures
+PRODUCT_PACKAGES += \
+GestureHandler
 
 # Display
 PRODUCT_PACKAGES += \

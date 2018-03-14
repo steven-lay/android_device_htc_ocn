@@ -391,11 +391,11 @@ on boot
     chown system system /sys/devices/virtual/htc_sensorhub/sensor_hub/hall_sensor
     chown system system /sys/devices/virtual/htc_sensorhub/sensor_hub/sensor_hub_rdata
     chown system system /sys/devices/virtual/htc_sensorhub/sensor_hub/facedown_enabled
-    chown system gesture_motion /sys/class/htc_sensorhub/sensor_hub/gesture_motion
+    chown system system /sys/class/htc_sensorhub/sensor_hub/gesture_motion
     chown system system /sys/class/htc_sensorhub/sensor_hub/mcu_wakeup
     chown system system /sys/class/htc_sensorhub/sensor_hub/dbg_flag
-    chown system gesture_motion /sys/class/htc_sensorhub/sensor_hub/edge_thd
-    chown system gesture_motion /sys/android_edge/hw_version
+    chown system system /sys/class/htc_sensorhub/sensor_hub/edge_thd
+    chown system system /sys/android_edge/hw_version
     chown system system /sys/android_edge/gadc
     chown system system /sys/class/htc_sensorhub/sensor_hub/vbus_time
     chown system system /sys/devices/virtual/htc_sensorhub/sensor_hub/vibrate_ms

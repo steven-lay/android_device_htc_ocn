@@ -39,3 +39,6 @@
 # Sensors
 /persist/sensorcal.json                          u:object_r:sensors_persist_file:s0
 /data/vendor/sensor/sensorcal_saved.json         u:object_r:sensors_persist_file:s0
+
+# Sysfs
+/sys/devices/virtual/htc_sensorhub(/.*)? u:object_r:sysfs_sensors:s0
