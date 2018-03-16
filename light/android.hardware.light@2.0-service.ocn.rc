@@ -2,6 +2,8 @@ service light-hal-2-0 /vendor/bin/hw/android.hardware.light@2.0-service.ocn
     class hal
     user system
     group system
+    # shutting off lights while powering-off
+    shutdown critical
 
 on init
     # lights
