@@ -58,7 +58,13 @@ public class TouchscreenGestures {
      * @return boolean Supported devices must return always true
      */
     public static boolean isSupported() {
-        return FileUtils.isFileWritable(CONTROL_PATH);
+        for (String path : GESTURE_PATHS) {
+            if (!FileUtils.isFileWritable(path) ||
+                    !FileUtils.isFileReadable(path)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /*
@@ -86,6 +92,7 @@ public class TouchscreenGestures {
      */
     public static boolean setGestureEnabled(
             final TouchscreenGesture gesture, final boolean state) {
-        return false;
+        final String stateStr = state ? "1" : "0";
+        return FileUtils.writeLine(GESTURE_PATHS[gesture.id], stateStr);
     }
 }
