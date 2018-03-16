@@ -1,0 +1,4 @@
+allow priv_app proc_modules:file {read open write getattr};
+allow priv_app proc_interrupts:file {open};
+allow priv_app proc_stat:file {read open getattr};
+allow priv_app device:dir {open};
