@@ -39,7 +39,6 @@ static const char *htc_emeads_properties =
     "ro.product.model=MSM8998 for arm64\n"
     "ro.product.device=htc_ocndugl\n"
     "ro.build.product=htc_ocndugl\n"
-    "ro.build.fingerprint=htc/ocndugl_00709/htc_ocndugl:8.0.0/OPR6.170623.013/999597.1:user/release-keys\n"
     "persist.rild.nitz_plmn=\n"
     "persist.rild.nitz_long_ons_0=\n"
     "persist.rild.nitz_long_ons_1=\n"

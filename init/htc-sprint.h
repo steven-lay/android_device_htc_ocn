@@ -17,7 +17,6 @@ static const char *htc_sprint_properties =
     "ro.product.model=MSM8998 for arm64\n"
     "ro.product.device=htc_ocnwhl\n"
     "ro.build.product=htc_ocnwhl\n"
-    "ro.build.fingerprint=htc/ocnwhl_00617/htc_ocnwhl:8.0.0/OPR6.170623.013/999597.2:user/release-keys\n"
     "persist.rild.nitz_plmn=\n"
     "persist.rild.nitz_long_ons_0=\n"
     "persist.rild.nitz_long_ons_1=\n"

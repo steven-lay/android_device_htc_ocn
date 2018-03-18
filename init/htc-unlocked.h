@@ -5,7 +5,6 @@ static bool is_variant_unlocked(std::string bootcid) {
 }
 
 static const char *htc_unlocked_properties =
-    "ro.build.fingerprint=htc/ocnwhl_00617/htc_ocnwhl:8.0.0/OPR6.170623.013/999597.2:user/release-keys\n"
     "ro.build.product=htc_ocnwhl\n"
     "ro.product.device=htc_ocnwhl\n"
     "ro.product.model=HTC u11\n"
