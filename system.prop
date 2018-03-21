@@ -35,6 +35,7 @@ vendor.fm.a2dp.conc.disabled=true
 vendor.audio.noisy.broadcast.delay=600
 audio.offload.pstimeout.secs=3
 persist.vendor.audio.headset.anc.type=feedback
+ro.config.media_vol_steps=25
 
 # Bluetooth
 ro.bt.bdaddr_path=/sys/module/htc_bdaddress/parameters/bdaddress
