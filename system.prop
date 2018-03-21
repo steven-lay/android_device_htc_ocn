@@ -95,6 +95,9 @@ persist.ims.disableADBLogs=1
 persist.ims.disableQXDMLogs=1
 persist.ims.disableIMSLogs=1
 
+# LineageOTA
+lineage.updater.uri=http://lineageota.ddns.net/api
+
 # Media
 media.stagefright.enable-player=true
 media.stagefright.enable-http=true
@@ -178,6 +181,9 @@ ro.telephony.call_ring.multiple=false
 persist.timed.enable=true
 persist.delta_time.enable=true
 persist.backup.ntpServer="0.pool.ntp.org"
+
+# Voice assistant
+ro.opa.eligible_device=true
 
 #VoLTE
 persist.volte_enabled_by_hw=1
