@@ -192,13 +192,13 @@ public class HtcGestureService extends Service {
 
     private void handleCameraActivation() {
         Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-        v.vibrate(500);
+        v.vibrate(250);
         launchCamera();
     }
 
     private void handleFlashlightActivation() {
         Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-        v.vibrate(500);
+        v.vibrate(50);
         launchFlashlight();
     }
 
