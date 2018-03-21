@@ -205,6 +205,9 @@ TARGET_PROVIDES_KEYMASTER := true
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
 
+# Lineage Hardware
+#BOARD_HARDWARE_CLASS += $(PLATFORM_PATH)/lineagehw
+
 # Media
 TARGET_USES_MEDIA_EXTENSIONS := true
 
@@ -233,7 +236,6 @@ BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 # Sensors
 USE_SENSOR_MULTI_HAL := true
 
-# Wifi
 # Wifi
 BOARD_HAS_QCOM_WLAN := true
 BOARD_HAS_QCOM_WLAN_SDK := true
