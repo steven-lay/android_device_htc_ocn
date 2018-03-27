@@ -98,6 +98,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.demo.hdmirotationlock=false \
     ro.opengles.version=196610 \
     ro.sf.lcd_density=640 \
+    vendor.display.disable_rotator_downscale=1 \
     sdm.debug.disable_skip_validate=1
 
 # Factory Reset Protection
