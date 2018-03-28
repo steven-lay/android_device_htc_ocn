@@ -482,10 +482,16 @@ service qvrd /system/bin/qvrservice
     socket qvrservice stream 0666 system system
     capabilities SYS_NICE
 
+# Needed for OTA control
+on property:ro.boot.carrier.sku=*
+    setprop ro.oem.key1 ${ro.boot.carrier.sku}
+
+on property:sys.boot_completed=1
+    setprop sys.io.scheduler bfq
+
 on property:sys.boot_completed=1
     # Enable ZRAM on boot_completed
     swapon_all /vendor/etc/fstab.qcom
-
 
 # To perform remarktag for let carrier partition match the OMADM uid
 # HTC_OMADM_START
