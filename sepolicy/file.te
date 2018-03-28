@@ -5,6 +5,7 @@ type nanohub_lock_file, file_type, data_file_type;
 type nv_data_file, file_type;
 
 type persist_rfs_file, file_type;
+type crypto_block_device, dev_type;
 
 type sensors_cal_file, file_type;
 
