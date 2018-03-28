@@ -1130,10 +1130,13 @@ vendor/lib64/libpdnotifier.so
 vendor/lib64/libqcmaputils.so
 vendor/lib64/libril-qc-ltedirectdisc.so
 vendor/lib64/libril-qc-ltedirectdisc.so.dugl|f369eef21a03718bed149269ad007d7feaa8c471
+vendor/lib64/libril-qc-ltedirectdisc.so.dtwl|f8c809ab9d2d9b448d8306154cfeeba18f03c6c1
 vendor/lib64/libril-qc-qmi-1.so
 vendor/lib64/libril-qc-qmi-1.so.dugl|c68215d639b70cea2df72828382b2f1effb2b275
+vendor/lib64/libril-qc-qmi-1.so.dtwl|217f2cd3a8eaba135f20990a042631f8b32a13e8
 vendor/lib64/libril-qc-radioconfig.so
 vendor/lib64/libril-qc-radioconfig.so.dugl|f1cf4bf48504501c86aeec9143f400360f57f9dc
+vendor/lib64/libril-qc-radioconfig.so.dtwl|f2de47f2f9c3863bbee4e37afce96bf4aeeaef35
 vendor/lib64/libril-qcril-hook-oem.so
 vendor/lib64/libril-qcril-hook-oem.so.dugl|5fd716b80e0fe3601ed81283d5bcec8986f15044
 vendor/lib64/librilqmiservices.so
