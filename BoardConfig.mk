@@ -19,7 +19,7 @@ BOARD_VENDOR := htc
 DEVICE_PATH := device/htc/ocn
 
 # Asserts
-TARGET_OTA_ASSERT_DEVICE := htc_ocn,htc_ocnuhl,htc_ocnwhl,htc_ocndugl
+TARGET_OTA_ASSERT_DEVICE := htc_ocn,htc_ocnuhl,htc_ocnwhl,htc_ocndugl,htc_ocndtwl,ocn
 
 # Architecture
 TARGET_ARCH := arm64
