@@ -62,7 +62,7 @@ public class HtcGestureService extends Service {
     private static final String KEY_SWIPE_LEFT = "swipe_left_action_key";
     private static final String KEY_SWIPE_RIGHT = "swipe_right_action_key";
 
-    private static final int SENSOR_WAKELOCK_DURATION = 200;
+    private static final int SENSOR_WAKELOCK_DURATION = 3000;
 
     private static final int ACTION_NONE = 0;
     private static final int ACTION_CAMERA = 1;
@@ -80,8 +80,8 @@ public class HtcGestureService extends Service {
     private CameraManager mCameraManager;
     private Vibrator mVibrator;
 
-    private String mTorchCameraId;
-    private boolean mTorchEnabled = false;
+    private String mRearCameraId;
+    private boolean mTorchEnabled;
 
     private int mSwipeUpAction;
     private int mSwipeDownAction;
@@ -127,8 +127,22 @@ public class HtcGestureService extends Service {
         mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
 
-        mCameraManager.registerTorchCallback(mTorchCallback, null);
-        mTorchCameraId = getTorchCameraId();
+        mCameraManager.registerTorchCallback(new TorchModeCallback(), null);
+    }
+
+
+    private class TorchModeCallback extends CameraManager.TorchCallback {
+        @Override
+        public void onTorchModeChanged(String cameraId, boolean enabled) {
+            if (!cameraId.equals(mRearCameraId)) return;
+            mTorchEnabled = enabled;
+        }
+
+        @Override
+        public void onTorchModeUnavailable(String cameraId) {
+            if (!cameraId.equals(mRearCameraId)) return;
+            mTorchEnabled = false;
+        }
     }
 
     @Override
@@ -204,7 +218,7 @@ public class HtcGestureService extends Service {
                 launchCamera();
                 break;
             case ACTION_TORCH:
-                toggleTorch();
+                toggleFlashlight();
                 break;
             case ACTION_BROWSER:
                 launchBrowser();
@@ -232,17 +246,21 @@ public class HtcGestureService extends Service {
         doHapticFeedback();
     }
 
-    private void toggleTorch() {
-        mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        try {
-            mCameraManager.setTorchMode(mTorchCameraId, !mTorchEnabled);
-        } catch (CameraAccessException e) {
-            // Ignore
-        }        
-        doHapticFeedback();
-
+    private void toggleFlashlight() {
+        String rearCameraId = getRearCameraId();
+        if (rearCameraId != null) {
+            mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
+            mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
+            try {
+                mCameraManager.setTorchMode(rearCameraId, !mTorchEnabled);
+                mTorchEnabled = !mTorchEnabled;
+            } catch (CameraAccessException e) {
+                // Ignore
+            }
+            doHapticFeedback();
+        }
     }
+
     private void launchBrowser() {
         mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
         mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
@@ -282,38 +300,6 @@ public class HtcGestureService extends Service {
         }
     }
 
-    private String getTorchCameraId() {
-        try {
-            for (final String id : mCameraManager.getCameraIdList()) {
-                CameraCharacteristics cc = mCameraManager.getCameraCharacteristics(id);
-                int direction = cc.get(CameraCharacteristics.LENS_FACING);
-                if (direction == CameraCharacteristics.LENS_FACING_BACK) {
-                    return id;
-                }
-            }
-        } catch (CameraAccessException e) {
-            // Ignore
-        }
-
-        return null;
-    }
-
-    private CameraManager.TorchCallback mTorchCallback = new CameraManager.TorchCallback() {
-        @Override
-        public void onTorchModeChanged(String cameraId, boolean enabled) {
-            if (!cameraId.equals(mTorchCameraId))
-                return;
-            mTorchEnabled = enabled;
-        }
-
-        @Override
-        public void onTorchModeUnavailable(String cameraId) {
-            if (!cameraId.equals(mTorchCameraId))
-                return;
-            mTorchEnabled = false;
-        }
-    };
-
     private void startActivitySafely(final Intent intent) {
         if (intent == null) {
             Log.w(TAG, "No intent passed to startActivitySafely");
@@ -342,6 +328,25 @@ public class HtcGestureService extends Service {
                 mVibrator.vibrate(50);
             }
         }
+    }
+
+    private String getRearCameraId() {
+        if (mRearCameraId == null) {
+            try {
+                for (final String cameraId : mCameraManager.getCameraIdList()) {
+                    final CameraCharacteristics characteristics =
+                            mCameraManager.getCameraCharacteristics(cameraId);
+                    final int orientation = characteristics.get(CameraCharacteristics.LENS_FACING);
+                    if (orientation == CameraCharacteristics.LENS_FACING_BACK) {
+                        mRearCameraId = cameraId;
+                        break;
+                    }
+                }
+            } catch (CameraAccessException e) {
+                // Ignore
+            }
+        }
+        return mRearCameraId;
     }
 
     private Intent getLaunchableIntent(Intent intent) {
