@@ -252,7 +252,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/AK8789_HALL_SENSOR.kl:system/usr/keylayout/AK8789_HALL_SENSOR.kl \
     $(LOCAL_PATH)/keylayout/uinput-fpc.kl:system/usr/keylayout/uinput-fpc.kl \
     $(LOCAL_PATH)/keylayout/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
-    $(LOCAL_PATH)/keylayout/himax-touchscreen-cap.kl:system/usr/keylayout/himax-touchscreen-cap.kl
+    $(LOCAL_PATH)/keylayout/himax-cap.kl:system/usr/keylayout/himax-cap.kl
 
 # IRQ
 PRODUCT_COPY_FILES += \
