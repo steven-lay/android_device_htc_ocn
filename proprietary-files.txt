@@ -1099,7 +1099,6 @@ vendor/etc/data/dsi_config.xml
 vendor/etc/data/netmgr_config.xml
 etc/permissions/qcrilhook.xml
 framework/QtiTelephonyServicelibrary.jar
--framework/qcrilhook.jar
 vendor/bin/qti
 vendor/lib/com.quicinc.cne.api@1.0.so
 vendor/lib/com.quicinc.cne.constants@1.0.so
