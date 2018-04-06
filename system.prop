@@ -97,7 +97,7 @@ persist.ims.disableQXDMLogs=1
 persist.ims.disableIMSLogs=1
 
 # LineageOTA
-lineage.updater.uri=http://lineageota.ddns.net/api
+lineage.updater.uri=http://lineageota.ddns.net/api/v1/{device}/{type}/{incr}
 
 # Media
 media.stagefright.enable-player=true
