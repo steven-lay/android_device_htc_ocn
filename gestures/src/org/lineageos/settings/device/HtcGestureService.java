@@ -62,7 +62,7 @@ public class HtcGestureService extends Service {
     private static final String KEY_SWIPE_LEFT = "swipe_left_action_key";
     private static final String KEY_SWIPE_RIGHT = "swipe_right_action_key";
 
-    private static final int SENSOR_WAKELOCK_DURATION = 3000;
+    private static final int SENSOR_WAKELOCK_DURATION = 500;
 
     private static final int ACTION_NONE = 0;
     private static final int ACTION_CAMERA = 1;
@@ -250,7 +250,6 @@ public class HtcGestureService extends Service {
         String rearCameraId = getRearCameraId();
         if (rearCameraId != null) {
             mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
-            mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
             try {
                 mCameraManager.setTorchMode(rearCameraId, !mTorchEnabled);
                 mTorchEnabled = !mTorchEnabled;
@@ -258,6 +257,8 @@ public class HtcGestureService extends Service {
                 // Ignore
             }
             doHapticFeedback();
+            onDisplayOn(); // Reset Gestures without turning screen on
+            onDisplayOff(); // Re-enable gestures
         }
     }
 
