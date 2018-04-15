@@ -1,6 +1,5 @@
-BOARD_PLATFORM_LIST := msm8916
-BOARD_PLATFORM_LIST += msm8909
-ifneq ($(call is-board-platform-in-list,$(BOARD_PLATFORM_LIST)),true)
+BOARD_PLATFORM_LIST := test
+ifeq ($(call is-board-platform-in-list,$(BOARD_PLATFORM_LIST)),true)
 ifneq (,$(filter $(QCOM_BOARD_PLATFORMS),$(TARGET_BOARD_PLATFORM)))
 ifneq (, $(filter aarch64 arm arm64, $(TARGET_ARCH)))
 
@@ -43,7 +42,7 @@ LOCAL_SRC_FILES := ipa_nat_test000.c \
 
 LOCAL_SHARED_LIBRARIES := libipanat
 
-LOCAL_MODULE_TAGS := tests
+LOCAL_MODULE_TAGS := debug
 LOCAL_MODULE_PATH := $(TARGET_OUT_DATA)/kernel-tests/ip_accelerator
 
 include $(BUILD_EXECUTABLE)
