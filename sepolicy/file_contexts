@@ -69,6 +69,8 @@
 /sys/devices/soc/soc:fp_fpc1020/irq                                     u:object_r:sysfs_fpc_irq:s0
 /sys/devices/soc/soc:fp_fpc1020/wakeup_enable                           u:object_r:sysfs_fpc_wake:s0
 /sys/devices/soc/soc:fp_fpc1020/fp_charger_control                      u:object_r:sysfs_fpc_charger:s0
+/sys/devices/virtual/graphics/fb0/dci_p3                        	u:object_r:sysfs_livedisplay:s0
+/sys/devices/virtual/graphics/fb0/srgb                          	u:object_r:sysfs_livedisplay:s0
 
 /sys/kernel/boot_wlan(/.*)?                                             u:object_r:sysfs_wifi:s0
 /sys/devices/soc/780000.qcom,msm-core/uio/uio2(/.*)?			u:object_r:sysfs_uio_file:s0

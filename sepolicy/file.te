@@ -12,6 +12,7 @@ type sensors_cal_file, file_type;
 type sysfs_fpc_wake, fs_type, sysfs_type;
 type sysfs_fpc_irq, fs_type, sysfs_type;
 type sysfs_fpc_charger, fs_type, sysfs_type;
+type sysfs_livedisplay, sysfs_type, fs_type;
 
 type sysfs_ktop_file, fs_type, sysfs_type;
 type sysfs_nanoapp_cmd, fs_type, sysfs_type;

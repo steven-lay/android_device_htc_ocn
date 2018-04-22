@@ -164,7 +164,6 @@ PRODUCT_PACKAGES += \
     libhwc2on1adapter \
     memtrack.msm8998 \
     libgenlock \
-    libjni_livedisplay \
     liboverlay \
     libtinyxml \
     libqdMetaData \
@@ -275,6 +274,14 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.light@2.0-impl \
     lights.msm8998
+
+# LiveDisplay native
+PRODUCT_PACKAGES += \
+    vendor.lineage.livedisplay@1.0-service-sdm \
+    vendor.lineage.livedisplay-V1.0-java
+
+PRODUCT_BOOT_JARS += \
+    vendor.lineage.livedisplay-V1.0-java
 
 # Media
 PRODUCT_COPY_FILES += \
