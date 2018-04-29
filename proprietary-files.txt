@@ -894,6 +894,9 @@ vendor/firmware/a540_zap.b02
 vendor/firmware/a540_zap.elf
 vendor/firmware/a540_zap.mdt
 
+# Hotword Enrollment
+-priv-app/GoogleHotwordEnrollment/GoogleHotwordEnrollment.apk;PRESIGNED
+
 # Mixed firmware
 etc/firmware/alIAF_InData_4M2M
 etc/firmware/alipay.b00

@@ -31,5 +31,11 @@
     <!-- Additional permissions on top of privapp-permissions-platform.xml -->
     <privapp-permissions package="org.lineageos.setupwizard">
         <permission name="android.permission.READ_PRIVILEGED_PHONE_STATE"/>
+
     </privapp-permissions>
+        <privapp-permissions package="com.android.hotwordenrollment">
+        <permission name="android.permission.MANAGE_VOICE_KEYPHRASES"/>
+        <permission name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    </privapp-permissions>
+
 </permissions>
