@@ -26,7 +26,10 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraAccessException;
@@ -46,16 +49,20 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 
+import java.util.Iterator;
+
 import lineageos.providers.LineageSettings;
+import org.lineageos.internal.util.FileUtils;
 
 import java.util.List;
 
-public class HtcGestureService extends Service {
+public class ScreenSensorService extends Service implements SensorEventListener {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     public static final String TAG = "GestureService";
     private static final String GESTURE_WAKEUP_REASON = "gesture-wakeup";
+    public static final String HTC_GESTURES = "hTC Gesture_Motion";
 
     private static final String KEY_SWIPE_UP = "swipe_up_action_key";
     private static final String KEY_SWIPE_DOWN = "swipe_down_action_key";
@@ -72,13 +79,37 @@ public class HtcGestureService extends Service {
     private static final int ACTION_EMAIL = 5;
     private static final int ACTION_MESSAGES = 6;
 
+    // Gestures
+    private static final int DOUBLE_TAP = 15;
+    private static final int SWIPE_UP = 2;
+    private static final int SWIPE_DOWN = 3;
+    private static final int SWIPE_LEFT = 4;
+    private static final int SWIPE_RIGHT = 5;
+    private static final int DOUBLE_SWIPE_DOWN = 6;
+
+    private static final String CONTROL_PATH =
+            "/sys/class/htc_sensorhub/sensor_hub/gesture_motion";
+
+    /* Sensor gesture definition used to instantiate GestureMotionSensor, externally usable */
+    /* These values also correspond to kernel driver values, so don't change them */
+    public static final int SENSOR_GESTURE_SWIPE_UP = 0x4;
+    public static final int SENSOR_GESTURE_SWIPE_DOWN = 0x8;
+    public static final int SENSOR_GESTURE_SWIPE_LEFT = 0x10;
+    public static final int SENSOR_GESTURE_SWIPE_RIGHT = 0x20;
+    public static final int SENSOR_GESTURE_CAMERA = 0x40;
+    public static final int SENSOR_GESTURE_DOUBLE_TAP = 0x8000;
+    public static final int SENSOR_GESTURE_ALL = 0x807C;
+
     private Context mContext;
-    private GestureMotionSensor mGestureSensor;
     private PowerManager mPowerManager;
     private AudioManager mAudioManager;
     private WakeLock mSensorWakeLock;
     private CameraManager mCameraManager;
     private Vibrator mVibrator;
+    private ScreenStateReceiver mScreenStateReceiver;
+    private SensorManager mSensorManager;
+    private Sensor mSensor = null;
+    private SensorEventListener mSensorEventListener;
 
     private String mRearCameraId;
     private boolean mTorchEnabled;
@@ -88,36 +119,12 @@ public class HtcGestureService extends Service {
     private int mSwipeLeftAction;
     private int mSwipeRightAction;
 
-    private GestureMotionSensor.GestureMotionSensorListener mListener =
-        new GestureMotionSensor.GestureMotionSensorListener() {
-        @Override
-        public void onEvent(int type, SensorEvent event) {
-            if (DEBUG) Log.d(TAG, "Received event: " + type);
-            switch (type) {
-                case GestureMotionSensor.SENSOR_GESTURE_DOUBLE_TAP:
-                    mPowerManager.wakeUp(SystemClock.uptimeMillis());
-                    break;
-                case GestureMotionSensor.SENSOR_GESTURE_SWIPE_UP:
-                case GestureMotionSensor.SENSOR_GESTURE_SWIPE_DOWN:
-                case GestureMotionSensor.SENSOR_GESTURE_SWIPE_LEFT:
-                case GestureMotionSensor.SENSOR_GESTURE_SWIPE_RIGHT:
-                    handleGestureAction(gestureToAction(type));
-                    break;
-                case GestureMotionSensor.SENSOR_GESTURE_CAMERA:
-                    launchCamera();
-                    break;
-            }
-        }
-    };
-
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
         super.onCreate();
 
         mContext = this;
-        mGestureSensor = GestureMotionSensor.getInstance(mContext);
-        mGestureSensor.registerListener(mListener);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         loadPreferences(sharedPrefs);
         sharedPrefs.registerOnSharedPreferenceChangeListener(mPrefListener);
@@ -128,6 +135,31 @@ public class HtcGestureService extends Service {
         mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
 
         mCameraManager.registerTorchCallback(new TorchModeCallback(), null);
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        mSensorEventListener = this;
+
+        Iterator iterator = mSensorManager.getSensorList(-1).iterator();
+        while (iterator.hasNext()) {
+            Sensor sensor = (Sensor) iterator.next();
+            if (sensor.getName().equals(HTC_GESTURES)) {
+                if (DEBUG) Log.d(TAG, "found gesture sensor");
+                mSensor = sensor;
+                if (!FileUtils.writeLine(CONTROL_PATH, Integer.toHexString(SENSOR_GESTURE_ALL))) {
+                    Log.w(TAG, "Failed to write control path, unable to disable sensor");
+        }
+            }
+        }
+        if (mSensor != null) {
+            mSensorManager.registerListener(mSensorEventListener,
+                    mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            mScreenStateReceiver = new ScreenStateReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+            intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+            registerReceiver(mScreenStateReceiver, intentFilter);
+        }
     }
 
 
@@ -146,18 +178,10 @@ public class HtcGestureService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (DEBUG) Log.d(TAG, "Starting service");
-        IntentFilter screenStateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-        screenStateFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        mContext.registerReceiver(mScreenStateReceiver, screenStateFilter);
-        return START_STICKY;
-    }
-
-    @Override
     public void onDestroy() {
         if (DEBUG) Log.d(TAG, "Destroying service");
         super.onDestroy();
+        mSensorManager.unregisterListener(this);
         unregisterReceiver(mScreenStateReceiver);
     }
 
@@ -166,44 +190,18 @@ public class HtcGestureService extends Service {
         return null;
     }
 
-    private void onDisplayOn() {
-        if (DEBUG) Log.d(TAG, "Display on");
-        if (isDoubleTapEnabled()) {
-            mGestureSensor.disableGesture(GestureMotionSensor.SENSOR_GESTURE_DOUBLE_TAP);
-        }
-        if (mSwipeUpAction != ACTION_NONE) {
-            mGestureSensor.disableGesture(GestureMotionSensor.SENSOR_GESTURE_SWIPE_UP);
-        }
-        if (mSwipeDownAction != ACTION_NONE) {
-            mGestureSensor.disableGesture(GestureMotionSensor.SENSOR_GESTURE_SWIPE_DOWN);
-        }
-        if (mSwipeLeftAction != ACTION_NONE) {
-            mGestureSensor.disableGesture(GestureMotionSensor.SENSOR_GESTURE_SWIPE_LEFT);
-        }
-        if (mSwipeRightAction != ACTION_NONE) {
-            mGestureSensor.disableGesture(GestureMotionSensor.SENSOR_GESTURE_SWIPE_RIGHT);
-        }
-        mGestureSensor.stopListening();
+    public final void onAccuracyChanged(Sensor sensor, int i) {
     }
 
-    private void onDisplayOff() {
-        if (DEBUG) Log.d(TAG, "Display off");
-        if (isDoubleTapEnabled()) {
-            mGestureSensor.enableGesture(GestureMotionSensor.SENSOR_GESTURE_DOUBLE_TAP);
+    public final void onSensorChanged(SensorEvent sensorEvent) {
+        mSensorManager.unregisterListener(mSensorEventListener);
+        float gesture = sensorEvent.values[0];
+        if (DEBUG) Log.d(TAG, "Sensor type=" + sensorEvent.sensor.getType()
+                + "," + sensorEvent.values[0] + "," + sensorEvent.values[1]);
+        int action = gestureToAction((int) gesture);
+        if (action > 0) {
+            handleGestureAction(action);
         }
-        if (mSwipeUpAction != ACTION_NONE) {
-            mGestureSensor.enableGesture(GestureMotionSensor.SENSOR_GESTURE_SWIPE_UP);
-        }
-        if (mSwipeDownAction != ACTION_NONE) {
-            mGestureSensor.enableGesture(GestureMotionSensor.SENSOR_GESTURE_SWIPE_DOWN);
-        }
-        if (mSwipeLeftAction != ACTION_NONE) {
-            mGestureSensor.enableGesture(GestureMotionSensor.SENSOR_GESTURE_SWIPE_LEFT);
-        }
-        if (mSwipeRightAction != ACTION_NONE) {
-            mGestureSensor.enableGesture(GestureMotionSensor.SENSOR_GESTURE_SWIPE_RIGHT);
-        }
-        mGestureSensor.beginListening();
     }
 
     private boolean isDoubleTapEnabled() {
@@ -236,6 +234,8 @@ public class HtcGestureService extends Service {
             default:
                 break;
         }
+        mSensorManager.registerListener(mSensorEventListener,
+                mSensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     private void launchCamera() {
@@ -257,8 +257,6 @@ public class HtcGestureService extends Service {
                 // Ignore
             }
             doHapticFeedback();
-            onDisplayOn(); // Reset Gestures without turning screen on
-            onDisplayOff(); // Re-enable gestures
         }
     }
 
@@ -359,26 +357,20 @@ public class HtcGestureService extends Service {
         return pm.getLaunchIntentForPackage(resInfo.get(0).activityInfo.packageName);
     }
 
-    private BroadcastReceiver mScreenStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                onDisplayOff();
-            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                onDisplayOn();
-            }
-        }
-    };
-
     private int gestureToAction(int gesture) {
+        if (DEBUG) Log.d(TAG, "Gesture to action: " + gesture);
         switch (gesture) {
-            case GestureMotionSensor.SENSOR_GESTURE_SWIPE_UP:
+            case DOUBLE_TAP:
+                    mPowerManager.wakeUp(SystemClock.uptimeMillis());
+                    doHapticFeedback();
+                    return -1;
+            case SWIPE_UP:
                 return mSwipeUpAction;
-            case GestureMotionSensor.SENSOR_GESTURE_SWIPE_DOWN:
+            case DOUBLE_SWIPE_DOWN:
                 return mSwipeDownAction;
-            case GestureMotionSensor.SENSOR_GESTURE_SWIPE_LEFT:
+            case SWIPE_LEFT:
                 return mSwipeLeftAction;
-            case GestureMotionSensor.SENSOR_GESTURE_SWIPE_RIGHT:
+            case SWIPE_RIGHT:
                 return mSwipeRightAction;
             default:
                 return -1;

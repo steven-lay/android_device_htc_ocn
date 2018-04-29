@@ -16,13 +16,20 @@
      limitations under the License.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:settings="http://schemas.android.com/apk/res/com.android.settings"
-        android:key="touchscreen_gesture_settings" >
+                  
+        android:key="gesture_panel"
+        android:title="@string/gesture_display_title">
 
     <PreferenceCategory
         android:key="screen_actions_key"
-        android:title="@string/gesture_display_title" >
-
+        android:title="@string/gesture_display_title">
+       
+        <lineageos.preference.LineageSystemSettingSwitchPreference
+            android:key="touchscreen_gesture_haptic_feedback"
+            android:title="@string/touchscreen_gestures_haptic_feedback_title"
+            android:summary="@string/touchscreen_gestures_haptic_feedback_summary"
+            android:defaultValue="true" />
+   
         <ListPreference
             android:key="swipe_up_action_key"
             android:defaultValue="0"
