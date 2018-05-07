@@ -6,3 +6,6 @@ allow thermal-engine sysfs_rmtfs:dir search;
 allow thermal-engine sysfs_rmtfs:file r_file_perms;
 allow thermal-engine hal_perf_default:binder call;
 allow thermal-engine hwservicemanager:binder call;
+allow thermal-engine hal_perf_hwservice:hwservice_manager { find };
+allow thermal-engine system_file:dir r_dir_perms;
+
