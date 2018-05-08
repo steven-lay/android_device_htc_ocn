@@ -19,11 +19,20 @@ package org.lineageos.settings.device;
 
 import android.os.Bundle;
 import android.support.v14.preference.PreferenceFragment;
+import android.util.Log;
+
+import org.lineageos.settings.device.widget.SeekBarPreference;
 
 public class TouchscreenGestureSettingsFragment extends PreferenceFragment {
+public static final String TAG = "GESTURESETTINGS";
+    private static final String SEEKBAR_PREFERENCE  = "squeeze_force";
+    private SeekBarPreference mSeekBar;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.gesture_panel);
+        mSeekBar = (SeekBarPreference) findPreference(SEEKBAR_PREFERENCE);
+        Log.d(TAG, "OnCreatePref" +  mSeekBar );
     }
+
 }

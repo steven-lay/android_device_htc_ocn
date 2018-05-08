@@ -28,7 +28,7 @@ public class ScreenStateReceiver extends BroadcastReceiver {
     public static final String TAG = "ScreenStateReceiver";
 
     public void onReceive(Context context, Intent intent) {
-        Intent serviceIntent = new Intent(context, ScreenSensorService.class);
+        Intent serviceIntent = new Intent(context, ScreenGestureService.class);
         if (intent.getAction().equals(Intent.ACTION_SCREEN_ON))  {
             context.stopService(serviceIntent);
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {

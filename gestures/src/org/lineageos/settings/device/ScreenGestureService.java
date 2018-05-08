@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2018 The LineageOS Project
  * Copyright (C) 2016 The CyanogenMod Project
  * Copyright (C) 2014 SlimRoms Project
  *
@@ -47,6 +48,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.view.KeyEvent;
 import android.util.Log;
 
 import java.util.Iterator;
@@ -56,28 +58,20 @@ import org.lineageos.internal.util.FileUtils;
 
 import java.util.List;
 
-public class ScreenSensorService extends Service implements SensorEventListener {
+public class ScreenGestureService extends Service implements SensorEventListener {
 
     private static final boolean DEBUG = true;
 
-    public static final String TAG = "GestureService";
+    private static final String TAG = "GestureService";
     private static final String GESTURE_WAKEUP_REASON = "gesture-wakeup";
-    public static final String HTC_GESTURES = "hTC Gesture_Motion";
+    private static final String HTC_GESTURES = "hTC Gesture_Motion";
 
     private static final String KEY_SWIPE_UP = "swipe_up_action_key";
-    private static final String KEY_SWIPE_DOWN = "swipe_down_action_key";
+    private static final String KEY_DOUBLE_SWIPE_DOWN = "double_swipe_down_action_key";
     private static final String KEY_SWIPE_LEFT = "swipe_left_action_key";
     private static final String KEY_SWIPE_RIGHT = "swipe_right_action_key";
 
-    private static final int SENSOR_WAKELOCK_DURATION = 500;
-
-    private static final int ACTION_NONE = 0;
-    private static final int ACTION_CAMERA = 1;
-    private static final int ACTION_TORCH = 2;
-    private static final int ACTION_BROWSER = 3;
-    private static final int ACTION_DIALER = 4;
-    private static final int ACTION_EMAIL = 5;
-    private static final int ACTION_MESSAGES = 6;
+    private static final int GESTURE_WAKELOCK_DURATION = 500;
 
     // Gestures
     private static final int DOUBLE_TAP = 15;
@@ -103,7 +97,7 @@ public class ScreenSensorService extends Service implements SensorEventListener 
     private Context mContext;
     private PowerManager mPowerManager;
     private AudioManager mAudioManager;
-    private WakeLock mSensorWakeLock;
+    private WakeLock mGestureWakeLock;
     private CameraManager mCameraManager;
     private Vibrator mVibrator;
     private ScreenStateReceiver mScreenStateReceiver;
@@ -130,7 +124,7 @@ public class ScreenSensorService extends Service implements SensorEventListener 
         sharedPrefs.registerOnSharedPreferenceChangeListener(mPrefListener);
         mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        mSensorWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "HtcGestureWakeLock");
+        mGestureWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "HtcGestureWakeLock");
         mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -162,21 +156,6 @@ public class ScreenSensorService extends Service implements SensorEventListener 
         }
     }
 
-
-    private class TorchModeCallback extends CameraManager.TorchCallback {
-        @Override
-        public void onTorchModeChanged(String cameraId, boolean enabled) {
-            if (!cameraId.equals(mRearCameraId)) return;
-            mTorchEnabled = enabled;
-        }
-
-        @Override
-        public void onTorchModeUnavailable(String cameraId) {
-            if (!cameraId.equals(mRearCameraId)) return;
-            mTorchEnabled = false;
-        }
-    }
-
     @Override
     public void onDestroy() {
         if (DEBUG) Log.d(TAG, "Destroying service");
@@ -199,7 +178,7 @@ public class ScreenSensorService extends Service implements SensorEventListener 
         if (DEBUG) Log.d(TAG, "Sensor type=" + sensorEvent.sensor.getType()
                 + "," + sensorEvent.values[0] + "," + sensorEvent.values[1]);
         int action = gestureToAction((int) gesture);
-        if (action > 0) {
+        if (action > -1) {
             handleGestureAction(action);
         }
     }
@@ -209,47 +188,176 @@ public class ScreenSensorService extends Service implements SensorEventListener 
                     Settings.Secure.DOUBLE_TAP_TO_WAKE, 0) != 0);
     }
 
+    private int gestureToAction(int gesture) {
+        if (DEBUG) Log.d(TAG, "Gesture to action: " + gesture);
+        switch (gesture) {
+            case DOUBLE_TAP:
+                    if (!isDoubleTapEnabled()) {
+                        mSensorManager.registerListener(mSensorEventListener,
+                            mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                        return -1;
+                    }
+                    mPowerManager.wakeUp(SystemClock.uptimeMillis());
+                    doHapticFeedback();
+                    return -1;
+            case SWIPE_UP:
+                return mSwipeUpAction;
+            case DOUBLE_SWIPE_DOWN:
+                return mSwipeDownAction;
+            case SWIPE_LEFT:
+                return mSwipeLeftAction;
+            case SWIPE_RIGHT:
+                return mSwipeRightAction;
+            default:
+                return -1;
+        }
+    }
+
     private void handleGestureAction(int action) {
         if (DEBUG) Log.d(TAG, "Performing gesture action: " + action);
         switch (action) {
-            case ACTION_CAMERA:
+            case TouchscreenGestureConstants.ACTION_CAMERA:
                 launchCamera();
                 break;
-            case ACTION_TORCH:
+            case TouchscreenGestureConstants.ACTION_FLASHLIGHT:
                 toggleFlashlight();
                 break;
-            case ACTION_BROWSER:
+            case TouchscreenGestureConstants.ACTION_BROWSER:
                 launchBrowser();
                 break;
-            case ACTION_DIALER:
+            case TouchscreenGestureConstants.ACTION_DIALER:
                 launchDialer();
                 break;
-            case ACTION_EMAIL:
+            case TouchscreenGestureConstants.ACTION_EMAIL:
                 launchEmail();
                 break;
-            case ACTION_MESSAGES:
+            case TouchscreenGestureConstants.ACTION_MESSAGES:
                 launchMessages();
                 break;
-            case ACTION_NONE:
-            default:
+            case TouchscreenGestureConstants.ACTION_PLAY_PAUSE_MUSIC:
+                playPauseMusic();
+                break;
+            case TouchscreenGestureConstants.ACTION_PREVIOUS_TRACK:
+                previousTrack();
+                break;
+            case TouchscreenGestureConstants.ACTION_NEXT_TRACK:
+                nextTrack();
+                break;
+            case TouchscreenGestureConstants.ACTION_VOLUME_DOWN:
+                volumeDown();
+                break;
+            case TouchscreenGestureConstants.ACTION_VOLUME_UP:
+                volumeUp();
                 break;
         }
         mSensorManager.registerListener(mSensorEventListener,
                 mSensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
+    private void loadPreferences(SharedPreferences sharedPreferences) {
+        try {
+            mSwipeUpAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_UP,
+                        Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+            mSwipeDownAction = Integer.parseInt(sharedPreferences.getString(KEY_DOUBLE_SWIPE_DOWN,
+                        Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+            mSwipeLeftAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_LEFT,
+                    Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+            mSwipeRightAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_RIGHT,
+                        Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Error loading preferences");
+        }
+    }
+
+    private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            try {
+                if (KEY_SWIPE_UP.equals(key)) {
+                    mSwipeUpAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_UP,
+                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                } else if (KEY_DOUBLE_SWIPE_DOWN.equals(key)) {
+                    mSwipeDownAction = Integer.parseInt(sharedPreferences.getString(KEY_DOUBLE_SWIPE_DOWN,
+                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                } else if (KEY_SWIPE_LEFT.equals(key)) {
+                    mSwipeLeftAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_LEFT,
+                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                } else if (KEY_SWIPE_RIGHT.equals(key)) {
+                    mSwipeRightAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_RIGHT,
+                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                }
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "Error loading preferences");
+            }
+        }
+    };
+
+    private class TorchModeCallback extends CameraManager.TorchCallback {
+        @Override
+        public void onTorchModeChanged(String cameraId, boolean enabled) {
+            if (!cameraId.equals(mRearCameraId)) return;
+            mTorchEnabled = enabled;
+        }
+
+        @Override
+        public void onTorchModeUnavailable(String cameraId) {
+            if (!cameraId.equals(mRearCameraId)) return;
+            mTorchEnabled = false;
+        }
+    }
+
     private void launchCamera() {
-        mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
+        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
         final Intent intent = new Intent(lineageos.content.Intent.ACTION_SCREEN_CAMERA_GESTURE);
         mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT,
                 Manifest.permission.STATUS_BAR_SERVICE);
         doHapticFeedback();
     }
 
+    private void launchBrowser() {
+        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
+        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
+        final Intent intent = getLaunchableIntent(
+                new Intent(Intent.ACTION_VIEW, Uri.parse("http:")));
+        startActivitySafely(intent);
+        doHapticFeedback();
+    }
+
+    private void launchDialer() {
+        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
+        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
+        final Intent intent = new Intent(Intent.ACTION_DIAL, null);
+        startActivitySafely(intent);
+        doHapticFeedback();
+    }
+
+    private void launchEmail() {
+        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
+        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
+        final Intent intent = getLaunchableIntent(
+                new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:")));
+        startActivitySafely(intent);
+        doHapticFeedback();
+    }
+
+    private void launchMessages() {
+        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
+        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
+        final String defaultApplication = Settings.Secure.getString(
+                mContext.getContentResolver(), "sms_default_application");
+        final PackageManager pm = mContext.getPackageManager();
+        final Intent intent = pm.getLaunchIntentForPackage(defaultApplication);
+        if (intent != null) {
+            startActivitySafely(intent);
+            doHapticFeedback();
+        }
+    }
+
     private void toggleFlashlight() {
         String rearCameraId = getRearCameraId();
         if (rearCameraId != null) {
-            mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
+            mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
             try {
                 mCameraManager.setTorchMode(rearCameraId, !mTorchEnabled);
                 mTorchEnabled = !mTorchEnabled;
@@ -260,43 +368,44 @@ public class ScreenSensorService extends Service implements SensorEventListener 
         }
     }
 
-    private void launchBrowser() {
-        mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final Intent intent = getLaunchableIntent(
-                new Intent(Intent.ACTION_VIEW, Uri.parse("http:")));
-        startActivitySafely(intent);
+    private void playPauseMusic() {
+        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
         doHapticFeedback();
     }
 
-    private void launchDialer() {
-        mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final Intent intent = new Intent(Intent.ACTION_DIAL, null);
-        startActivitySafely(intent);
+    private void previousTrack() {
+        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
         doHapticFeedback();
     }
 
-    private void launchEmail() {
-        mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final Intent intent = getLaunchableIntent(
-                new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:")));
-        startActivitySafely(intent);
+    private void nextTrack() {
+        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_NEXT);
         doHapticFeedback();
     }
 
-    private void launchMessages() {
-        mSensorWakeLock.acquire(SENSOR_WAKELOCK_DURATION);
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final String defaultApplication = Settings.Secure.getString(
-                mContext.getContentResolver(), "sms_default_application");
-        final PackageManager pm = mContext.getPackageManager();
-        final Intent intent = pm.getLaunchIntentForPackage(defaultApplication);
-        if (intent != null) {
-            startActivitySafely(intent);
-            doHapticFeedback();
+    private void volumeDown() {
+        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
+        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
+        doHapticFeedback();
+    }
+
+    private void volumeUp() {
+        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
+        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0);
+        doHapticFeedback();
+    }
+
+    private void dispatchMediaKeyWithWakeLockToMediaSession(final int keycode) {
+        final MediaSessionLegacyHelper helper = MediaSessionLegacyHelper.getHelper(mContext);
+        if (helper == null) {
+            Log.w(TAG, "Unable to send media key event");
+            return;
         }
+        KeyEvent event = new KeyEvent(SystemClock.uptimeMillis(),
+                SystemClock.uptimeMillis(), KeyEvent.ACTION_DOWN, keycode, 0);
+        helper.sendMediaButtonEvent(event, true);
+        event = KeyEvent.changeAction(event, KeyEvent.ACTION_UP);
+        helper.sendMediaButtonEvent(event, true);
     }
 
     private void startActivitySafely(final Intent intent) {
@@ -357,62 +466,4 @@ public class ScreenSensorService extends Service implements SensorEventListener 
         return pm.getLaunchIntentForPackage(resInfo.get(0).activityInfo.packageName);
     }
 
-    private int gestureToAction(int gesture) {
-        if (DEBUG) Log.d(TAG, "Gesture to action: " + gesture);
-        switch (gesture) {
-            case DOUBLE_TAP:
-                    mPowerManager.wakeUp(SystemClock.uptimeMillis());
-                    doHapticFeedback();
-                    return -1;
-            case SWIPE_UP:
-                return mSwipeUpAction;
-            case DOUBLE_SWIPE_DOWN:
-                return mSwipeDownAction;
-            case SWIPE_LEFT:
-                return mSwipeLeftAction;
-            case SWIPE_RIGHT:
-                return mSwipeRightAction;
-            default:
-                return -1;
-        }
-    }
-
-    private void loadPreferences(SharedPreferences sharedPreferences) {
-        try {
-            mSwipeUpAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_UP,
-                        Integer.toString(ACTION_NONE)));
-            mSwipeDownAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_DOWN,
-                        Integer.toString(ACTION_NONE)));
-            mSwipeLeftAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_LEFT,
-                    Integer.toString(ACTION_NONE)));
-            mSwipeRightAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_RIGHT,
-                        Integer.toString(ACTION_NONE)));
-        } catch (NumberFormatException e) {
-            Log.e(TAG, "Error loading preferences");
-        }
-    }
-
-    private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            try {
-                if (KEY_SWIPE_UP.equals(key)) {
-                    mSwipeUpAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_UP,
-                                Integer.toString(ACTION_NONE)));
-                } else if (KEY_SWIPE_DOWN.equals(key)) {
-                    mSwipeDownAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_DOWN,
-                                Integer.toString(ACTION_NONE)));
-                } else if (KEY_SWIPE_LEFT.equals(key)) {
-                    mSwipeLeftAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_LEFT,
-                                Integer.toString(ACTION_NONE)));
-                } else if (KEY_SWIPE_RIGHT.equals(key)) {
-                    mSwipeRightAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_RIGHT,
-                                Integer.toString(ACTION_NONE)));
-                }
-            } catch (NumberFormatException e) {
-                Log.e(TAG, "Error loading preferences");
-            }
-        }
-    };
 }

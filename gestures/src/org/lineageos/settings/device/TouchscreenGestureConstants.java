@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2016 The CyanogenMod Project
  *               2017 The LineageOS Project
  *
@@ -17,20 +17,18 @@
 
 package org.lineageos.settings.device;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.os.Bundle;
-
-import com.android.settingslib.drawer.SettingsDrawerActivity;
-
-public class TouchscreenGestureSettingsActivity extends SettingsDrawerActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        getFragmentManager().beginTransaction().replace(R.id.content_frame,
-                new TouchscreenGestureSettingsFragment()).commit();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+class TouchscreenGestureConstants {
+    // Gesture actions
+    static final int ACTION_DO_NOTHING = 0;
+    static final int ACTION_FLASHLIGHT = 1;
+    static final int ACTION_CAMERA = 2;
+    static final int ACTION_BROWSER = 3;
+    static final int ACTION_DIALER = 4;
+    static final int ACTION_EMAIL = 5;
+    static final int ACTION_MESSAGES = 6;
+    static final int ACTION_PLAY_PAUSE_MUSIC = 7;
+    static final int ACTION_PREVIOUS_TRACK = 8;
+    static final int ACTION_NEXT_TRACK = 9;
+    static final int ACTION_VOLUME_DOWN = 10;
+    static final int ACTION_VOLUME_UP = 11;
 }
