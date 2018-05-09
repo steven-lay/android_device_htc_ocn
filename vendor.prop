@@ -183,9 +183,6 @@ persist.timed.enable=true
 persist.delta_time.enable=true
 persist.backup.ntpServer="0.pool.ntp.org"
 
-# Voice assistant
-ro.opa.eligible_device=true
-
 #VoLTE
 persist.volte_enabled_by_hw=1
 persist.dbg.ims_volte_enable=1
