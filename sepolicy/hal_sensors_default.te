@@ -14,3 +14,5 @@ allowxperm hal_sensors_default self:socket ioctl msm_sock_ipc_ioctls;
 allow hal_sensors_default qdsp_device:chr_file r_file_perms;
 allow hal_sensors_default nanohub_lock_file:file rw_file_perms;
 allow hal_sensors_default nanohub_lock_file:dir { read search };
+
+allow hal_sensors_default system_data_file:dir rw_dir_perms;

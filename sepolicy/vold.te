@@ -2,3 +2,4 @@ allow vold crypto_block_device:blk_file rw_file_perms;
 allow vold tee_listener_prop:file r_file_perms;
 allow vold persist_file:dir rw_file_perms;
 allow vold proc_irq:dir r_dir_perms;
+allow vold adb_data_file:file rw_file_perms;
