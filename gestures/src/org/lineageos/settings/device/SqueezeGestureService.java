@@ -60,7 +60,7 @@ import java.util.List;
 
 public class SqueezeGestureService extends Service implements SensorEventListener {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static final int SHORTSQUEEZE = 100;
     private static final int LONGSQUEEZE = 101;
