@@ -6,3 +6,4 @@ allow rmt_storage sysfs_uio:lnk_file r_file_perms;
 allow rmt_storage sysfs_rmtfs:dir search;
 allow rmt_storage sysfs_rmtfs:file r_file_perms;
 allow rmt_storage sysfs_rmtfs:dir search;
+allow rmt_storage qti_debugfs:file rw_file_perms;

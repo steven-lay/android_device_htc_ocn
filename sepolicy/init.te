@@ -1,5 +1,5 @@
 allow init fingerprint_device:chr_file { setattr };
-allow init ipa_dev:chr_file { rw_file_perms };
+allow init ipa_dev:chr_file write;
 allow init carrier_block_device:blk_file write;
 allow init carrier_block_device:chr_file { read setattr open };
 allow init modem_block_device:chr_file { open setattr read };
@@ -13,5 +13,7 @@ allow init configfs:file w_file_perms;
 allow init persist_file:dir mounton;
 allow init boot_block_device:lnk_file relabelto;
 allow init persist_block_device:lnk_file relabelto;
+allow init app_data_file:dir { relabelfrom relabelto getattr };
+allow init app_data_file:file { relabelfrom relabelto getattr };
 dontaudit init kernel:system module_request;
 
