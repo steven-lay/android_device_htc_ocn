@@ -4,7 +4,8 @@
       android:sharedUserId="android.uid.system">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" /> 
+    <uses-permission android:name="android.permission.INJECT_EVENTS" />
 
     <application android:label="GestureHandler"
             android:theme="@style/Theme.Settings"

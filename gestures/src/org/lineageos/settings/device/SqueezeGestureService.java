@@ -49,9 +49,23 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.KeyEvent;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.app.Instrumentation;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ApplicationInfo;
+import android.view.MotionEvent;
 import android.util.Log;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.graphics.PixelFormat;
+import android.view.Display;
+import android.view.Gravity;
 
 import java.util.Iterator;
+import java.lang.Runtime;
+import java.io.IOException;
 
 import lineageos.providers.LineageSettings;
 import org.lineageos.internal.util.FileUtils;
@@ -77,7 +91,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private static final String SQUEEZE_GESTURE_ENABLE = "squeeze_enabled";
     private static final String SQUEEZE_FORCE = "squeeze_force";
     private static final int SQUEEZE_FORCE_DEFAULT = 30;
-    private static final int SQUEEZE_FORCE_MULTIPLIER = 8;
+    private static final int SQUEEZE_FORCE_MULTIPLIER = 6;
     private static final int GESTURE_WAKELOCK_DURATION = 500;
 
     private Context mContext;
@@ -88,6 +102,8 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private Vibrator mVibrator;
     private ScreenStateReceiver mScreenStateReceiver;
     private SensorManager mSensorManager;
+    private WindowManager windowManager;
+    private ImageView squeezeForceView;
 
     private String mRearCameraId;
     private boolean mTorchEnabled;
@@ -100,7 +116,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private long mGestureUpTime = 0;
     private int mForcePref = 0;
     private String[] mIntStrings = new String[10];
-
+    
     long tStart = System.currentTimeMillis();
     long tEnd = System.currentTimeMillis();
     long tDelta =0;
@@ -170,9 +186,18 @@ public class SqueezeGestureService extends Service implements SensorEventListene
         } else {
             tDelta = tEnd - tStart;
             if (tDelta >=100 && tDelta <=700) {
-                int action = gestureToAction(SHORTSQUEEZE);
-                if (action > -1) {
-                    handleGestureAction(action);
+                if (DEBUG) { Log.d(TAG, "Foreground App Name " + getForegroundApp(mContext)); }
+		        if (getForegroundApp(mContext).equals("Camera")){
+                    doHapticFeedback();
+                    SystemClock.sleep(500);
+                    simulateKey(KeyEvent.KEYCODE_VOLUME_UP);
+                    mSensorManager.registerListener(mEdgeSensorEventListener,
+                        mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                } else {
+                    int action = gestureToAction(SHORTSQUEEZE);
+                    if (action > -1) {
+                        handleGestureAction(action);
+                    }
                 }
             } else if (tDelta > 700) {
                 int action = gestureToAction(LONGSQUEEZE);
@@ -453,6 +478,39 @@ public class SqueezeGestureService extends Service implements SensorEventListene
             return null;
         }
         return pm.getLaunchIntentForPackage(resInfo.get(0).activityInfo.packageName);
+    }
+
+    public static String getForegroundApp(Context context){
+        ActivityManager manager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+        List< ActivityManager.RunningTaskInfo > runningTaskInfo = manager.getRunningTasks(1); 
+
+        ComponentName componentInfo = runningTaskInfo.get(0).topActivity;
+        PackageManager packageManager = context.getPackageManager();
+
+        String appName = "empty";
+        try {
+        	return appName = (String)packageManager.getApplicationLabel(packageManager.getApplicationInfo(componentInfo.getPackageName(), PackageManager.GET_META_DATA));
+        } catch (NameNotFoundException e) {
+	        Log.e("Application not found ", e.toString());
+            return "empty";
+        }
+
+    }
+
+    public static void simulateKey(final int KeyCode) {
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Instrumentation inst = new Instrumentation();
+                    inst.sendKeyDownUpSync(KeyCode);
+                } catch (Exception e) {
+                    Log.e("Exception when sendKeyDownUpSync", e.toString());
+                }
+           }
+
+       }.start();
     }
 
 }
