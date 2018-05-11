@@ -31,6 +31,7 @@ using android::hardware::light::V2_0::implementation::Light;
 
 const static std::string kBacklightPath = "/sys/class/leds/lcd-backlight/brightness";
 const static std::string kIndicatorPath = "/sys/class/leds/indicator/ModeRGB";
+const static std::string kCapacitiveBacklightPath = "/sys/class/leds/button-backlight/brightness";
 
 int main() {
     std::ofstream backlight(kBacklightPath);
@@ -47,7 +48,14 @@ int main() {
         return -error;
     }
 
-    android::sp<ILight> service = new Light(std::move(backlight), std::move(indicator));
+    std::ofstream capacitive(kCapacitiveBacklightPath);
+    if (!capacitive) {
+        int error = errno;
+        ALOGE("Failed to open %s (%d): %s", kCapacitiveBacklightPath.c_str(), error, strerror(error));
+        return -error;
+    }
+
+    android::sp<ILight> service = new Light(std::move(backlight), std::move(capacitive), std::move(indicator));
 
     configureRpcThreadpool(1, true);
 
