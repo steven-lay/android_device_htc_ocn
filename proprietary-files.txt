@@ -999,30 +999,6 @@ vendor/lib64/libhtc_common.so
 # NFC
 vendor/firmware/libpn553_fw.so
 
-# Perf - Xiaomi msm8998
-vendor/bin/hw/vendor.qti.hardware.perf@1.0-service|8f26b2b56b0c64b8b1818a00c07f48c2812bb4b2
-vendor/etc/init/vendor.qti.hardware.perf@1.0-service.rc|b50182aadab2e31409df61c523d0fb914a394e43
-vendor/etc/perf/perf-profile0.conf
-vendor/etc/perf/perf-profile1.conf
-vendor/etc/perf/perf-profile2.conf
-vendor/etc/perf/perf-profile3.conf
-vendor/etc/perf/perf-profile4.conf
-vendor/etc/perf/perf-profile5.conf
-vendor/etc/perf/perf-profile6.conf
-vendor/etc/perf/perfboostsconfig.xml|5334c3537113b44b6c9ff8f79a33205c645d848a
-vendor/lib/libfeedbackhandler.so|4a2783a03cf4f9935eb63e4525621d70c7fb0462
-vendor/lib/libperfgluelayer.so|f38d3a317e41718fd574c39edb843f10cc05f8bd
-vendor/lib/libqti-perfd-client.so|4dc73bb0039c9db0fea0bf622370f4e393647c41
-vendor/lib/libqti-perfd.so|6e7e7f3475907379eaee321b9192e15e929b1170
-vendor/lib/libqti-util.so|c285827ce550f235aa78c4e44f936868ff7e31f4
-vendor/lib/vendor.qti.hardware.perf@1.0_vendor.so|ffaaf98078ff3be80f8635de8475dd9862b00f21
-vendor/lib64/libfeedbackhandler.so|020f98e879322323371431a4c52d9fe1988a6293
-vendor/lib64/libperfgluelayer.so|76fdb82c7e275a7fc273281f9e5619ce477d784c
-vendor/lib64/libqti-perfd-client.so|ef2c0ab71a10206173fa99f5c329288a7ec75887
-vendor/lib64/libqti-perfd.so|2f2c5b8292fd83c26831c4bed8c6479f7f4649b1
-vendor/lib64/libqti-util.so|7d85e9bb97ce1aef4b604c38a6076cf9d22d67a1
-vendor/lib64/vendor.qti.hardware.perf@1.0_vendor.so|11f80bc9ce4eb7a5ce937423f24ce2830e74f13f
-
 # Peripheral manager
 vendor/bin/pm-proxy
 vendor/bin/pm-service
