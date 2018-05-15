@@ -45,6 +45,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.os.Vibrator;
+import android.os.VibrationEffect;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -442,13 +443,11 @@ public class SqueezeGestureService extends Service implements SensorEventListene
         if (mVibrator == null || !mVibrator.hasVibrator()) {
             return;
         }
-
-        if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
             final boolean enabled = LineageSettings.System.getInt(mContext.getContentResolver(),
                     LineageSettings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK, 1) != 0;
             if (enabled) {
-                mVibrator.vibrate(50);
-            }
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
         }
     }
 
