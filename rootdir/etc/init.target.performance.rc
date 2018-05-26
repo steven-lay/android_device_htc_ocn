@@ -155,5 +155,8 @@ on property:sys.boot_completed=1
     write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 1
     write /sys/module/lowmemorykiller/parameters/vmpressure_file_min 105984
 
+    # Enable PowerHAL hint processing
+    setprop vendor.powerhal.init 1
+
     # Set BFQ I/O scheduler
     setprop sys.io.scheduler "bfq"
