@@ -370,6 +370,10 @@ PRODUCT_COPY_FILES += \
     android.hardware.sensors@1.0-impl \
     android.hardware.sensors@1.0-service
 
+# TextClassifier smart selection model files
+PRODUCT_PACKAGES += \
+    textclassifier.smartselection.bundle1
+
 # Tetheroffload
 PRODUCT_PACKAGES += \
     ipacm \
