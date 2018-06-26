@@ -1,6 +1,0 @@
-genfscon debugfs /p2p0/power_stats     u:object_r:debugfs_power_stats:s0
-genfscon debugfs /wlan0/power_stats    u:object_r:debugfs_power_stats:s0
-genfscon debugfs /rmt_storage/rmts     u:object_r:qti_debugfs:s0
-genfscon debugfs /msm_core             u:object_r:qti_debugfs:s0
-
-genfscon sysfs /devices/soc/83800000.qcom,rmtfs_rtel_sharedmem          u:object_r:sysfs_rmtfs:s0

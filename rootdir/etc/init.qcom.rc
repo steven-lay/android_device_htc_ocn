@@ -782,6 +782,7 @@ service vendor.nqnfcinfo /system/vendor/bin/nqnfcinfo
     group nfc
     user system
     oneshot
+    disabled
 
 service vendor.iop /system/vendor/bin/iop
     class main
@@ -794,6 +795,7 @@ service vendor.qcomsysd /system/vendor/bin/qcom-system-daemon
     class main
     user root
     group root diag
+    disabled
 
 service vendor.ssr_setup /system/vendor/bin/ssr_setup
     oneshot
@@ -886,7 +888,6 @@ service vendor.qcom-c_main-sh /vendor/bin/init.class_main.sh
 on property:vold.decrypt=trigger_restart_framework
     start vendor.qcom-c_main-sh
     start vendor.wcnss-service
-    start vendor.cnss_diag
 
 on property:persist.env.fastdorm.enabled=true
     setprop persist.radio.data_no_toggle 1
@@ -980,7 +981,7 @@ service ftmd /system/bin/logwrapper /system/bin/ftmdaemon
 
 service vendor.port-bridge /system/vendor/bin/port-bridge
     class main
-    user radio system
+    user radio
     group radio system inet
     disabled
     oneshot
@@ -1062,6 +1063,7 @@ service vendor.cnss_diag /system/vendor/bin/cnss_diag -q -f
     user system
     group system wifi inet net_admin sdcard_rw media_rw diag oem_2901
     oneshot
+    disabled
 
 service vendor.cnss-daemon /system/vendor/bin/cnss-daemon -n -l
     class late_start
@@ -1107,12 +1109,14 @@ service vendor.ssgqmigd /vendor/bin/ssgqmigd
     user radio
     group radio
     socket ssgqmig seqpacket 0660 radio inet
+    disabled
 
 service vendor.mlid /vendor/bin/mlid
     class late_start
     user gps
     group gps
     socket mlid stream 0666 gps gps
+    disabled
 
 service vendor.loc_launcher /system/vendor/bin/loc_launcher
     #loc_launcher will start as root and set its uid to gps
@@ -1127,6 +1131,7 @@ service vendor.qcom-sh /vendor/bin/init.qcom.sh
     class late_start
     user root
     oneshot
+    disabled
 
 service vendor.qcom-post-boot /vendor/bin/init.qcom.post_boot.sh
     class late_start
@@ -1153,11 +1158,13 @@ service vendor.qvop-daemon /vendor/bin/qvop-daemon
     class late_start
     user system
     group system drmrpc
+    disabled
 
 service vendor.atfwd /vendor/bin/ATFWD-daemon
     class late_start
     user system
     group system radio
+    disabled
 
 service vendor.ims_regmanager /system/vendor/bin/exe-ims-regmanagerprocessnative
     class late_start
@@ -1274,9 +1281,11 @@ service vendor.qseeproxydaemon /system/vendor/bin/qseeproxydaemon
     class late_start
     user system
     group system
+    disabled
 
 service vendor.esepmdaemon /system/vendor/bin/esepmdaemon
     class core
+    disabled
     user system
     group nfc
 
@@ -1302,11 +1311,13 @@ service vendor.qdmastatsd /system/vendor/bin/qdmastatsd
     class late_start
     user system
     group readproc system net_bw_stats radio
+    disabled
 
 service vendor.vppservice /vendor/bin/vppservice
     class main
     user media
     group camera
+    disabled
 
 # Set vendor-ril lib path based on Meta version
 on property:vendor.rild.libpath=*
@@ -1343,6 +1354,7 @@ service htcnetd /system/bin/htcnetd
     class main
     socket htcnetd stream 0660 root inet
     user root
+    disabled
 
 # log level control
 on property:persist.sys.htcdebugflag=1
@@ -1371,5 +1383,6 @@ wait /data/system/bi_native
 service tpd_daemon /system/bin/tpd_daemon
     class core
     user root
+    disabled
 # Security - Tamper Detection - END
 

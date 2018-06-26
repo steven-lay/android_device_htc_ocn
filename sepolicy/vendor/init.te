@@ -1,0 +1,7 @@
+allow init servicemanager:binder { call };
+allow init proc:lnk_file { setattr };
+
+# Allow init to chown/chmod on pseudo files in /sys
+allow init sysfs_type:file { open read write setattr };
+
+dontaudit init kernel:system module_request;

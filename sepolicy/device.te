@@ -1,4 +1,0 @@
-type fingerprint_device, dev_type;
-type carrier_block_device, dev_type;
-type ramdump_block_device, dev_type;
-type ssd_block_device, dev_type;

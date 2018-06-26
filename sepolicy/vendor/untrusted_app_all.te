@@ -1,0 +1,6 @@
+dontaudit untrusted_app_all proc_uptime:file read;
+dontaudit untrusted_app_all proc_vmstat:file { getattr open read };
+dontaudit untrusted_app_all proc_zoneinfo:file { getattr open read };
+dontaudit untrusted_app_all proc_stat:file { getattr open read };
+dontaudit untrusted_app_all hal_memtrack_hwservice:hwservice_manager find;
+dontaudit untrusted_app_all hal_memtrack_default:binder call;

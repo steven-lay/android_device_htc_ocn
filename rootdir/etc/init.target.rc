@@ -115,7 +115,7 @@ on post-fs
     chmod 0771 /preload
 
 on post-fs-data
-    mkdir /data/tombstones 0771 system system
+    mkdir /data/vendor/tombstones 0771 system system
     mkdir /tombstones/modem 0771 system system
     mkdir /tombstones/lpass 0771 system system
     mkdir /tombstones/wcnss 0771 system system
@@ -132,7 +132,6 @@ on post-fs-data
 # Silver Only configuration cannot work with 0-7
 on boot
    start vendor.rmt_storage
-   start vendor.rfs_access
    write /dev/cpuset/top-app/cpus 0-3
    write /dev/cpuset/foreground/cpus 0-3
    write /dev/cpuset/background/cpus 0-3

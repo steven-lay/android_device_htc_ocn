@@ -54,7 +54,7 @@ TARGET_COMPILE_WITH_MSM_KERNEL := true
 TARGET_KERNEL_SOURCE := kernel/htc/msm8998
 TARGET_KERNEL_CONFIG := lineage_ocean_defconfig
 
-BOARD_ROOT_EXTRA_FOLDERS := bt_firmware firmware persist firmware/image dsp
+BOARD_ROOT_EXTRA_FOLDERS := bt_firmware dsp firmware persist
 
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-hidl"
@@ -221,7 +221,8 @@ TARGET_RIL_VARIANT := caf
 
 # SELinux
 -include device/qcom/sepolicy/sepolicy.mk
-BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
+BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+BOARD_PLAT_PRIVATE_SEPOLICY_DIR += $(DEVICE_PATH)/sepolicy/private
 
 # Sensors
 USE_SENSOR_MULTI_HAL := true

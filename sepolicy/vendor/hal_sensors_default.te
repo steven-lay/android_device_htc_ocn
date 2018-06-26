@@ -1,0 +1,9 @@
+allow hal_sensors_default input_device:chr_file rw_file_perms;
+allow hal_sensors_default nanohub_lock_file:file rw_file_perms;
+allow hal_sensors_default nanohub_lock_file:dir { read search };
+r_dir_file(hal_sensors_default, sensors_persist_file)
+
+# Allow access to persistent partition for calibration data
+allow hal_sensors persist_file:dir search;
+allow hal_sensors sensors_cal_file:dir create_dir_perms;
+allow hal_sensors sensors_cal_file:file create_file_perms;

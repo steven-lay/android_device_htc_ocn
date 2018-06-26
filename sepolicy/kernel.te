@@ -1,1 +1,0 @@
-allow kernel sysfs_ktop_file:file { open write };

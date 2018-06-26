@@ -1,8 +1,0 @@
-set_prop(qti_init_shell, fingerprint_prop)
-
-allow qti_init_shell sysfs:file { rw_file_perms };
-allow qti_init_shell sysfs_cpu_boost:file { rw_file_perms };
-allow qti_init_shell kmsg_device:chr_file { rw_file_perms };
-allow qti_init_shell nv_data_file:file { getattr };
-allow qti_init_shell proc_modules:file { r_file_perms };
-allow qti_init_shell ramdump_block_device:blk_file getattr;
