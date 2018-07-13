@@ -9,7 +9,6 @@
 #<src>                                    <mnt_point>       <type> <mnt_flags and options>                          <fs_mgr_flags>
 /dev/block/bootdevice/by-name/system      /                 ext4   ro,barrier=1,discard                             wait,verify
 /dev/block/bootdevice/by-name/userdata    /data             ext4   nosuid,nodev,noatime,barrier=1,noauto_da_alloc,errors=panic      wait,check,formattable,encryptable=/dev/block/bootdevice/by-name/extra
-/dev/block/bootdevice/by-name/frp         /persistent       emmc   defaults                                         defaults
 /dev/block/bootdevice/by-name/misc        /misc             emmc   defaults                                         defaults
 /dev/block/bootdevice/by-name/cache       /cache            ext4   nosuid,nodev,noatime,barrier=1,errors=continue           wait
 /dev/block/bootdevice/by-name/persist     /persist          ext4   nosuid,nodev,noatime,barrier=1,errors=panic              wait
