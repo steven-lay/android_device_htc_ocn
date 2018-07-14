@@ -39,6 +39,7 @@ on init
     write /dev/stune/top-app/schedtune.sched_boost_no_override 1
     write /dev/stune/schedtune.colocate 0
     write /dev/stune/background/schedtune.colocate 0
+    write /dev/stune/system-background/schedtune.colocate 0
     write /dev/stune/foreground/schedtune.colocate 0
     write /dev/stune/top-app/schedtune.colocate 1
     write /sys/module/qpnp_rtc/parameters/poweron_alarm 1
@@ -55,6 +56,27 @@ on init
     write /sys/block/zram0/comp_algorithm lz4
     write /proc/sys/vm/page-cluster 0
 
+    # Disable UFS powersaving
+    write /sys/devices/soc/1da4000.ufshc/clkscale_enable 0
+    write /sys/devices/soc/1da4000.ufshc/clkgate_enable 0
+    write /sys/devices/soc/1da4000.ufshc/hibern8_on_idle_enable 0
+
+    write /sys/module/lpm_levels/parameters/sleep_disabled Y
+
+    write /dev/stune/foreground/schedtune.sched_boost_no_override 1
+    write /dev/stune/top-app/schedtune.sched_boost_no_override 1
+    write /dev/stune/schedtune.colocate 0
+    write /dev/stune/background/schedtune.colocate 0
+    write /dev/stune/foreground/schedtune.colocate 0
+    write /dev/stune/top-app/schedtune.colocate 1
+
+    # Add a cpuset for the camera daemon
+    mkdir /dev/cpuset/camera-daemon 0750 cameraserver cameraserver
+    write /dev/cpuset/camera-daemon/cpus 0-7
+    write /dev/cpuset/camera-daemon/mems 0
+    chown cameraserver cameraserver /dev/cpuset/camera-daemon/tasks
+    chmod 0660 /dev/cpuset/camera-daemon/tasks
+
 on fs
     wait /dev/device-mapper
     mount_all /vendor/etc/fstab.qcom
@@ -67,6 +89,15 @@ on fs
 
     mkdir /persist/data 0700 system system
     mkdir /persist/bms 0700 root system
+
+on late-fs
+    # Enable boot time fs tuning (ro like system is on sda, rw like userdata is on sde)
+    write /sys/block/sda/queue/iostats 0
+    write /sys/block/sda/queue/nr_requests 256
+    write /sys/block/sda/queue/read_ahead_kb 2048
+    write /sys/block/sde/queue/iostats 0
+    write /sys/block/sde/queue/nr_requests 256
+    write /sys/block/sda/queue/read_ahead_kb 2048
 
 on post-fs
     # Wait qseecomd started
@@ -105,16 +136,16 @@ on post-fs-data
 # For cpusets initialize for Silver Only first and then Silver + Gold
 # Silver Only configuration cannot work with 0-7
 on boot
-    start rmt_storage
-    start rfs_access
-    write /dev/cpuset/top-app/cpus 0-3
-    write /dev/cpuset/foreground/cpus 0-3
-    write /dev/cpuset/background/cpus 0-3
-    write /dev/cpuset/system-background/cpus 0-3
-    write /dev/cpuset/top-app/cpus 0-7
-    write /dev/cpuset/foreground/cpus 0-7
-    write /dev/cpuset/background/cpus 0-7
-    write /dev/cpuset/system-background/cpus 0-7
+   start rmt_storage
+   start rfs_access
+   write /dev/cpuset/top-app/cpus 0-3
+   write /dev/cpuset/foreground/cpus 0-3
+   write /dev/cpuset/background/cpus 0-3
+   write /dev/cpuset/system-background/cpus 0-3
+   write /dev/cpuset/top-app/cpus 0-7
+   write /dev/cpuset/foreground/cpus 0-7
+   write /dev/cpuset/background/cpus 0-7
+   write /dev/cpuset/system-background/cpus 0-7
 
    # Add a cpuset for the camera daemon
    # We want all cores for camera
@@ -124,6 +155,24 @@ on boot
    chown cameraserver cameraserver /dev/cpuset/camera-daemon
    chown cameraserver cameraserver /dev/cpuset/camera-daemon/tasks
    chmod 0660 /dev/cpuset/camera-daemon/tasks
+
+   chown system graphics /sys/devices/virtual/graphics/fb0/srgb
+   chown system graphics /sys/devices/virtual/graphics/fb0/dci_p3
+   chown system graphics /sys/devices/virtual/graphics/fb0/hbm
+   chown system graphics /sys/devices/virtual/graphics/fb0/night_mode
+   chown system graphics /sys/devices/virtual/graphics/fb0/panel_serial_number
+   chown system graphics /sys/devices/virtual/graphics/fb0/adaption_mode
+   chmod 0666 /sys/devices/virtual/graphics/fb0/srgb
+   chmod 0666 /sys/devices/virtual/graphics/fb0/dci_p3
+   chmod 0666 /sys/devices/virtual/graphics/fb0/hbm
+   chmod 0666 /sys/devices/virtual/graphics/fb0/night_mode
+   chmod 0666 /sys/devices/virtual/graphics/fb0/panel_serial_number
+   chmod 0666 /sys/devices/virtual/graphics/fb0/adaption_mode
+
+   chown system graphics /sys/class/graphics/fb0/srgb
+   chown system graphics /sys/class/graphics/fb0/dci_p3
+   chmod 0664 /sys/class/graphics/fb0/srgb
+   chmod 0664 /sys/class/graphics/fb0/dci_p3
 
    # Wifi firmware reload path
    chown wifi wifi /sys/module/wlan/parameters/fwpath
@@ -176,50 +225,34 @@ on charger
 #   start hvdcp_opti
     setprop sys.usb.configfs 1
 
-#on post-fs
-#    export LD_PRELOAD /vendor/lib/libNimsWrap.so
-#
-## Allow usb charging to be disabled peristently
-#on property:persist.usb.chgdisabled=1
-#    write /sys/class/power_supply/battery/charging_enabled 0
-#
-#on property:persist.usb.chgdisabled=0
-#    write /sys/class/power_supply/battery/charging_enabled 1
-#
-#service qrngd /system/bin/qrngd -f
-#   class main
-#   user root
-#   group root
-#
-#service qrngp /system/bin/qrngp
-#    class main
-#    user root
-#    group root
-#    oneshot
-#    disabled
-#
-#on property:sys.boot_completed=1
-#    start qrngp
-#
+    # Enable UFS powersaving
+    write /sys/devices/soc/1da4000.ufshc/clkscale_enable 1
+    write /sys/devices/soc/1da4000.ufshc/clkgate_enable 1
+    write /sys/devices/soc/1da4000.ufshc/hibern8_on_idle_enable 1
+
+    write /sys/module/lpm_levels/parameters/sleep_disabled N
+
+    # disable thermal core control
+    write /sys/module/msm_thermal/core_control/enabled 0
+
+    # online cpu 0 and set governor powersave
+    write /sys/devices/system/cpu/cpu0/online 1
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor powersave
+
+    # offline remaining cores
+    write /sys/devices/system/cpu/cpu1/online 0
+    write /sys/devices/system/cpu/cpu2/online 0
+    write /sys/devices/system/cpu/cpu3/online 0
+    write /sys/devices/system/cpu/cpu4/online 0
+    write /sys/devices/system/cpu/cpu5/online 0
+    write /sys/devices/system/cpu/cpu6/online 0
+    write /sys/devices/system/cpu/cpu7/online 0
+
 service qseecomd /vendor/bin/qseecomd
    class core
    user root
    group root
 
-service spdaemon /vendor/bin/spdaemon
-   class core
-   user system
-   group system
-
-#service mpdecision /system/vendor/bin/mpdecision --avg_comp
-#   user root
-#   disabled
-#
-#service qosmgrd /system/bin/qosmgr /system/etc/qosmgr_rules.xml
-#   user system
-#   group system
-#   disabled
-#
 service thermal-engine /system/vendor/bin/thermal-engine
    class main
    user root
@@ -228,15 +261,6 @@ service thermal-engine /system/vendor/bin/thermal-engine
    socket thermal-recv-passive-client stream 0666 system system
    socket thermal-send-rule stream 0660 system system
    group root
-
-#service security-check1 /sbin/security_boot_check system
-#    class core
-#    oneshot
-#
-#service security-check2 /sbin/security_boot_check recovery
-#    class core
-#    oneshot
-#
 
 service adsprpcd /system/vendor/bin/adsprpcd
    class main
@@ -249,72 +273,6 @@ service hbtp /system/vendor/bin/hbtp_daemon
     group system
     disabled
 
-service audiod /system/vendor/bin/audiod
-   class late_start
-   user system
-   group system
-
-#service usf_tester /system/vendor/bin/usf_tester
-#    user system
-#    group system inet
-#    disabled
-#
-#service usf_epos /system/vendor/bin/usf_epos
-#    user system
-#    group system inet
-#    disabled
-#
-#service usf_gesture /system/vendor/bin/usf_gesture
-#    user system
-#    group system inet
-#    disabled
-#
-
-#service usf_sync_gesture /system/vendor/bin/usf_sync_gesture
-#    user system
-#    group system inet
-#    disabled
-#
-
-#service usf_p2p /system/vendor/bin/usf_p2p
-#    user system
-#    group system inet
-#    disabled
-#
-#service usf_hovering /system/vendor/bin/usf_hovering
-#    user system
-#    group system inet
-#    disabled
-#
-#service usf_proximity /system/vendor/bin/usf_proximity
-#    user system
-#    group system inet
-#    disabled
-#
-#service usf-post-boot /system/vendor/bin/sh /system/etc/usf_post_boot.sh
-#    class late_start
-#    user root
-#    disabled
-#    oneshot
-#
-#on property:init.svc.bootanim=stopped
-#    start usf-post-boot
-#
-#
-#on boot
-#    insmod /system/lib/modules/adsprpc.ko
-#    insmod /system/lib/modules/mhi.ko
-## access permission for secure touch
-#    chmod 0660 /sys/devices/f9966000.i2c/i2c-1/1-004a/secure_touch_enable
-#    chmod 0440 /sys/devices/f9966000.i2c/i2c-1/1-004a/secure_touch
-#    chmod 0660 /sys/devices/f9966000.i2c/i2c-1/1-0020/secure_touch_enable
-#    chmod 0440 /sys/devices/f9966000.i2c/i2c-1/1-0020/secure_touch
-#    chown system drmrpc /sys/devices/f9966000.i2c/i2c-1/1-004a/secure_touch_enable
-#    chown system drmrpc /sys/devices/f9966000.i2c/i2c-1/1-004a/secure_touch
-#    chown system drmrpc /sys/devices/f9966000.i2c/i2c-1/1-0020/secure_touch_enable
-#    chown system drmrpc /sys/devices/f9966000.i2c/i2c-1/1-0020/secure_touch
-#
-#
 service imsqmidaemon /system/vendor/bin/imsqmidaemon
     class main
     user system
@@ -327,62 +285,9 @@ service imsdatadaemon /system/vendor/bin/imsdatadaemon
     socket ims_datad stream 0660 system radio
     group system wifi radio inet log diag
     disabled
-#
-#service mdm_helper /system/bin/mdm_helper
-#    class core
-#    onrestart setprop ro.service.mdm_helper_restarted "true"
-#    disabled
-#
-#service mdm_helper_proxy /system/bin/mdm_helper_proxy
-#    class core
-#    disabled
-#
-#service mdm_launcher /system/bin/sh /init.mdm.sh
-#    class main
-#    oneshot
-#
-#service qcamerasvr /system/bin/mm-qcamera-daemon
-#    class late_start
-#    user camera
-#    group camera system inet input graphics
-#
-# Stop mdm_helper_proxy in case of shutdown
-#on property:sys.shutdown.requested=*
-#    stop mdm_helper_proxy
-#
-# Stop mdm_helper_proxy on APQ target
-#on property:ro.radio.noril=yes
-#    stop mdm_helper_proxy
-#
-#on property:persist.airplane.mode.pwr.svg=enabled
-#    setprop ro.mdm_helper_proxy_req false
-#
-#on property:init.svc.ril-daemon=running
-#    setprop ro.mdm_helper_proxy_req true
-#
-## Start mdm_helper_proxy
-#on property:ro.mdm_helper_proxy_req=true
-#    start mdm_helper_proxy
-#
-## QCA1530 SoC core detect
-#service gnss-detect /system/vendor/bin/gnss.qca1530.sh detect
-#   class core
-#   oneshot
+
 service pd_mapper /system/vendor/bin/pd-mapper
      class core
-
-#
-## QCA1530 SoC late_start group trigger
-#service gnss-init /system/vendor/bin/gnss.qca1530.sh init
-#   class late_start
-#   oneshot
-#
-## QCA1530 SoC Service Daemon
-#service gnss-svcd /system/vendor/bin/gnss.qca1530.sh start
-#   class late_start
-#   user root
-#   group gps system oem_2901 diag log inet net_raw
-#   disabled
 
 on property:vendor.ims.QMI_DAEMON_STATUS=1
     start imsdatadaemon
@@ -402,7 +307,6 @@ service imsrcsservice /system/vendor/bin/imsrcsd
 on property:vendor.ims.DATA_DAEMON_STATUS=1
     start ims_rtp_daemon
     start imsrcsservice
-#
 
 service ppd /vendor/bin/mm-pp-dpps
     class late_start
@@ -429,50 +333,16 @@ on property:init.svc.zygote=running
 on property:init.svc.zygote=restarting
     stop ppd
 
-#
-#service nqs /system/bin/nqs
-#    class late_start
-#    socket nqs_qsb_comm stream 660 system system
-#    user system
-#    group drmrpc
-#
-#service adsprpcd /system/vendor/bin/adsprpcd
-#   class main
-#   user media
-#   group media
-#
-##Start picture quality tuning service
-#service vqttoolservice /system/bin/vqttoolservice
-#    class late_start
-#    socket vqtss stream 0660 system system
-#    user system
-#    group system
-
 service energy-awareness /system/vendor/bin/energy-awareness
     class main
     user root
     group system
     oneshot
 
-service mdtpd /system/vendor/bin/mdtpd
-    class late_start
-    user root
-    group system radio drmrpc
-
 #service hvdcp_opti /system/vendor/bin/hvdcp_opti
 #   class main
 #   user root
 #   group system wakelock
-
-service trustonic-daemon /vendor/bin/mcDriverDaemon -b
-    class core
-    user system
-    group system
-    oneshot
-    disabled
-
-on property:sys.mobicore.vendor.enable=true
-    start trustonic-daemon
 
 service qvrd /system/bin/qvrservice
     class late_start
@@ -481,22 +351,178 @@ service qvrd /system/bin/qvrservice
     socket qvrservice stream 0666 system system
     capabilities SYS_NICE
 
-# Needed for OTA control
-on property:ro.boot.carrier.sku=*
-    setprop ro.oem.key1 ${ro.boot.carrier.sku}
-
-on property:sys.boot_completed=1
-    setprop sys.io.scheduler bfq
-
 on property:sys.boot_completed=1
     # Enable ZRAM on boot_completed
     swapon_all /vendor/etc/fstab.qcom
 
-# To perform remarktag for let carrier partition match the OMADM uid
-# HTC_OMADM_START
-service remarktag /system/bin/remarktag
-    class late_start
-    user root
-    group root oem_5011
-    oneshot
-# HTC_OMADM_END
+    # Disable boot time fs tuning
+    write /sys/block/sde/queue/read_ahead_kb 1024
+    write /sys/block/sde/queue/nr_requests 128
+    write /sys/block/sde/queue/iostats 1
+    write /sys/block/sda/queue/read_ahead_kb 1024
+    write /sys/block/sda/queue/nr_requests 128
+    write /sys/block/sda/queue/iostats 1
+
+    # Enable UFS powersaving
+    write /sys/devices/soc/1da4000.ufshc/clkscale_enable 1
+    write /sys/devices/soc/1da4000.ufshc/clkgate_enable 1
+    write /sys/devices/soc/1da4000.ufshc/hibern8_on_idle_enable 1
+
+    # disable thermal core control until CPU is configured
+    write /sys/module/msm_thermal/core_control/enabled 0
+
+    # online little cluster
+    write /sys/devices/system/cpu/cpu0/online 1
+    # configure governor settings for little cluster
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "interactive"
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_sched_load 1
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_migration_notif 1
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 19000
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load 90
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate 20000
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq 1248000
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/io_is_busy 1
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads "83 1804800:95"
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 19000
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/max_freq_hysteresis 79000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/ignore_hispeed_on_notif 1
+
+    # online big cluster
+    write /sys/devices/system/cpu/cpu4/online 1
+    # configure governor settings for big cluster
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor "interactive"
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_sched_load 1
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_migration_notif 1
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay 19000
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load 90
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate 20000
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq 1574400
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/io_is_busy 1
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads "83 1939200:90 2016000:95"
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time 19000
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 79000
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 300000
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/ignore_hispeed_on_notif 1
+
+    # Core Control
+    write /sys/devices/system/cpu/cpu4/core_ctl/min_cpus 2
+    write /sys/devices/system/cpu/cpu4/core_ctl/busy_up_thres 60
+    write /sys/devices/system/cpu/cpu4/core_ctl/busy_down_thres 30
+    write /sys/devices/system/cpu/cpu4/core_ctl/offline_delay_ms 100
+    write /sys/devices/system/cpu/cpu4/core_ctl/is_big_cluster 1
+    write /sys/devices/system/cpu/cpu4/core_ctl/task_thres 4
+
+    # CPU is configured, re-enable thermal core control
+    write /sys/module/msm_thermal/core_control/enabled 1
+
+    # Enable input boost configuration
+    write /sys/module/cpu_boost/parameters/input_boost_freq "0:1324800"
+    write /sys/module/cpu_boost/parameters/input_boost_ms 40
+
+    # Enable bus-dcvs
+    write /sys/class/devfreq/soc:qcom,cpubw/governor "bw_hwmon"
+    write /sys/class/devfreq/soc:qcom,cpubw/polling_interval 50
+    write /sys/class/devfreq/soc:qcom,cpubw/min_freq 1525
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/mbps_zones "3143 5859 11863 13763"
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/sample_ms 4
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/io_percent 34
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/hist_memory 20
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/hyst_length 10
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/low_power_ceil_mbps 0
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/low_power_io_percent 34
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/low_power_delay 20
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/guard_band_mbps 0
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/up_scale 250
+    write /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/idle_mbps 1600
+
+    # Configure memory latencies
+    write /sys/class/devfreq/soc:qcom,memlat-cpu0/governor "mem_latency"
+    write /sys/class/devfreq/soc:qcom,memlat-cpu0/polling_interval 10
+    write /sys/class/devfreq/soc:qcom,memlat-cpu0/mem_latency/ratio_ceil 400
+
+    write /sys/class/devfreq/soc:qcom,memlat-cpu4/governor "mem_latency"
+    write /sys/class/devfreq/soc:qcom,memlat-cpu4/polling_interval 10
+    write /sys/class/devfreq/soc:qcom,memlat-cpu4/mem_latency/ratio_ceil 400
+
+    write /sys/class/devfreq/soc:qcom,mincpubw/governor "cpufreq"
+
+    # Setup power retention
+    write /sys/module/lpm_levels/system/pwr/cpu0/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/cpu1/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/cpu2/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/cpu3/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/cpu4/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/cpu5/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/cpu6/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/cpu7/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/pwr-l2-dynret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/pwr-l2-ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/perf-l2-dynret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/perf-l2-ret/idle_enabled N
+    write /sys/module/lpm_levels/parameters/sleep_disabled N
+
+    # Setup cpusets
+    write /dev/cpuset/top-app/cpus 0-7
+    write /dev/cpuset/foreground/cpus 0-3,6-7
+    write /dev/cpuset/background/cpus 0-1
+    write /dev/cpuset/system-background/cpus 0-3
+    write /dev/cpuset/camera-daemon/cpus 0-3
+
+    # Disable sched boost
+    write /proc/sys/kernel/sched_boost 0
+
+    # Enable Adaptive LMK
+    write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 1
+    write /sys/module/lowmemorykiller/parameters/minfree "18432,23040,27648,51256,150296,200640"
+    write /sys/module/lowmemorykiller/parameters/vmpressure_file_min 162500
+
+    # Set up big.LITTLE scheduler configuration
+    write /proc/sys/kernel/sched_migration_fixup 1
+    write /proc/sys/kernel/sched_upmigrate 95
+    write /proc/sys/kernel/sched_downmigrate 90
+    write /proc/sys/kernel/sched_group_upmigrate 100
+    write /proc/sys/kernel/sched_group_downmigrate 95
+    write /proc/sys/kernel/sched_select_prev_cpu_us 0
+    write /proc/sys/kernel/sched_freq_inc_notify 400000
+    write /proc/sys/kernel/sched_freq_dec_notify 400000
+    write /proc/sys/kernel/sched_spill_nr_run 5
+    write /proc/sys/kernel/sched_restrict_cluster_spill 1
+    write /proc/sys/kernel/sched_prefer_sync_wakee_to_waker 1
+
+    # Set BFQ I/O scheduler
+    setprop sys.io.scheduler "bfq"
+
+    # Is IOP even still a thing?
+    start iop
+
+on property:sys.srgb=1
+   write /sys/devices/virtual/graphics/fb0/srgb 1
+
+on property:sys.srgb=0
+   write /sys/devices/virtual/graphics/fb0/srgb 0
+
+on property:sys.dci3p=1
+   write /sys/devices/virtual/graphics/fb0/dci_p3 1
+
+on property:sys.dci3p=0
+   write /sys/devices/virtual/graphics/fb0/dci_p3 0
+
+on property:sys.hbm=1
+   write /sys/devices/virtual/graphics/fb0/hbm 1
+
+on property:sys.hbm=0
+   write /sys/devices/virtual/graphics/fb0/hbm 0
+
+on property:sys.night_mode=1
+   write /sys/devices/virtual/graphics/fb0/night_mode 1
+
+on property:sys.night_mode=0
+   write /sys/devices/virtual/graphics/fb0/night_mode 0
+
+on property:sys.automode=1
+   write /sys/devices/virtual/graphics/fb0/adaption_mode 1
+
+on property:sys.automode=0
+   write /sys/devices/virtual/graphics/fb0/adaption_mode 0
+
