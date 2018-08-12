@@ -198,7 +198,7 @@ DEVICE_MATRIX_FILE := $(DEVICE_PATH)/configs/compatibility_matrix.xml
 TARGET_UNIFIED_DEVICE := true
 TARGET_INIT_VENDOR_LIB := libinit_ocn
 TARGET_RECOVERY_DEVICE_MODULES := libinit_ocn
-TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/fstab.recovery
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.recovery
 
 # Keymaster
 TARGET_PROVIDES_KEYMASTER := true
