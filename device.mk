@@ -237,10 +237,8 @@ PRODUCT_PACKAGES += \
 # Init
 PRODUCT_PACKAGES += \
     fstab.qcom \
-    init.qcom.power.rc \
     init.qcom.rc \
     init.qcom.usb.rc \
-    init.htc.common.rc \
     init.target.rc \
     ueventd.rc
 
@@ -248,13 +246,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     init.class_main.sh \
     init.htc.fp.sh \
-    init.minidump.sh \
-    init.qcom.class_core.sh \
-    init.qcom.sh \
     init.qcom.usb.sh \
     init.qcom.early_boot.sh \
-    init.qcom.post_boot.sh \
-    init.qti.qseecomd.sh
+    init.qcom.post_boot.sh
 
 # Input
 PRODUCT_COPY_FILES += \
