@@ -341,12 +341,10 @@ PRODUCT_PACKAGES += \
     libhtcril_db \
     libprotobuf-cpp-full \
     librmnetctl \
-    libxml2 \
-    telephony-ext
+    libxml2
 
 PRODUCT_BOOT_JARS += \
-    qcrilhook \
-    telephony-ext
+    qcrilhook
 
 # RenderScript HAL
 PRODUCT_PACKAGES += \
