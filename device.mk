@@ -395,15 +395,19 @@ PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl \
     android.hardware.vibrator@1.0-service
 
+# VNDK
+PRODUCT_PACKAGES += \
+    vndk_package
+
+# VNDK-SP
+PRODUCT_PACKAGES += \
+    vndk-sp
+
 # VR
 PRODUCT_PACKAGES += \
     android.hardware.vr@1.0-impl \
     android.hardware.vr@1.0-service \
     vr.msm8998
-
-# VNDK-SP:
-PRODUCT_PACKAGES += \
-    vndk-sp
 
 # Wifi
 PRODUCT_PACKAGES += \
