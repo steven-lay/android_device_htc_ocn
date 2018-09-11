@@ -28,10 +28,6 @@
 #
 
 on early-init
-    mkdir /firmware 0771 system system
-    mkdir /bt_firmware 0550 bluetooth net_bt
-    symlink /data/tombstones /tombstones
-    mkdir /dsp 0771 media media
     write /proc/sys/kernel/sched_boost 1
 
 on init
