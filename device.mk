@@ -160,7 +160,9 @@ PRODUCT_PACKAGES += \
     libmmjpeg_interface \
     libmmcamera_interface \
     vendor.qti.hardware.camera.device@1.0 \
-    vendor.qti.hardware.camera.device@1.0_vendor
+    vendor.qti.hardware.camera.device@1.0_vendor \
+    libsensorndkbridge \
+    libcamera_shim
 
 # Connectivity Engine support (CNE)
 PRODUCT_PACKAGES += \

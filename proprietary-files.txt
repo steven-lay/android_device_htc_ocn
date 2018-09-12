@@ -1234,7 +1234,6 @@ lib64/hw/sensors.msm8998.so
 vendor/lib64/libsensor1.so
 vendor/lib64/libsensor_reg.so
 vendor/lib64/sensor_calibrate.so
-vendor/lib/libsensorndkbridge.so
 
 # SLPI
 vendor/firmware/slpi_v1.b00
