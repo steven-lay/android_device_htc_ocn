@@ -1,3 +1,0 @@
-subdirs = [
-    "wifi_offload",
-]
