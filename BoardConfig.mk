@@ -59,9 +59,6 @@ TARGET_KERNEL_CONFIG := lineage_ocean_defconfig
 
 BOARD_ROOT_EXTRA_FOLDERS := bt_firmware firmware persist firmware/image dsp
 
-# ANT+
-BOARD_ANT_WIRELESS_DEVICE := "qualcomm-uart"
-
 # Audio
 AUDIO_FEATURE_ENABLED_3D_AUDIO := true
 AUDIO_FEATURE_ENABLED_AAC_ADTS_OFFLOAD := true
