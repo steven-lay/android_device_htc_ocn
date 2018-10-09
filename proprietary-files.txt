@@ -1102,15 +1102,18 @@ bin/qvrcameratseq64
 bin/qvrcameratest
 
 # Radio
--app/QtiTelephonyService/QtiTelephonyService.apk
+-app/QtiTelephonyService/QtiTelephonyService.apk:vendor/app/QtiTelephonyService/QtiTelephonyService.apk|8e205bf2abb8d17f679cce354c6e849ec91b7563
+framework/qti-telephony-common.jar|3fc00ec80be50bc9b595fc9fe06ec26c832a72e3
 vendor/bin/netmgrd
 vendor/bin/port-bridge
 vendor/bin/rmt_storage
 vendor/bin/tftp_server
 vendor/etc/data/dsi_config.xml
 vendor/etc/data/netmgr_config.xml
-etc/permissions/qcrilhook.xml
-framework/QtiTelephonyServicelibrary.jar
+etc/permissions/qcrilhook.xml:vendor/etc/permissions/qcrilhook.xml|cf740b4339659e7a30cabcd1c2fe5066e69b8760
+vendor/framework/qcrilhook.jar|66771d1f295a102dd5115c638f309057589c60a2
+-priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk|98bf31fc802d0e0a41b08cf900545f0e519dad4e
+framework/QtiTelephonyServicelibrary.jar:vendor/framework/QtiTelephonyServicelibrary.jar|d7cf75e44e12bedf1eb612460509394099cfd433
 vendor/bin/qti
 vendor/lib/com.quicinc.cne.api@1.0.so
 vendor/lib/com.quicinc.cne.constants@1.0.so
