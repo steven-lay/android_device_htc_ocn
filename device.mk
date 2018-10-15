@@ -334,6 +334,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.power@1.1-service-qti
 
+# Properties
+include $(LOCAL_PATH)/vendor_prop.mk
+
 # QMI
 PRODUCT_PACKAGES += \
     libjson
