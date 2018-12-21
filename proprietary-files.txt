@@ -1103,7 +1103,7 @@ bin/qvrcameratest
 
 # Radio
 -app/QtiTelephonyService/QtiTelephonyService.apk:vendor/app/QtiTelephonyService/QtiTelephonyService.apk|8e205bf2abb8d17f679cce354c6e849ec91b7563
-framework/qti-telephony-common.jar|3fc00ec80be50bc9b595fc9fe06ec26c832a72e3
+framework/qti-telephony-common.jar|b1953a3599255f08f1785c677d22810f65e0167b
 vendor/bin/netmgrd
 vendor/bin/port-bridge
 vendor/bin/rmt_storage
@@ -1181,7 +1181,7 @@ vendor/bin/imsqmidaemon
 vendor/bin/ims_rtp_daemon
 vendor/bin/imsdatadaemon
 vendor/bin/imsrcsd
--app/ims/ims.apk|2e78bcabe64ed1a988f8550ec78fdbc9ee7704be
+-priv-app/ims/ims.apk|eef47c0b6f250e7f96e7155d84274b1c83940d8f
 vendor/framework/qti-vzw-ims-internal.jar
 vendor/lib64/lib-dplmedia.so
 vendor/lib64/lib-imsrcs-v2.so
