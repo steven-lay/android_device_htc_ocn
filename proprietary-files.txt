@@ -561,7 +561,7 @@ etc/permissions/com.quicinc.cne.xml
 framework/cneapiclient.jar
 framework/com.quicinc.cne.jar
 framework/com.quicinc.cne.api-V1.0-java.jar
--priv-app/CNEService/CNEService.apk
+-priv-app/CNEService/CNEService.apk|cd015cf0e96e4fe3c62f840131f5af890f453d65
 vendor/lib/libcneqmiutils.so
 lib/libvendorconn.so
 vendor/lib/libwms.so
