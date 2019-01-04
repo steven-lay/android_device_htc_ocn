@@ -692,6 +692,9 @@ etc/firmware/widevine.b05:/vendor/firmware/widevine.b05
 etc/firmware/widevine.b06:/vendor/firmware/widevine.b06
 etc/firmware/widevine.b07:/vendor/firmware/widevine.b07
 etc/firmware/widevine.mdt:/vendor/firmware/widevine.mdt
+vendor/lib/libwvhidl.so
+vendor/etc/init/android.hardware.drm@1.0-service.widevine.rc
+vendor/bin/hw/android.hardware.drm@1.0-service.widevine
 
 # Edge Sensor
 vendor/firmware/edge_xr15510.img
