@@ -1033,13 +1033,6 @@ vendor/bin/pm-service
 vendor/lib/libperipheral_client.so
 vendor/lib64/libperipheral_client.so
 
-# Postprocessing
-etc/permissions/com.qti.snapdragon.sdk.display.xml
-framework/com.qti.snapdragon.sdk.display.jar
-vendor/bin/mm-pp-dpps
-vendor/lib/libdisp-aba.so
-vendor/lib64/libdisp-aba.so
-
 # Power
 vendor/etc/powerhint.xml|c23d3a9d8d2ba3b1bbd09c272d75c7143ba17cd0
 
