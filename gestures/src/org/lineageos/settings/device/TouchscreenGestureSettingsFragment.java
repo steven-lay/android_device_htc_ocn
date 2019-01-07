@@ -17,6 +17,7 @@
 
 package org.lineageos.settings.device;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v14.preference.PreferenceFragment;
 import android.util.Log;
@@ -31,8 +32,9 @@ public static final String TAG = "GESTURESETTINGS";
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.gesture_panel);
+        final ActionBar actionBar = getActivity().getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         mSeekBar = (SeekBarPreference) findPreference(SEEKBAR_PREFERENCE);
         Log.d(TAG, "OnCreatePref" +  mSeekBar );
     }
-
 }

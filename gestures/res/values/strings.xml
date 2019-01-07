@@ -14,8 +14,8 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="gesture_panel_display_title">Gestures</string>
-	
+    <string name="gesture_panel_display_title">HTC Gestures and Edge sense</string>
+    <string name="style_summary"></string>
 
     <!-- Gestures: Touchscreen gestures -->
     <string name="touchscreen_gestures_haptic_feedback_title">Haptic feedback</string>

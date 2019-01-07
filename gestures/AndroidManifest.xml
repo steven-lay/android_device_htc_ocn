@@ -3,6 +3,8 @@
       package="org.lineageos.settings.device"
       android:sharedUserId="android.uid.system">
 
+    <original-package android:name="com.cyanogenmod.settings.device" />
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" /> 
     <uses-permission android:name="android.permission.INJECT_EVENTS" />
@@ -13,7 +15,8 @@
             android:supportsRtl="true"
             android:defaultToDeviceProtectedStorage="true"
             android:directBootAware="true"
-            android:allowBackup="true">
+            android:allowBackup="true"
+            android:persistent="true">
 
         <receiver android:name="org.lineageos.settings.device.BootReceiver">
             <intent-filter>
@@ -28,12 +31,16 @@
 
         <activity
             android:name=".TouchscreenGestureSettingsActivity"
-            android:label="@string/gesture_panel_display_title"
-            android:theme="@style/Theme.Settings">
+            android:label="@string/gesture_panel_display_title">
             <intent-filter>
-                <action android:name="org.lineageos.settings.device.GESTURE_SETTINGS" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
             </intent-filter>
+            <meta-data
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.gestures" />
+            <meta-data
+                android:name="com.android.settings.summary"
+                android:resource="@string/style_summary" />
         </activity>
 
     </application>
