@@ -1010,7 +1010,7 @@ vendor/etc/perf/perf-profile3.conf
 vendor/etc/perf/perf-profile4.conf
 vendor/etc/perf/perf-profile5.conf
 vendor/etc/perf/perf-profile6.conf
-vendor/etc/perf/perfboostsconfig.xml|f15d7db710490d95681d6a45d9ab38fb6e1f556c
+vendor/etc/perf/perfboostsconfig.xml|5334c3537113b44b6c9ff8f79a33205c645d848a
 vendor/lib/libfeedbackhandler.so|4a2783a03cf4f9935eb63e4525621d70c7fb0462
 vendor/lib/libperfgluelayer.so|f38d3a317e41718fd574c39edb843f10cc05f8bd
 vendor/lib/libqti-perfd-client.so|4dc73bb0039c9db0fea0bf622370f4e393647c41
