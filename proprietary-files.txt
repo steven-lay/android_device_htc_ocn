@@ -1267,14 +1267,12 @@ vendor/firmware/slpi_v2.b14
 vendor/firmware/slpi_v2.cfg
 vendor/firmware/slpi_v2.mdt
 
-# Thermal
-vendor/etc/thermal-engine.conf
-vendor/bin/thermal-engine
-vendor/etc/thermal-monitor.conf
-vendor/bin/thermal-monitor
--vendor/lib/libthermalclient.so
--vendor/lib64/libthermalclient.so
-vendor/lib64/libthermalioctl.so
+# Thermal - Oneplus 5 (cheeseburger)
+vendor/etc/thermal-engine.conf|c6c9312b7c7b52926cf7d0fc9bff933d90967100
+vendor/bin/thermal-engine|95e0937ccc3f876c27772ca0f8086505c11dc927
+-vendor/lib/libthermalclient.so|4579096edb376b06827f8e90a49480cf121030f0
+-vendor/lib64/libthermalclient.so|54121e31e4a5170f8c50e36ddb57685b6c538a21
+vendor/lib64/libthermalioctl.so|77e51147daac315cb37f59e707bba1ebbc785d87
 
 # Time services
 -vendor/app/TimeService/TimeService.apk
