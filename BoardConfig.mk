@@ -51,7 +51,7 @@ BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_RAMDISK_OFFSET     := 0x01000000
 TARGET_COMPILE_WITH_MSM_KERNEL := true
 TARGET_KERNEL_SOURCE := kernel/htc/msm8998
-TARGET_KERNEL_CONFIG := lineage_ocean_defconfig
+TARGET_KERNEL_CONFIG := lineage_ocn_defconfig
 
 BOARD_ROOT_EXTRA_FOLDERS := bt_firmware dsp firmware persist
 
