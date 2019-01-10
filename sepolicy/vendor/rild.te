@@ -1,0 +1,3 @@
+set_prop(rild, diag_prop)
+allow rild shell_exec:file { getattr read open execute execute_no_trans };
+allow rild toolbox_exec:file { getattr read open execute execute_no_trans };

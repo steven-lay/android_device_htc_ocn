@@ -8,3 +8,5 @@ allow ueventd graphics_device:dir relabelto;
 allow ueventd graphics_device:file relabelto;
 allow ueventd graphics_device:lnk_file relabelto;
 allow ueventd mba_debug_dev:blk_file r_file_perms;
+allow ueventd vfat:dir { r_file_perms search };
+allow ueventd vfat:file r_file_perms;

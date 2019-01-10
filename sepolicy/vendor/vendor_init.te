@@ -7,9 +7,14 @@ allow vendor_init {
     system_data_file
     media_rw_data_file
     tombstone_data_file
-}:dir create_dir_perms;
+    wifi_data_file
+    wpa_socket
+    dhcp_data_file
+}:dir  { create_dir_perms setattr };
 
 allow vendor_init dm_device:chr_file getattr;
 allow vendor_init rootfs:dir { add_name setattr write };
 allow vendor_init radio_data_file:file { getattr open read };
 allow vendor_init firmware_file:dir mounton;
+allow vendor_init sysfs:dir write;
+allow vendor_init system_data_file:lnk_file create;

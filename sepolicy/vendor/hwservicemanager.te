@@ -2,3 +2,8 @@ allow hwservicemanager thermal-engine:binder transfer;
 allow hwservicemanager thermal-engine:dir search;
 allow hwservicemanager thermal-engine:file { open read };
 allow hwservicemanager thermal-engine:process getattr;
+allow hwservicemanager init:dir { search };
+allow hwservicemanager init:file { read open };
+allow hwservicemanager init:process { getattr };
+allow hwservicemanager init:binder call;
+

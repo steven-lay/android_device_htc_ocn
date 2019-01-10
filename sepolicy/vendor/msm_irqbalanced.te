@@ -1,1 +1,4 @@
 allow msm_irqbalanced self:capability { setuid setgid dac_override };
+allow msm_irqbalanced sysfs_irqbalance:dir { search };
+allow msm_irqbalanced sysfs_irqbalance:file { write };
+

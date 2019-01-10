@@ -75,6 +75,7 @@
 
 # Sysfs
 /sys/devices/virtual/htc_sensorhub(/.*)?                                      u:object_r:sysfs_sensors:s0
+/sys/class/htc_sensorhub/sensor_hub(/.*)?				      u:object_r:sysfs_sensors:s0
 /sys/devices/virtual/optical_sensors/proximity/ps_pocket                      u:object_r:sysfs_sensors:s0
 /sys/android_edge/gadc                                                        u:object_r:sysfs_sensors:s0
 /sys/devices/soc/soc:fp_fpc1020(/.*?)                                         u:object_r:sysfs_fps_attr:s0

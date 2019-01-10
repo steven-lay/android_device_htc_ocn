@@ -11,6 +11,7 @@ allow system_server sensors_persist_file:file r_file_perms;
 allow system_server sensors_persist_file:dir search;
 allow system_server proc_stat:file r_file_perms;
 allow system_server user_profile_data_file:dir r_file_perms;
+allow system_server init:binder call;
 
 # For gestures
 allow system_server sysfs_sensors:file w_file_perms;

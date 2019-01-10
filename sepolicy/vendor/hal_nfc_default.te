@@ -1,5 +1,8 @@
 r_dir_file(hal_nfc_default, firmware_file)
 
+allow hal_nfc_default nfc_vendor_data_file:dir { search write add_name };
+allow hal_nfc_default nfc_vendor_data_file:file create;
+
 dontaudit hal_nfc_default nxpnfc_hwservice:hwservice_manager add;
 dontaudit hal_nfc_default nxpese_hwservice:hwservice_manager find;
-allow hal_nfc_default nfc_vendor_data_file:dir search;
+

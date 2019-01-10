@@ -1,7 +1,17 @@
 allow init servicemanager:binder { call };
 allow init proc:lnk_file { setattr };
+allow init vendor_file:file execute_no_trans;
+allow init system_data_file:lnk_file r_file_perms;
+allow init hwservicemanager:binder { call transfer };
+allow init hal_power_hwservice:hwservice_manager add;
+allow init sysfs_kgsl:lnk_file read;
+allow init hidl_base_hwservice:hwservice_manager add;
+allow init device_latency:chr_file write;
 
 # Allow init to chown/chmod on pseudo files in /sys
 allow init sysfs_type:file { open read write setattr };
 
+allow init { netd domain tzdatacheck vendor_init ueventd tee fsck lmkd crash_dump }:process noatsecure;
+
 dontaudit init kernel:system module_request;
+

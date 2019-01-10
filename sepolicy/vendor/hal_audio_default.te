@@ -1,4 +1,6 @@
 hal_client_domain(hal_audio_default, hal_power)
 
 get_prop(hal_audio_default, audio_prop)
-allow hal_audio_default vendor_data_file:file rw_file_perms;
+allow hal_audio_default vendor_data_file:file { create rw_file_perms };
+allow hal_audio_default vendor_data_file:dir { add_name write };
+allow hal_audio_default init:binder call;

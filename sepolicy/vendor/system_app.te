@@ -1,0 +1,3 @@
+allow system_app sysfs_sensors:lnk_file { rw_file_perms };
+allow system_app sysfs_sensors:dir { search };
+allow system_app sysfs_sensors:file { rw_file_perms };

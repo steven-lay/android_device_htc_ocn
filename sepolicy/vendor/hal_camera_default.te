@@ -1,3 +1,7 @@
 allow hal_camera_default sysfs_jpeg:dir r_dir_perms;
+allow hal_camera_default sysfs:file { open read getattr };
+allow hal_camera_default cameraserver:file { getattr read open };
+allow hal_camera_default cameraserver:dir search;
+allow hal_camera_default proc_version:file { open read getattr };
 dontaudit hal_camera_default camera_data_file:dir search;
 dontaudit hal_camera_default debugfs:file { getattr open read };
