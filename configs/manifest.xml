@@ -266,7 +266,7 @@
         <version>1.0</version>
         <interface>
             <name>IGatekeeper</name>
-            <instance>msm8998</instance>
+            <instance>default</instance>
         </interface>
     </hal>
     <hal format="hidl">
@@ -311,7 +311,7 @@
         <version>3.0</version>
         <interface>
             <name>IKeymasterDevice</name>
-            <instance>msm8998</instance>
+            <instance>default</instance>
         </interface>
     </hal>
     <hal format="hidl">
