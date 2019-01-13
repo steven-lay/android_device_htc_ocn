@@ -969,6 +969,14 @@ vendor/bin/msm_irqbalance
 vendor/lib64/hw/keystore.msm8998.so
 vendor/lib/hw/keystore.msm8998.so
 
+# Keymaster
+vendor/lib/libkeymasterutils.so
+vendor/lib/libkeymasterprovision.so
+vendor/lib/libkeymasterdeviceutils.so
+vendor/lib64/libkeymasterutils.so
+vendor/lib64/libkeymasterprovision.so
+vendor/lib64/libkeymasterdeviceutils.so
+
 # Media
 -vendor/lib/libgpustats.so
 -vendor/lib64/libgpustats.so
