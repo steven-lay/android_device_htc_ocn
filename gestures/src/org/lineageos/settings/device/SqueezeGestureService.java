@@ -91,6 +91,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private static final String SQUEEZE_LONG_ACTION = "squeeze_long";
     private static final String SQUEEZE_GESTURE_ENABLE = "squeeze_enabled";
     private static final String SQUEEZE_FORCE = "squeeze_force";
+    private static final String SQUEEZE_HAPTIC_FEEDBACK_ENABLED = "squeeze_haptic_feedback";
     private static final int SQUEEZE_FORCE_DEFAULT = 30;
     private static final int SQUEEZE_FORCE_MULTIPLIER = 6;
     private static final int GESTURE_WAKELOCK_DURATION = 500;
@@ -111,6 +112,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private int mShortSqueezeAction;
     private int mLongSqueezeAction;
     private boolean mSqueezeEnabled;
+    private boolean mHapticFeedbackEnabled;
 
     private Sensor mEdgeSensor = null;
     private SensorEventListener mEdgeSensorEventListener;
@@ -274,6 +276,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
             mSqueezeEnabled = sharedPreferences.getBoolean(SQUEEZE_GESTURE_ENABLE, true);
             mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
             mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
+	    mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
         } catch (NumberFormatException e) {
             Log.e(TAG, "Error loading preferences");
         }
@@ -301,7 +304,9 @@ public class SqueezeGestureService extends Service implements SensorEventListene
                 } else if (SQUEEZE_FORCE.equals(key)) {
                     mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
                     mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
-                }
+                } else if (SQUEEZE_HAPTIC_FEEDBACK_ENABLED.equals(key)) {
+		    mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+		}
             } catch (NumberFormatException e) {
                 Log.e(TAG, "Error loading preferences");
             }
@@ -443,9 +448,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
         if (mVibrator == null || !mVibrator.hasVibrator()) {
             return;
         }
-            final boolean enabled = LineageSettings.System.getInt(mContext.getContentResolver(),
-                    LineageSettings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK, 1) != 0;
-            if (enabled) {
+	if (mHapticFeedbackEnabled) {
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
         }

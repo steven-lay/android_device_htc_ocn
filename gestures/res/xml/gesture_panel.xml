@@ -72,6 +72,13 @@
             android:summaryOn="Squeeze gestures are enabled"
             android:summaryOff="Squeeze gestures are disabled" />
 
+        <SwitchPreference
+            android:key="squeeze_haptic_feedback"
+            android:title="@string/touchscreen_gestures_haptic_feedback_title"
+            android:defaultValue="true"
+            android:summary="Vibrate when a squeeze gesture is activated"
+            android:dependency="squeeze_enabled" />
+
         <ListPreference
             android:key="squeeze_short"
             android:defaultValue="0"
