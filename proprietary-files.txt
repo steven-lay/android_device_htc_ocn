@@ -747,10 +747,10 @@ vendor/lib64/lib_htc_fp_hal_util.so
 vendor/lib/hw/gatekeeper.msm8998.so
 vendor/lib64/hw/gatekeeper.msm8998.so
 
-lib/vendor.qti.gnss@1.0.so
+lib/vendor.qti.gnss@1.0.so|8fb1b90a7a07ca18822f075fc8b1a62526c55c0c
 lib/libxt_native.so
 lib/liblocationservice_jni.so
-lib64/vendor.qti.gnss@1.0.so
+lib64/vendor.qti.gnss@1.0.so|9598b6540b72f08e8d0b435138fdd29e7bea511b
 lib64/libxt_native.so
 lib64/liblocationservice_jni.so
 etc/permissions/com.qti.location.sdk.xml
@@ -764,7 +764,7 @@ vendor/bin/lowi-server
 vendor/bin/slim_daemon
 vendor/bin/xtwifi-client
 vendor/bin/xtwifi-inet-agent
-vendor/bin/hw/vendor.qti.gnss@1.0-service
+vendor/bin/hw/vendor.qti.gnss@1.0-service|424a63e998c4e4386b25493b5c37f18a00facbba
 vendor/etc/init/vendor.qti.gnss@1.0-service.rc
 vendor/etc/cacert_location.pem
 vendor/etc/xtra_root_cert.pem
@@ -790,8 +790,8 @@ vendor/lib/libulp2.so
 vendor/lib/libslimclient.so
 vendor/lib/libxtadapter.so
 vendor/lib/libxtwifi_ulp_adaptor.so
-vendor/lib/vendor.qti.gnss@1.0_vendor.so
-vendor/lib/hw/vendor.qti.gnss@1.0-impl.so
+vendor/lib/vendor.qti.gnss@1.0_vendor.so|10f722f74f5091f9a3625120e5e9cabea19a2bf1
+vendor/lib/hw/vendor.qti.gnss@1.0-impl.so|cbad35fd03f84d0bae6afb3a5f93132ad9bd07ca
 -vendor/lib64/libloc_api_v02.so
 vendor/lib64/libloc_ds_api.so
 vendor/lib64/libalarmservice_jni.so
@@ -814,8 +814,8 @@ vendor/lib64/libulp2.so
 vendor/lib64/libslimclient.so
 vendor/lib64/libxtadapter.so
 vendor/lib64/libxtwifi_ulp_adaptor.so
-vendor/lib64/vendor.qti.gnss@1.0_vendor.so
-vendor/lib64/hw/vendor.qti.gnss@1.0-impl.so
+vendor/lib64/vendor.qti.gnss@1.0_vendor.so|46cb5ed3e9eb83a433b48f7844c79d590842411c
+vendor/lib64/hw/vendor.qti.gnss@1.0-impl.so|d513ca63f5384edca2d4d6dfca9d0934c86d176e
 
 # Gesture Sensor
 vendor/firmware/nanohub.full.bin
