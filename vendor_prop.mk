@@ -166,7 +166,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.data.df.mux_count=8 \
     persist.data.df.ul_mode=5 \
     persist.data.wda.enable=true \
-    persist.rmnet.data.enable=true
+    persist.rmnet.data.enable=true \
+    persist.data.iwlan.enable=true 
 
 # Sensors
 PRODUCT_PROPERTY_OVERRIDES += \
