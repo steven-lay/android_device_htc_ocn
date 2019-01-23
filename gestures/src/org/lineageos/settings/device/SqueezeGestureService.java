@@ -113,6 +113,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private int mLongSqueezeAction;
     private boolean mSqueezeEnabled;
     private boolean mHapticFeedbackEnabled;
+    private boolean mLongSqueezeHandled = false;
 
     private Sensor mEdgeSensor = null;
     private SensorEventListener mEdgeSensorEventListener;
@@ -181,18 +182,19 @@ public class SqueezeGestureService extends Service implements SensorEventListene
 
     public void onSensorChanged(SensorEvent sensorEvent) {
         float averageValue = ((sensorEvent.values[8] + sensorEvent.values[9])/2);
-            if (DEBUG) {
-                Log.d(TAG, "sensorEvent.values[8]=" + sensorEvent.values[8]);
-                Log.d(TAG, "sensorEvent.values[9]=" + sensorEvent.values[9]);
-                Log.d(TAG, "averageForce=" + averageValue);
-            }
-        if (averageValue >= mForcePref) {
-           tEnd = System.currentTimeMillis();
+        if ((averageValue >= mForcePref) && !mLongSqueezeHandled) {
+	   tEnd = System.currentTimeMillis();
+	   tDelta = tEnd - tStart;
+	   if (tDelta > 700 && !mLongSqueezeHandled) {
+                int action = gestureToAction(LONGSQUEEZE);
+                if (action > -1) {
+                    handleGestureAction(action);
+		    mLongSqueezeHandled = true;
+		}
+           }
         } else {
-            tDelta = tEnd - tStart;
-            if (tDelta >=100 && tDelta <=700) {
-                if (DEBUG) { Log.d(TAG, "Foreground App Name " + getForegroundApp(mContext)); }
-		        if (getForegroundApp(mContext).equals("Camera")){
+            if (tDelta >= 100 && tDelta <= 700) {
+		if (getForegroundApp(mContext).equals("Camera")){
                     doHapticFeedback();
                     SystemClock.sleep(500);
                     simulateKey(KeyEvent.KEYCODE_VOLUME_UP);
@@ -200,19 +202,16 @@ public class SqueezeGestureService extends Service implements SensorEventListene
                         mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
                 } else {
                     int action = gestureToAction(SHORTSQUEEZE);
-                    if (action > -1) {
+                    if (action > -1)
                         handleGestureAction(action);
-                    }
                 }
-            } else if (tDelta > 700) {
-                int action = gestureToAction(LONGSQUEEZE);
-                if (action > -1) {
-                    handleGestureAction(action);
-                }
-            }
-            tStart = System.currentTimeMillis();
-            tEnd = System.currentTimeMillis();
-            tDelta = 0;
+	    }
+	    if (averageValue < mForcePref) {
+		tStart = System.currentTimeMillis();
+		tEnd = System.currentTimeMillis();
+		tDelta = 0;
+		mLongSqueezeHandled = false;
+	    }
         }
     }
 
