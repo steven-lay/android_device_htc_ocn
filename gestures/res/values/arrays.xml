@@ -32,6 +32,23 @@
         <item>@string/action_volume_up</item>
     </string-array>
 
+    <string-array name="action_entries_squeeze" translatable="false">
+        <item>@string/action_do_nothing</item>
+        <item>@string/action_flashlight</item>
+        <item>@string/action_camera</item>
+        <item>@string/action_browser</item>
+        <item>@string/action_dialer</item>
+        <item>@string/action_email</item>
+        <item>@string/action_messages</item>
+        <item>@string/action_play_pause_music</item>
+        <item>@string/action_previous_track</item>
+        <item>@string/action_next_track</item>
+        <item>@string/action_volume_down</item>
+        <item>@string/action_volume_up</item>
+        <item>@string/action_take_screenshot</item>
+    </string-array>
+
+
     <string-array name="action_values" translatable="false">
         <item>0</item>
         <item>1</item>
@@ -45,6 +62,22 @@
         <item>9</item>
         <item>10</item>
         <item>11</item>
+    </string-array>
+
+    <string-array name="action_values_squeeze" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
     </string-array>
 
 </resources>

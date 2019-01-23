@@ -47,5 +47,6 @@
     <string name="action_next_track">Skip to the next music track</string>
     <string name="action_volume_down">Lower media volume</string>
     <string name="action_volume_up">Raise media volume</string>
+    <string name="action_take_screenshot">Take a screenshot</string>
 
 </resources>

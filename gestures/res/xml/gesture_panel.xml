@@ -84,8 +84,8 @@
             android:defaultValue="0"
             android:title="@string/squeeze_short_title"
             android:dialogTitle="@string/squeeze_short_title"
-            android:entries="@array/action_entries"
-            android:entryValues="@array/action_values"
+            android:entries="@array/action_entries_squeeze"
+            android:entryValues="@array/action_values_squeeze"
             android:dependency="squeeze_enabled" />
         
         <ListPreference
@@ -93,8 +93,8 @@
             android:defaultValue="0"
             android:title="@string/squeeze_long_title"
             android:dialogTitle="@string/squeeze_long_title"
-            android:entries="@array/action_entries"
-            android:entryValues="@array/action_values" 
+            android:entries="@array/action_entries_squeeze"
+            android:entryValues="@array/action_values_squeeze"
             android:dependency="squeeze_enabled" />
 
         <org.lineageos.settings.device.widget.SeekBarPreference

@@ -124,6 +124,8 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     long tEnd = System.currentTimeMillis();
     long tDelta =0;
 
+    static final int ACTION_TAKE_SCREENSHOT = 12;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -262,6 +264,9 @@ public class SqueezeGestureService extends Service implements SensorEventListene
             case TouchscreenGestureConstants.ACTION_VOLUME_UP:
                 volumeUp();
                 break;
+            case ACTION_TAKE_SCREENSHOT:
+                takeScreenshot();
+                break;
         }
         mSensorManager.registerListener(mEdgeSensorEventListener,
                 mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
@@ -372,6 +377,15 @@ public class SqueezeGestureService extends Service implements SensorEventListene
             startActivitySafely(intent);
             doHapticFeedback();
         }
+    }
+
+    private void takeScreenshot() {
+	if (ScreenStateReceiver.isScreenOn) {
+            simulateKey(KeyEvent.KEYCODE_SYSRQ);
+	    doHapticFeedback();
+	} else {
+	    Log.d(TAG, "Cannot take screenshot while screen is off");
+	}
     }
 
     private void toggleFlashlight() {
