@@ -92,9 +92,11 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private static final String SQUEEZE_GESTURE_ENABLE = "squeeze_enabled";
     private static final String SQUEEZE_FORCE = "squeeze_force";
     private static final String SQUEEZE_HAPTIC_FEEDBACK_ENABLED = "squeeze_haptic_feedback";
+    private static final String SQUEEZE_LONG_SQUEEZE_DURATION = "long_squeeze_duration";
     private static final int SQUEEZE_FORCE_DEFAULT = 30;
     private static final int SQUEEZE_FORCE_MULTIPLIER = 6;
     private static final int GESTURE_WAKELOCK_DURATION = 500;
+    private static final int LONG_SQUEEZE_DURATION_DEFAULT = 700;
 
     private Context mContext;
     private PowerManager mPowerManager;
@@ -111,6 +113,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private boolean mTorchEnabled;
     private int mShortSqueezeAction;
     private int mLongSqueezeAction;
+    private int mLongSqueezeDuration = 700;
     private boolean mSqueezeEnabled;
     private boolean mHapticFeedbackEnabled;
     private boolean mLongSqueezeHandled = false;
@@ -185,7 +188,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
         if ((averageValue >= mForcePref) && !mLongSqueezeHandled) {
 	   tEnd = System.currentTimeMillis();
 	   tDelta = tEnd - tStart;
-	   if (tDelta > 700 && !mLongSqueezeHandled) {
+	   if ((tDelta > mLongSqueezeDuration) && !mLongSqueezeHandled) {
                 int action = gestureToAction(LONGSQUEEZE);
                 if (action > -1) {
                     handleGestureAction(action);
@@ -193,7 +196,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
 		}
            }
         } else {
-            if (tDelta >= 100 && tDelta <= 700) {
+            if (tDelta >= 100 && (tDelta <= mLongSqueezeDuration)) {
 		if (getForegroundApp(mContext).equals("Camera")){
                     doHapticFeedback();
                     SystemClock.sleep(500);
@@ -281,6 +284,8 @@ public class SqueezeGestureService extends Service implements SensorEventListene
             mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
             mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
 	    mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+            mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
+                        Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
         } catch (NumberFormatException e) {
             Log.e(TAG, "Error loading preferences");
         }
@@ -310,6 +315,9 @@ public class SqueezeGestureService extends Service implements SensorEventListene
                     mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
                 } else if (SQUEEZE_HAPTIC_FEEDBACK_ENABLED.equals(key)) {
 		    mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+		} else if (SQUEEZE_LONG_SQUEEZE_DURATION.equals(key)) {
+            mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
+                        Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
 		}
             } catch (NumberFormatException e) {
                 Log.e(TAG, "Error loading preferences");

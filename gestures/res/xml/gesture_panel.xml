@@ -97,6 +97,14 @@
             android:entryValues="@array/action_values_squeeze"
             android:dependency="squeeze_enabled" />
 
+        <ListPreference
+            android:key="long_squeeze_duration"
+            android:title="Long Squeeze activation time"
+	    android:defaultValue="700"
+            android:entries="@array/long_squeeze_entries"
+            android:entryValues="@array/long_squeeze_entries_values"
+            android:dependency="squeeze_enabled" />
+
         <org.lineageos.settings.device.widget.SeekBarPreference
             android:key="squeeze_force"
             android:title="Squeeze force"
