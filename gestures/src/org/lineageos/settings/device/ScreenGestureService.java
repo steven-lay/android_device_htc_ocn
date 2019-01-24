@@ -438,11 +438,9 @@ public class ScreenGestureService extends Service implements SensorEventListener
             return;
         }
 	if (mHapticIgnoreRinger) {
-	    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-	    v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
+	    mVibrator.vibrate(50);
 	} else if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-	    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-	    v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
+	    mVibrator.vibrate(50);
 	}
     }
 
