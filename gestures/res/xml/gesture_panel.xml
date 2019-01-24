@@ -116,4 +116,16 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="advanced_settings"
+        android:title="Advanced">
+
+        <SwitchPreference
+            android:key="haptic_ignore_ringer"
+            android:title="Haptic feedback ignores ringer mode"
+            android:defaultValue="true"
+            android:summary="Vibrate even when in Do Not Disturb Mode" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

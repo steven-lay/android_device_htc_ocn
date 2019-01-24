@@ -93,6 +93,8 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private static final String SQUEEZE_FORCE = "squeeze_force";
     private static final String SQUEEZE_HAPTIC_FEEDBACK_ENABLED = "squeeze_haptic_feedback";
     private static final String SQUEEZE_LONG_SQUEEZE_DURATION = "long_squeeze_duration";
+    private static final String HAPTIC_FEEDBACK_IGNORE_RINGER = "haptic_ignore_ringer";
+
     private static final int SQUEEZE_FORCE_DEFAULT = 30;
     private static final int SQUEEZE_FORCE_MULTIPLIER = 6;
     private static final int GESTURE_WAKELOCK_DURATION = 500;
@@ -116,6 +118,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     private int mLongSqueezeDuration = 700;
     private boolean mSqueezeEnabled;
     private boolean mHapticFeedbackEnabled;
+    private boolean mHapticIgnoreRinger;
     private boolean mLongSqueezeHandled = false;
 
     private Sensor mEdgeSensor = null;
@@ -284,6 +287,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
             mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
             mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
 	    mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+            mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
             mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
                         Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
         } catch (NumberFormatException e) {
@@ -316,8 +320,10 @@ public class SqueezeGestureService extends Service implements SensorEventListene
                 } else if (SQUEEZE_HAPTIC_FEEDBACK_ENABLED.equals(key)) {
 		    mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
 		} else if (SQUEEZE_LONG_SQUEEZE_DURATION.equals(key)) {
-            mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
-                        Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
+                    mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
+			Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
+		} else if (HAPTIC_FEEDBACK_IGNORE_RINGER.equals(key)) {
+		    mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
 		}
             } catch (NumberFormatException e) {
                 Log.e(TAG, "Error loading preferences");
@@ -466,13 +472,16 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     }
 
     private void doHapticFeedback() {
-        if (mVibrator == null || !mVibrator.hasVibrator()) {
+        if (mVibrator == null || !mVibrator.hasVibrator() || !mHapticFeedbackEnabled) {
             return;
         }
-	if (mHapticFeedbackEnabled) {
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
-        }
+	if (mHapticIgnoreRinger) {
+	    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+	    v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
+	} else if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+	    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+	    v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
+	}
     }
 
     private String getRearCameraId() {

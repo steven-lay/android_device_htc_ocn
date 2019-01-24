@@ -72,6 +72,8 @@ public class ScreenGestureService extends Service implements SensorEventListener
     private static final String KEY_SWIPE_LEFT = "swipe_left_action_key";
     private static final String KEY_SWIPE_RIGHT = "swipe_right_action_key";
 
+    private static final String HAPTIC_FEEDBACK_IGNORE_RINGER = "haptic_ignore_ringer";
+
     private static final int GESTURE_WAKELOCK_DURATION = 500;
 
     // Gestures
@@ -108,6 +110,7 @@ public class ScreenGestureService extends Service implements SensorEventListener
 
     private String mRearCameraId;
     private boolean mTorchEnabled;
+    private boolean mHapticIgnoreRinger;
 
     private int mSwipeUpAction;
     private int mSwipeDownAction;
@@ -265,6 +268,7 @@ public class ScreenGestureService extends Service implements SensorEventListener
                     Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
             mSwipeRightAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_RIGHT,
                         Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+            mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
         } catch (NumberFormatException e) {
             Log.e(TAG, "Error loading preferences");
         }
@@ -287,7 +291,9 @@ public class ScreenGestureService extends Service implements SensorEventListener
                 } else if (KEY_SWIPE_RIGHT.equals(key)) {
                     mSwipeRightAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_RIGHT,
                                 Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
-                }
+		} else if (HAPTIC_FEEDBACK_IGNORE_RINGER.equals(key)) {
+		    mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
+		}
             } catch (NumberFormatException e) {
                 Log.e(TAG, "Error loading preferences");
             }
@@ -426,15 +432,18 @@ public class ScreenGestureService extends Service implements SensorEventListener
     }
 
     private void doHapticFeedback() {
-        if (mVibrator == null || !mVibrator.hasVibrator()) {
+        final boolean enabled = LineageSettings.System.getInt(mContext.getContentResolver(),
+                    LineageSettings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK, 1) != 0;
+        if (mVibrator == null || !mVibrator.hasVibrator() || !enabled) {
             return;
         }
-            final boolean enabled = LineageSettings.System.getInt(mContext.getContentResolver(),
-                    LineageSettings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK, 1) != 0;
-            if (enabled) {
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
-        }
+	if (mHapticIgnoreRinger) {
+	    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+	    v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
+	} else if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+	    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+	    v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
+	}
     }
 
     private String getRearCameraId() {
