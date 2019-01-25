@@ -109,12 +109,10 @@ void Light::setBatteryLight(const LightState& state) {
 
 void Light::setCapacitiveLight(const LightState& state) {
     std::lock_guard<std::mutex> lock(mLock);
-    mCapacitiveState = state;
-    if (isLit(mCapacitiveState)) {
-        mCapacitive << 255 << std::endl;
-    } else  {
-        mCapacitive << 0 << std::endl;
-    }
+
+    uint32_t brightness = rgbToBrightness(state);
+
+    mCapacitive << brightness << std::endl;
 }
 
 void Light::setNotificationLight(const LightState& state) {
