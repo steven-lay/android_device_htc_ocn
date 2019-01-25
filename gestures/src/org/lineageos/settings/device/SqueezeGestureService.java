@@ -191,7 +191,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
         if ((averageValue >= mForcePref) && !mLongSqueezeHandled) {
 	   tEnd = System.currentTimeMillis();
 	   tDelta = tEnd - tStart;
-	   if ((tDelta > mLongSqueezeDuration) && !mLongSqueezeHandled) {
+	   if (tDelta > mLongSqueezeDuration) {
                 int action = gestureToAction(LONGSQUEEZE);
                 if (action > -1) {
                     handleGestureAction(action);
