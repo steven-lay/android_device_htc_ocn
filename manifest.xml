@@ -354,7 +354,7 @@
         <version>2.0</version>
         <interface>
             <name>ILight</name>
-            <instance>msm8998</instance>
+            <instance>default</instance>
         </interface>
     </hal>
     <hal format="hidl">
