@@ -220,7 +220,7 @@ BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 BOARD_ROOT_EXTRA_FOLDERS := bt_firmware dsp firmware persist
 
 # Shims
-TARGET_LD_SHIM_LIBS := /vendor/lib/hw/camera.msm8998.so|libcamera_shim.so
+TARGET_LD_SHIM_LIBS := /vendor/lib/hw/camera.msm8998.so|libcamera_shim.so:/system/lib64/lib-imsvideocodec.so|libims_shim.so
 
 # Qualcomm
 BOARD_USES_QCOM_HARDWARE := true

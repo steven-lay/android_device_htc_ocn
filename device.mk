@@ -236,6 +236,7 @@ PRODUCT_PACKAGES += \
 
 # IMS
 PRODUCT_PACKAGES += \
+    libims_shim \
     com.android.ims.rcsmanager
 
 # Init
