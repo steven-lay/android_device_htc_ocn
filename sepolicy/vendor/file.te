@@ -3,3 +3,4 @@ type nanohub_lock_file, file_type, data_file_type;
 type sysfs_nanoapp_cmd, fs_type, sysfs_type;
 type sysfs_wifi, fs_type, sysfs_type;
 type sensors_cal_file, file_type;
+type debugfs_wlan, debugfs_type, fs_type;
