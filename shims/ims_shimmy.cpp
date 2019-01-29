@@ -14,12 +14,4 @@
  * limitations under the License.
  */
 
-#include "ims_shimmy.cpp"
-
-extern "C" void _ZN7android10frameworks13sensorservice4V1_08toStringENS2_6ResultE() { }
-extern "C" void _ZN7android21SurfaceComposerClient13createSurfaceERKNS_7String8EjjijPNS_14SurfaceControlEjj() { }
-extern "C" void _ZN7android21SurfaceComposerClient21openGlobalTransactionEv() { }
-extern "C" void _ZN7android14SurfaceControl8setLayerEi() { }
-extern "C" void _ZN7android14SurfaceControl7setSizeEjj() { }
-extern "C" void _ZN7android14SurfaceControl11setPositionEff() { }
-extern "C" void _ZN7android21SurfaceComposerClient22closeGlobalTransactionEb() { }
+extern "C" void _ZN7android5FenceD1Ev() {}
