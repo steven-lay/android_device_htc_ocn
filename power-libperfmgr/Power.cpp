@@ -15,7 +15,7 @@
  */
 
 #define ATRACE_TAG (ATRACE_TAG_POWER | ATRACE_TAG_HAL)
-#define LOG_TAG "android.hardware.power@1.2-service.nash-libperfmgr"
+#define LOG_TAG "android.hardware.power@1.2-service.ocn-libperfmgr"
 
 #include <android-base/file.h>
 #include <android-base/logging.h>
