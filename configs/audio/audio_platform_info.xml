@@ -40,163 +40,8 @@
         <device name="SND_DEVICE_IN_CAPTURE_VI_FEEDBACK_MONO_2" acdb_id="152"/>
         <device name="SND_DEVICE_IN_CAMCORDER_MIC" acdb_id="506" />
         <device name="SND_DEVICE_IN_HANDSET_MIC" acdb_id="41" />
-        <device name="SND_DEVICE_IN_VOICE_SPEAKER_MIC" acdb_id="42" />
-            <!-- speaker: SPKR_PHONE_SPKR_STEREO -->
         <device name="SND_DEVICE_IN_HEADSET_MIC" acdb_id="501"/>
-            <!-- headset-mic: Interal_MIC_VoiceRecoder -->
-        <!-- HTC DEV START -->
-        <!-- HTC OUT MFG -->
-        <device name="SND_DEVICE_OUT_MFG_SPEAKER" acdb_id="15"/>
-            <!-- mfg-speaker -->
-        <device name="SND_DEVICE_OUT_MFG_SPEAKER_DSP" acdb_id="15"/>
-            <!-- mfg-speaker-dsp -->
-        <device name="SND_DEVICE_OUT_MFG_HEADPHONES" acdb_id="10"/>
-            <!-- mfg-headphones -->
-        <device name="SND_DEVICE_OUT_MFG_EARPIECE" acdb_id="7"/>
-            <!-- mfg-earpiece -->
-        <!-- HTC OUT DEV -->
-        <device name="SND_DEVICE_OUT_SPEAKER_VOICE" acdb_id="15"/>
-            <!--speaker-voice-->
-        <device name="SND_DEVICE_OUT_SPEAKER_CAR_VOICE" acdb_id="610"/>
-            <!--speaker-car-voice-->
-        <device name="SND_DEVICE_OUT_SPEAKER_FM" acdb_id="15"/>
-            <!--speaker-car-voice-->
-        <device name="SND_DEVICE_OUT_SPEAKER_HW_VOIP" acdb_id="604"/>
-            <!--speaker-hw-voip-->
-        <device name="SND_DEVICE_OUT_SPEAKER_AUDIO_EC_VOIP" acdb_id="607"/>
-            <!--speaker-audio-voip-->
-        <device name="SND_DEVICE_OUT_SPEAKER_RIGNTONE" acdb_id="15"/>
-            <!--speaker-ringtone-->
-        <device name="SND_DEVICE_OUT_HEADPHONES_VOICE" acdb_id="10"/>
-            <!--headphones-voice-->
-        <device name="SND_DEVICE_OUT_HEADPHONES_FM" acdb_id="10"/>
-            <!--headphones-fm-->
-        <device name="SND_DEVICE_OUT_HEADPHONES_HW_VOIP" acdb_id="401"/>
-            <!--headphones-hw-voip-->
-        <device name="SND_DEVICE_OUT_HEADPHONES_AUDIO_EC_VOIP" acdb_id="402"/>
-            <!--headphones-audio-voip-->
-        <device name="SND_DEVICE_OUT_EARPIECE" acdb_id="7"/>
-            <!--earpiece-->
-        <device name="SND_DEVICE_OUT_EARPIECE_VOICE" acdb_id="7"/>
-            <!--earpiece-voice-->
-        <device name="SND_DEVICE_OUT_EARPIECE_HW_VOIP" acdb_id="202"/>
-            <!--earpiece-hw-voip-->
-        <device name="SND_DEVICE_OUT_EARPIECE_AUDIO_EC_VOIP" acdb_id="203"/>
-            <!--earpiece-audio-voip-->
-        <device name="SND_DEVICE_OUT_EARPIECE_HAC_VOICE" acdb_id="201"/>
-            <!--earpiece-hac-voice-->
-        <device name="SND_DEVICE_OUT_SPEAKER_HEADSET" acdb_id="603"/>
-            <!--speaker-headset-->
-        <device name="SND_DEVICE_OUT_VOICE_SPEAKER_AND_HEADPHONES" acdb_id="7"/>
-            <!--voice-speaker-and-headphones-->
-        <device name="SND_DEVICE_OUT_EARPIECE_HAC_VOICE_SIDETONE" acdb_id="211"/>
-            <!--earpiece-hac-voice-sidetone-->
-        <device name="SND_DEVICE_OUT_JBL_USB_HEADSET_VOICE_CALL" acdb_id="645"/>
-            <!--voice-tx-jbl-->
-        <device name="SND_DEVICE_OUT_USB_HEADPHONES_AUDIO_EC_VOIP" acdb_id="645"/>
-            <!--usb-headphones-audio-voip-->
-        <device name="SND_DEVICE_OUT_JBL_USB_AUDIO_EC_VOIP" acdb_id="945"/>
-            <!--voice-tx-jbl-->
-        <device name="SND_DEVICE_OUT_BT_SCO_AUDIO_EC_VOIP" acdb_id="11000"/>
-            <!--bt-sco-headphone-audio-voip-->
-        <device name="SND_DEVICE_OUT_BT_SCO_AUDIO_EC_VOIP_WB" acdb_id="11000"/>
-            <!--bt-sco-headphone-audio-voip-->
-        <device name="SND_DEVICE_OUT_SPEAKER_BT_SCO" acdb_id="603"/>
-            <!--speaker-bt-sco-->
-        <device name="SND_DEVICE_OUT_SPEAKER_BT_SCO_WB" acdb_id="603"/>
-            <!--speaker-bt-sco-wb-->
-
-        <!-- HTC IN MFG -->
-        <device name="SND_DEVICE_IN_MFG_REC_00" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_01" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_02" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_03" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_04" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_13" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_14" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_15" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_21" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_22" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_23" acdb_id="4"/>
-        <device name="SND_DEVICE_IN_MFG_REC_24" acdb_id="4"/>
-        <!-- HTC IN DEV -->
-        <device name="SND_DEVICE_IN_LINE" acdb_id="501"/>
-            <!--line-->
-        <device name="SND_DEVICE_IN_LINE_VR" acdb_id="505"/>
-            <!--line-vr-->
-        <device name="SND_DEVICE_IN_LINE_VOICE" acdb_id="4"/>
-            <!--line-voice-->
-        <device name="SND_DEVICE_IN_LINE_HW_VOIP" acdb_id="504"/>
-            <!--line-hw-voip-->
-        <device name="SND_DEVICE_IN_LINE_AUDIO_EC_VOIP" acdb_id="507"/>
-            <!--line-audio_ec-voip-->
-        <device name="SND_DEVICE_IN_LINE_CAR_VOICE" acdb_id="510"/>
-            <!--line-car-voice-->
-        <device name="SND_DEVICE_IN_LINE_LANDSCAPECAM" acdb_id="506"/>
-            <!--line-landscapecam-->
-        <device name="SND_DEVICE_IN_LINE_INVERTLANDSCAPECAM" acdb_id="508"/>
-            <!--line-invertlandscapecam-->
-        <device name="SND_DEVICE_IN_LINE_PORTRAITCAM" acdb_id="508"/>
-            <!--line-portraitcam-->
-        <device name="SND_DEVICE_IN_HANDSET_HW_VOIP" acdb_id="341"/>
-            <!--handset-hw-voip-->
-        <device name="SND_DEVICE_IN_HANDSET_AUDIO_EC_VOIP" acdb_id="342"/>
-            <!--handset-audio-voip-->
-        <device name="SND_DEVICE_IN_DMIC_ENDFIRE" acdb_id="41"/>
-            <!--dmic-endfire-->
-        <device name="SND_DEVICE_IN_SPEAKER_DMIC_ENDFIRE" acdb_id="42"/>
-            <!--speaker-dmic-endfire-->
-        <device name="SND_DEVICE_IN_HEADSET_VOICE" acdb_id="8"/>
-            <!--headset-voice-->
-        <device name="SND_DEVICE_IN_HEADSET_HW_VOIP" acdb_id="301"/>
-            <!--headset-hw-voip-->
-        <device name="SND_DEVICE_IN_HEADSET_AUDIO_EC_VOIP" acdb_id="302"/>
-            <!--headset-audio-voip-->
-        <device name="SND_DEVICE_IN_HEADSET_VR" acdb_id="505"/>
-            <!--headset-vr-->
-        <device name="SND_DEVICE_IN_HEADSET_CAM" acdb_id="305"/>
-            <!--headset-cam-->
-        <device name="SND_DEVICE_IN_HEADSET_SPEAKER_VR" acdb_id="4"/>
-            <!--headset-speaker-vr-->
-        <device name="SND_DEVICE_IN_SECOND_MIC" acdb_id="4"/>
-            <!--secondmic-->
-        <device name="SND_DEVICE_IN_THIRD_MIC" acdb_id="4"/>
-            <!--thirdmic-->
-        <device name="SND_DEVICE_IN_DMIC_HAC_ENDFIRE" acdb_id="41"/>
-            <!--dmic-hac-endfire-->
-        <device name="SND_DEVICE_IN_DMIC_HAC_ENDFIRE_SIDETONE" acdb_id="41"/>
-            <!--dmic-hac-endfire-sidetone-->
-        <device name="SND_DEVICE_IN_JBL_USB_HEADSET_VOICE_CALL" acdb_id="644"/>
-            <!--voice-rx-jbl-->
-        <device name="SND_DEVICE_IN_USB_HEADSET_AUDIO_EC_VOIP" acdb_id="644"/>
-            <!--usb-headset-audio-voip-->
-        <device name="SND_DEVICE_IN_JBL_USB_AUDIO_EC_VOIP" acdb_id="944"/>
-            <!--voice-rx-jbl-->
-        <device name="SND_DEVICE_IN_24BIT_LINE_LANDSCAPECAM" acdb_id="706"/>
-            <!--24bit-line-landscapecam-->
-        <device name="SND_DEVICE_IN_24BIT_LINE_INVERTLANDSCAPECAM" acdb_id="708"/>
-            <!--24bit-line-invertlandscapecam-->
-        <device name="SND_DEVICE_IN_24BIT_LINE_PORTRAITCAM" acdb_id="708"/>
-            <!--24bit-line-portraitcam-->
-        <device name="SND_DEVICE_IN_24BIT_HEADSET_CAM" acdb_id="805"/>
-            <!--24bit-headset-cam-->
-        <device name="SND_DEVICE_IN_LINE_24BIT" acdb_id="502"/>
-            <!--line-24bit-->
-        <device name="SND_DEVICE_IN_HEADSET_MIC_24BIT" acdb_id="502"/>
-            <!--headset-24bit-->
-        <device name="SND_DEVICE_IN_HEADSET_AS20_EAR" acdb_id="905"/>
-            <!--headset-mic-as20-cal-ear-->
-        <device name="SND_DEVICE_IN_HEADSET_AS20_AMBIENT" acdb_id="907"/>
-            <!--headset-mic-as20-cal-ambient-->
-        <device name="SND_DEVICE_IN_LINE_LANDSCAPECAM_4MIC" acdb_id="4"/>
-            <!--line-landscapecam-4mic-->
-        <device name="SND_DEVICE_IN_LINE_INVERTLANDSCAPECAM_4MIC" acdb_id="4"/>
-            <!--line-invertlandscapecam-4mic-->
-        <device name="SND_DEVICE_IN_BT_SCO_MIC_AUDIO_EC_VOIP" acdb_id="10000"/>
-            <!--bt-sco-mic-audio-voip-->
-        <device name="SND_DEVICE_IN_BT_SCO_MIC_AUDIO_EC_VOIP_WB" acdb_id="10000"/>
-            <!--bt-sco-mic-audio-voip-->
-        <!-- HTC DEV END -->
+        <device name="SND_DEVICE_IN_VOICE_SPEAKER_MIC" acdb_id="42" />
 
     </acdb_ids>
     <bit_width_configs>
@@ -267,50 +112,13 @@
         <device name="SND_DEVICE_OUT_VOICE_TTY_FULL_HEADPHONES" backend="headphones" interface="SLIMBUS_6_RX"/>
         <device name="SND_DEVICE_OUT_VOICE_TTY_VCO_HEADPHONES" backend="headphones" interface="SLIMBUS_6_RX"/>
         <!-- HTC BACKEND START -->
-        <device name="SND_DEVICE_OUT_EARPIECE" backend="earpiece" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_EARPIECE_VOICE" backend="earpiece" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_EARPIECE_HW_VOIP" backend="earpiece" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_EARPIECE_AUDIO_EC_VOIP" backend="earpiece" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_EARPIECE_HAC_VOICE" backend="earpiece" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_EARPIECE_HAC_VOICE_SIDETONE" backend="earpiece" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_MFG_EARPIECE" backend="earpiece" interface="QUAT_MI2S_RX"/>
         <device name="SND_DEVICE_OUT_SPEAKER" backend="speaker" interface="QUAT_MI2S_RX"/>
         <device name="SND_DEVICE_OUT_VOICE_SPEAKER" backend="speaker" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_MFG_SPEAKER" backend="speaker" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_MFG_SPEAKER_DSP" backend="speaker" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_SPEAKER_VOICE" backend="speaker" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_SPEAKER_CAR_VOICE" backend="speaker" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_SPEAKER_FM" backend="speaker" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_SPEAKER_HW_VOIP" backend="speaker" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_SPEAKER_AUDIO_EC_VOIP" backend="speaker" interface="QUAT_MI2S_RX"/>
-        <device name="SND_DEVICE_OUT_SPEAKER_RIGNTONE" backend="speaker" interface="QUAT_MI2S_RX"/>
-
-        <device name="SND_DEVICE_OUT_MFG_HEADPHONES" backend="headphones" interface="SLIMBUS_6_RX"/>
-        <device name="SND_DEVICE_OUT_HEADPHONES_VOICE" backend="headphones" interface="SLIMBUS_6_RX"/>
-        <device name="SND_DEVICE_OUT_HEADPHONES_FM" backend="headphones" interface="SLIMBUS_6_RX"/>
-        <device name="SND_DEVICE_OUT_HEADPHONES_HW_VOIP" backend="headphones" interface="SLIMBUS_6_RX"/>
-        <device name="SND_DEVICE_OUT_HEADPHONES_AUDIO_EC_VOIP" backend="headphones" interface="SLIMBUS_6_RX"/>
         <device name="SND_DEVICE_OUT_VOICE_TTY_FULL_HEADPHONES" backend="headphones" interface="SLIMBUS_6_RX"/>
         <device name="SND_DEVICE_OUT_VOICE_TTY_VCO_HEADPHONES" backend="headphones" interface="SLIMBUS_6_RX"/>
-        <device name="SND_DEVICE_OUT_SPEAKER_HEADSET" backend="speaker-headset" interface="QUAT_MI2S_RX-and-SLIMBUS_6_RX"/>
-        <device name="SND_DEVICE_OUT_VOICE_SPEAKER_AND_HEADPHONES" backend="speaker-headset" interface="QUAT_MI2S_RX-and-SLIMBUS_6_RX"/>
         <device name="SND_DEVICE_OUT_SPEAKER_AND_HDMI" backend="speaker-and-hdmi" interface="QUAT_MI2S_RX-and-HDMI_RX"/>
         <device name="SND_DEVICE_OUT_SPEAKER_AND_DISPLAY_PORT" backend="speaker-and-display-port" interface="QUAT_MI2S_RX-and-DISPLAY_PORT_RX"/>
         <device name="SND_DEVICE_OUT_SPEAKER_AND_USB_HEADSET" backend="speaker-and-usb-headphones" interface="QUAT_MI2S_RX-and-USB_AUDIO_RX"/>
-
-        <device name="SND_DEVICE_OUT_JBL_USB_HEADSET_VOICE_CALL" backend="usb-headset" interface="USB_AUDIO_RX"/>
-        <device name="SND_DEVICE_IN_JBL_USB_HEADSET_VOICE_CALL" backend="usb-headset-mic" interface="USB_AUDIO_TX"/>
-        <device name="SND_DEVICE_OUT_USB_HEADPHONES_AUDIO_EC_VOIP" backend="usb-headset" interface="USB_AUDIO_RX"/>
-        <device name="SND_DEVICE_IN_USB_HEADSET_AUDIO_EC_VOIP" backend="usb-headset-mic" interface="USB_AUDIO_TX"/>
-        <device name="SND_DEVICE_OUT_JBL_USB_AUDIO_EC_VOIP" backend="usb-headset" interface="USB_AUDIO_RX"/>
-        <device name="SND_DEVICE_IN_JBL_USB_AUDIO_EC_VOIP" backend="usb-headset-mic" interface="USB_AUDIO_TX"/>
-        <device name="SND_DEVICE_OUT_BT_SCO_AUDIO_EC_VOIP" backend="bt-sco" interface="SLIMBUS_7_RX"/>
-        <device name="SND_DEVICE_OUT_BT_SCO_AUDIO_EC_VOIP_WB" backend="bt-sco-wb" interface="SLIMBUS_7_RX"/>
-        <device name="SND_DEVICE_IN_BT_SCO_MIC_AUDIO_EC_VOIP" backend="bt-sco" interface="SLIMBUS_7_TX"/>
-        <device name="SND_DEVICE_IN_BT_SCO_MIC_AUDIO_EC_VOIP_WB" backend="bt-sco-wb" interface="SLIMBUS_7_TX"/>
-
-        <device name="SND_DEVICE_OUT_SPEAKER_BT_SCO" backend="speaker-bt-sco" interface="QUAT_MI2S_RX-and-SLIMBUS_7_RX"/>
-        <device name="SND_DEVICE_OUT_SPEAKER_BT_SCO_WB" backend="speaker-bt-sco-wb" interface="QUAT_MI2S_RX-and-SLIMBUS_7_RX"/>
         <!-- HTC BACKEND END -->
     </backend_names>
     <device_names>
