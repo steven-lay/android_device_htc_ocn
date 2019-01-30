@@ -320,6 +320,8 @@ PRODUCT_COPY_FILES += \
 
 # OMX
 PRODUCT_PACKAGES += \
+    libaacwrapper \
+    libnl \
     libc2dcolorconvert \
     libextmedia_jni \
     libhypv_intercept \
@@ -417,6 +419,10 @@ PRODUCT_PACKAGES += \
     android.hardware.vr@1.0-impl \
     android.hardware.vr@1.0-service \
     vr.msm8998
+
+# Wi-Fi Display
+PRODUCT_BOOT_JARS += \
+    WfdCommon
 
 # Wifi
 PRODUCT_PACKAGES += \
