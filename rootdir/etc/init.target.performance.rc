@@ -125,7 +125,7 @@ on late-fs
     write /sys/block/sda/queue/read_ahead_kb 2048
 
 # qcom-power triggers this property
-on property:vendor.post_boot.parsed=1
+on property:sys.post_boot.parsed=1
     # Setup permission for powerHAL
     chown system system /dev/stune/top-app/schedtune.boost
     chown system system /dev/cpu_dma_latency
