@@ -205,3 +205,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Wifi
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0
+
+# WFD
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.wfd.virtual=0 \
+    persist.debug.wfd.enable=1
