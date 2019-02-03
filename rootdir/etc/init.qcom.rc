@@ -234,6 +234,8 @@ on boot
     # load WIGIG platform driver
     insmod /vendor/lib/modules/msm_11ad_proxy.ko
 
+    chown wifi wifi /sys/kernel/boot_wlan/boot_wlan
+
 # NFC Felica++
 # permissions for Felica
     chmod 0600 /dev/cxd224x-i2c
