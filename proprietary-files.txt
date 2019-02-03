@@ -999,6 +999,9 @@ vendor/lib64/libhtc_common.so
 # NFC
 vendor/firmware/libpn553_fw.so
 
+# Perf - energy awareness
+vendor/bin/energy-awareness
+
 # Peripheral manager
 vendor/bin/pm-proxy
 vendor/bin/pm-service
