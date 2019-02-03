@@ -1268,6 +1268,13 @@ service vendor.msm_irqbalance /vendor/bin/msm_irqbalance -f /system/vendor/etc/m
     user root
     group root
 
+service vendor.energy-awareness /vendor/bin/energy-awareness
+    class main
+    user root
+    group system
+    oneshot
+    writepid /dev/cpuset/system-background/tasks
+
 # service for USERDEBUG
 service vendor.LKCore-dbg /vendor/bin/LKCore
     class late_start

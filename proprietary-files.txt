@@ -999,6 +999,9 @@ vendor/lib64/libhtc_common.so
 # NFC
 vendor/firmware/libpn553_fw.so
 
+# Perf - energy awareness
+vendor/bin/energy-awareness
+
 # Perf - Xiaomi msm8998
 vendor/bin/hw/vendor.qti.hardware.perf@1.0-service|8f26b2b56b0c64b8b1818a00c07f48c2812bb4b2
 vendor/etc/init/vendor.qti.hardware.perf@1.0-service.rc|b50182aadab2e31409df61c523d0fb914a394e43
