@@ -1,15 +1,4 @@
 // EMEA | MID: 2PZC10000 | CID: HTC__001, HTC__M27, HTC__002, HTC__034, HTC__J15, HTC__A07
-static bool is_variant_emea(std::string bootcid) {
-    if (bootcid == "HTC__001") return true;
-    if (bootcid == "HTC__M27") return true;
-    if (bootcid == "HTC__002") return true;
-    if (bootcid == "HTC__034") return true;
-    if (bootcid == "HTC__J15") return true;
-    if (bootcid == "HTC__A07") return true;
-    if (bootcid == "11111111") return true;
-    return false;
-}
-
 static const char *htc_emea_properties =
     "ro.product.model=HTC U11\n"
     "ro.ril.vmail.23415=1571,BT,121,VDF UK\n"
