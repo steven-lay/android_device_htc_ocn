@@ -104,14 +104,14 @@ void vendor_load_properties()
     LOG(INFO) << "Found bootcid " << bootcid << " bootmid " << bootmid << std::endl;
 
     if (bootmid == "2PZC10000" || bootmid == "2PZC50000") {
-        if (is_variant_emea(bootcid)) {
-           load_properties(htc_emea_properties);
-        } else if (is_variant_sprint(bootcid)) {
+        if (is_variant_sprint(bootcid)) {
            load_properties(htc_sprint_properties);
         } else if (is_variant_eeuk(bootcid)) {
            load_properties(htc_eeuk_properties);
         } else if (is_variant_unlocked(bootcid)) {
            load_properties(htc_unlocked_properties);
+        } else {
+           load_properties(htc_emea_properties);
         }
     } else if (bootmid == "2PZC30000" || bootmid == "2PZC50000") {
         if (is_variant_emeads(bootcid)) {
@@ -123,8 +123,6 @@ void vendor_load_properties()
         } else if (is_variant_chinads(bootcid)) {
            load_properties(htc_chinads_properties);
         }
-    } else {
-           load_properties(htc_emea_properties);
     }
 }
 
