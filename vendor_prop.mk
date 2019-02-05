@@ -66,11 +66,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.bluetooth.wipower=false \
     ro.bt.bdaddr_path=/sys/module/htc_bdaddress/parameters/bdaddress \
     ro.bt.ble_tag=1 \
-    ro.bt.chipset=Qualcomm WCN3990 \
-    ro.bt.profiles=12806147 \
-    ro.bt.stack=Bluedroid \
-    ro.bt.version=5.0 \
-    ro.product.bluetooth=5.0 \
     ro.qc.bluetooth.stack=bluedroid
 
 # Camera
