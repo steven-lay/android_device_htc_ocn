@@ -66,7 +66,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.bluetooth.wipower=false \
     ro.bt.bdaddr_path=/sys/module/htc_bdaddress/parameters/bdaddress \
     ro.bt.ble_tag=1 \
-    ro.qc.bluetooth.stack=bluedroid
+    ro.qc.bluetooth.stack=bluedroid \
+    persist.vendor.bt.a2dp_offload_cap=sbc-aptx
 
 # Camera
 PRODUCT_PROPERTY_OVERRIDES += \
