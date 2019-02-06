@@ -345,7 +345,8 @@ include $(LOCAL_PATH)/vendor_prop.mk
 
 # QMI
 PRODUCT_PACKAGES += \
-    libjson
+    libjson \
+    libgptutils
 
 # RIL
 PRODUCT_PACKAGES += \
