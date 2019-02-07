@@ -132,6 +132,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     DEVICE_PROVISIONED=1 \
     persist.radio.apm_sim_not_pwdn=0 \
     persist.radio.videopause.mode=1 \
+    persist.vendor.dpm.feature=0 \
     persist.vendor.radio.data_ltd_sys_ind=1 \
     persist.vendor.radio.snapshot_timer=0 \
     persist.vendor.radio.cs_srv_type=1 \
