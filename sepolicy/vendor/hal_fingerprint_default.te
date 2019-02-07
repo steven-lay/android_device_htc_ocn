@@ -9,4 +9,3 @@ allow hal_fingerprint_default hal_power_default:binder call;
 allow hal_fingerprint_default hal_power_hwservice:hwservice_manager find;
 allow hal_fingerprint_default sysfs_usb_supply:dir search;
 allow hal_fingerprint_default sysfs_usb_supply:file r_file_perms;
-allow hal_fingerprint_default init:binder call;
