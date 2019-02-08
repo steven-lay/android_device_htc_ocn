@@ -134,33 +134,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     DEVICE_PROVISIONED=1 \
     persist.radio.apm_sim_not_pwdn=0 \
-    persist.radio.videopause.mode=1 \
-    persist.vendor.dpm.feature=0 \
-    persist.radio.fill_eons=1 \
-    persist.radio.data_ltd_sys_ind=1 \
-    persist.radio.snapshot_timer=0 \
-    persist.radio.cs_srv_type=1 \
-    persist.radio.RATE_ADAPT_ENABLE=1 \
-    persist.radio.ROTATION_ENABLE=1 \
-    persist.radio.VT_ENABLE=1 \
-    persist.radio.VT_HYBRID_ENABLE=1 \
     persist.vendor.radio.apm_mdm_not_pwdn=1 \
     persist.vendor.radio.cs_srv_type=1 \
     persist.vendor.radio.data_ltd_sys_ind=1 \
     persist.vendor.radio.fill_eons=1 \
     persist.vendor.radio.snapshot_timer=0 \
     rild.libpath=/vendor/lib64/libril-qc-qmi-1.so \
-    ro.baseband.arch=msm \
-    persist.rild.nitz_plmn="" \
-    persist.rild.nitz_long_ons_0="" \
-    persist.rild.nitz_long_ons_1="" \
-    persist.rild.nitz_long_ons_2="" \
-    persist.rild.nitz_long_ons_3="" \
-    persist.rild.nitz_short_ons_0="" \
-    persist.rild.nitz_short_ons_1="" \
-    persist.rild.nitz_short_ons_2="" \
-    persist.rild.nitz_short_ons_3="" \
-    ril.subscription.types=NV,RUIM
+    ro.baseband.arch=msm
 
 # RmNet Data
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -195,8 +175,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Telephony
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.telephony.call_ring.multiple=false \
-    telephony.lteOnCdmaDevice=1
+    ro.telephony.call_ring.multiple=false
 
 # Time-services
 PRODUCT_PROPERTY_OVERRIDES += \
