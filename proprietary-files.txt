@@ -953,8 +953,8 @@ vendor/firmware/ipa_fws.b03
 vendor/firmware/ipa_fws.b04
 vendor/firmware/ipa_fws.mdt
 
-# IRQ balance
-vendor/bin/msm_irqbalance
+# IRQ balance - Mata
+vendor/bin/msm_irqbalance|9b2513151a5b3dc5f20893bc6b0bb0942185e5ab
 
 # Keystore
 vendor/lib64/hw/keystore.msm8998.so
