@@ -393,7 +393,7 @@ public class SqueezeGestureService extends Service implements SensorEventListene
     }
 
     private void takeScreenshot() {
-	if (ScreenStateReceiver.isScreenOn) {
+	if (ScreenStateReceiver.isScreenOn()) {
             simulateKey(KeyEvent.KEYCODE_SYSRQ);
 	    doHapticFeedback();
 	} else {
