@@ -10,7 +10,6 @@ on init
     write /dev/stune/top-app/schedtune.colocate 1
 
     # Disable UFS powersaving
-    write /sys/devices/soc/1da4000.ufshc/clkscale_enable 0
     write /sys/devices/soc/1da4000.ufshc/clkgate_enable 0
     write /sys/devices/soc/1da4000.ufshc/hibern8_on_idle_enable 0
 
@@ -49,7 +48,6 @@ on charger
     setprop sys.usb.configfs 1
 
     # Enable UFS powersaving
-    write /sys/devices/soc/1da4000.ufshc/clkscale_enable 1
     write /sys/devices/soc/1da4000.ufshc/clkgate_enable 1
     write /sys/devices/soc/1da4000.ufshc/hibern8_on_idle_enable 1
 
@@ -90,7 +88,6 @@ on property:sys.boot_completed=1
     write /sys/block/sda/queue/iostats 1
 
     # Enable UFS powersaving
-    write /sys/devices/soc/1da4000.ufshc/clkscale_enable 1
     write /sys/devices/soc/1da4000.ufshc/clkgate_enable 1
     write /sys/devices/soc/1da4000.ufshc/hibern8_on_idle_enable 1
 
