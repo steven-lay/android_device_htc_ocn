@@ -26,7 +26,7 @@
 <!-- IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                          -->
 <audio_platform_info>
     <acdb_ids>
-        <device name="SND_DEVICE_IN_BT_SCO_MIC" acdb_id="1604"/>
+        <device name="SND_DEVICE_IN_BT_SCO_MIC" acdb_id="1420"/>
         <device name="SND_DEVICE_IN_BT_SCO_MIC_NREC" acdb_id="21"/>
         <device name="SND_DEVICE_IN_BT_SCO_MIC_WB" acdb_id="21"/>
         <device name="SND_DEVICE_IN_BT_SCO_MIC_WB_NREC" acdb_id="21"/>
@@ -40,7 +40,7 @@
         <device name="SND_DEVICE_IN_VOICE_REC_MIC" acdb_id="505" />
         <device name="SND_DEVICE_IN_VOICE_SPEAKER_DMIC" acdb_id="42" />
         <device name="SND_DEVICE_IN_VOICE_SPEAKER_MIC" acdb_id="4" />
-        <device name="SND_DEVICE_OUT_BT_SCO" acdb_id="1704"/>
+        <device name="SND_DEVICE_OUT_BT_SCO" acdb_id="1520"/>
         <device name="SND_DEVICE_OUT_BT_SCO_WB" acdb_id="22"/>
         <device name="SND_DEVICE_OUT_SPEAKER" acdb_id="15"/>
         <device name="SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES" acdb_id="603"/>
