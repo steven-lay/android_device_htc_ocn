@@ -16,7 +16,7 @@
 /dev/block/bootdevice/by-name/bluetooth   /bt_firmware      vfat   ro,shortname=lower,uid=1002,gid=3002,dmask=227,fmask=337,context=u:object_r:bt_firmware_file:s0 wait
 /dev/block/bootdevice/by-name/radio       /firmware/image   vfat   ro,shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337,context=u:object_r:firmware_file:s0 wait
 
-/dev/block/zram0                          none              swap   defaults                                         zramsize=536870912,max_comp_streams=8
+/dev/block/zram0                          none              swap   defaults                                         zramsize=1073741824,max_comp_streams=8
 
 /devices/soc/c0a4900.sdhci/mmc_host*      auto              vfat   nosuid,nodev                                     wait,voldmanaged=ext_sd:auto,encryptable=footer
 /devices/soc/a800000.ssusb/a800000.dwc3*  auto              vfat   defaults                                         voldmanaged=usb:auto
