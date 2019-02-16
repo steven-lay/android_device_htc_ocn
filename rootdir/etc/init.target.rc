@@ -211,3 +211,4 @@ service qvrd /system/bin/qvrservice
 on property:sys.boot_completed=1
     # Enable ZRAM on boot_completed
     swapon_all /vendor/etc/fstab.qcom
+    start vendor.qcom-post-boot

@@ -840,6 +840,7 @@ on property:sys.boot_completed=1
     #WDSP FW boot sysfs node used by STHAL
     chown media audio /sys/kernel/wdsp0/boot
     chown media audio /sys/kernel/wcd_cpe0/fw_name
+
 on property:persist.radio.atfwd.start=false
     stop vendor.atfwd
 
@@ -1161,9 +1162,6 @@ service vendor.wifi-crda /vendor/bin/init.crda.sh
    user root
    disabled
    oneshot
-
-on property:sys.boot_completed=1
-    start vendor.qcom-post-boot
 
 service vendor.qvop-daemon /vendor/bin/qvop-daemon
     class late_start
