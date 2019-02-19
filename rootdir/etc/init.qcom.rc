@@ -81,7 +81,7 @@ on post-fs
 
     chmod 0664 /sys/devices/virtual/graphics/fb0/idle_time
     chown system graphics /sys/devices/virtual/graphics/fb0/idle_time
-    write /sys/devices/virtual/graphics/fb0/idle_time 50
+    write /sys/devices/virtual/graphics/fb0/idle_time 100
 
     chmod 0755 /sys/kernel/debug/tracing
     ## ensure correct calibration file permissions
