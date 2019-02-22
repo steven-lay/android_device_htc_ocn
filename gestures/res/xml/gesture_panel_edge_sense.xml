@@ -40,6 +40,7 @@
             android:key="squeeze_short"
             android:defaultValue="0"
             android:title="@string/squeeze_short_title"
+            android:summary="%s"
             android:dialogTitle="@string/squeeze_short_title"
             android:entries="@array/action_entries_squeeze"
             android:entryValues="@array/action_values_squeeze"
@@ -49,6 +50,7 @@
             android:key="squeeze_long"
             android:defaultValue="0"
             android:title="@string/squeeze_long_title"
+            android:summary="%s"
             android:dialogTitle="@string/squeeze_long_title"
             android:entries="@array/action_entries_squeeze"
             android:entryValues="@array/action_values_squeeze"
@@ -57,7 +59,8 @@
         <ListPreference
             android:key="long_squeeze_duration"
             android:title="Long Squeeze activation time"
-	    android:defaultValue="700"
+            android:summary="%s"
+            android:defaultValue="700"
             android:entries="@array/long_squeeze_entries"
             android:entryValues="@array/long_squeeze_entries_values"
             android:dependency="squeeze_enabled" />

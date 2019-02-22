@@ -32,6 +32,7 @@
             android:key="swipe_up_action_key"
             android:defaultValue="0"
             android:title="@string/touchscreen_swipe_up_title"
+            android:summary="%s"
             android:dialogTitle="@string/touchscreen_swipe_up_title"
             android:entries="@array/action_entries"
             android:entryValues="@array/action_values" />
@@ -40,6 +41,7 @@
             android:key="swipe_left_action_key"
             android:defaultValue="0"
             android:title="@string/touchscreen_swipe_left_title"
+            android:summary="%s"
             android:dialogTitle="@string/touchscreen_swipe_left_title"
             android:entries="@array/action_entries"
             android:entryValues="@array/action_values" />
@@ -48,6 +50,7 @@
             android:key="swipe_right_action_key"
             android:defaultValue="0"
             android:title="@string/touchscreen_swipe_right_title"
+            android:summary="%s"
             android:dialogTitle="@string/touchscreen_swipe_right_title"
             android:entries="@array/action_entries"
             android:entryValues="@array/action_values" />
@@ -56,6 +59,7 @@
             android:key="double_swipe_down_action_key"
             android:defaultValue="0"
             android:title="@string/touchscreen_double_swipe_down_title"
+            android:summary="%s"
             android:dialogTitle="@string/touchscreen_double_swipe_down_title"
             android:entries="@array/action_entries"
             android:entryValues="@array/action_values" />
