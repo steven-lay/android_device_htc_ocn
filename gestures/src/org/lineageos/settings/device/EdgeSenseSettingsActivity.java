@@ -20,12 +20,12 @@ package org.lineageos.settings.device;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
-public class TouchscreenGestureSettingsActivity extends PreferenceActivity {
+public class EdgeSenseSettingsActivity extends PreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction()
-            .replace(android.R.id.content, new TouchscreenGestureSettingsFragment()).commit();
+            .replace(android.R.id.content, new EdgeSenseSettingsFragment()).commit();
     }
 }

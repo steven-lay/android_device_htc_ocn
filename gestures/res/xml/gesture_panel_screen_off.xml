@@ -16,7 +16,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:key="gesture_panel"
-        android:title="@string/gesture_panel_display_title">
+        android:title="@string/gesture_screen_off_title">
 
     <PreferenceCategory
         android:key="screen_actions_key"
@@ -59,61 +59,6 @@
             android:dialogTitle="@string/touchscreen_double_swipe_down_title"
             android:entries="@array/action_entries"
             android:entryValues="@array/action_values" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="squeeze_gestures"
-        android:title="@string/squeeze_display_title">
-      
-        <SwitchPreference
-            android:key="squeeze_enabled"
-            android:title="@string/squeeze_enabled_title"
-            android:defaultValue="true"
-            android:summaryOn="Squeeze gestures are enabled"
-            android:summaryOff="Squeeze gestures are disabled" />
-
-        <SwitchPreference
-            android:key="squeeze_haptic_feedback"
-            android:title="@string/touchscreen_gestures_haptic_feedback_title"
-            android:defaultValue="true"
-            android:summary="Vibrate when a squeeze gesture is activated"
-            android:dependency="squeeze_enabled" />
-
-        <ListPreference
-            android:key="squeeze_short"
-            android:defaultValue="0"
-            android:title="@string/squeeze_short_title"
-            android:dialogTitle="@string/squeeze_short_title"
-            android:entries="@array/action_entries_squeeze"
-            android:entryValues="@array/action_values_squeeze"
-            android:dependency="squeeze_enabled" />
-        
-        <ListPreference
-            android:key="squeeze_long"
-            android:defaultValue="0"
-            android:title="@string/squeeze_long_title"
-            android:dialogTitle="@string/squeeze_long_title"
-            android:entries="@array/action_entries_squeeze"
-            android:entryValues="@array/action_values_squeeze"
-            android:dependency="squeeze_enabled" />
-
-        <ListPreference
-            android:key="long_squeeze_duration"
-            android:title="Long Squeeze activation time"
-	    android:defaultValue="700"
-            android:entries="@array/long_squeeze_entries"
-            android:entryValues="@array/long_squeeze_entries_values"
-            android:dependency="squeeze_enabled" />
-
-        <org.lineageos.settings.device.widget.SeekBarPreference
-            android:key="squeeze_force"
-            android:title="Squeeze force"
-            android:summary="Adjust the squeeze force"
-            android:max="100"
-            android:defaultValue="30"
-            android:layout="@layout/preference_slider"
-            android:dependency="squeeze_enabled" />
-
     </PreferenceCategory>
 
     <PreferenceCategory

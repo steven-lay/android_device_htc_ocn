@@ -31,8 +31,22 @@
         <service android:name="org.lineageos.settings.device.ScreenStateService" />
 
         <activity
-            android:name=".TouchscreenGestureSettingsActivity"
-            android:label="@string/gesture_panel_display_title">
+            android:name=".EdgeSenseSettingsActivity"
+            android:label="@string/gesture_edge_sense_title">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.gestures" />
+            <meta-data
+                android:name="com.android.settings.summary"
+                android:resource="@string/style_summary" />
+        </activity>
+
+        <activity
+            android:name=".ScreenOffGestureSettingsActivity"
+            android:label="@string/gesture_screen_off_title">
             <intent-filter>
                 <action android:name="com.android.settings.action.IA_SETTINGS" />
             </intent-filter>
