@@ -24,14 +24,14 @@ import android.util.Log;
 
 import org.lineageos.settings.device.widget.SeekBarPreference;
 
-public class TouchscreenGestureSettingsFragment extends PreferenceFragment {
+public class EdgeSenseSettingsFragment extends PreferenceFragment {
 public static final String TAG = "GESTURESETTINGS";
     private static final String SEEKBAR_PREFERENCE  = "squeeze_force";
     private SeekBarPreference mSeekBar;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        addPreferencesFromResource(R.xml.gesture_panel);
+        addPreferencesFromResource(R.xml.gesture_panel_edge_sense);
         final ActionBar actionBar = getActivity().getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         mSeekBar = (SeekBarPreference) findPreference(SEEKBAR_PREFERENCE);

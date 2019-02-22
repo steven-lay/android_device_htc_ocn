@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2016 The CyanogenMod Project
+                   2017 The LineageOS Project
+     Licensed under the Apache License, Version 2.0 (the "License"
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<PreferenceScreen 
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:key="gesture_panel"
+        android:title="@string/gesture_edge_sense_title">
+
+    <PreferenceCategory
+        android:key="squeeze_gestures"
+        android:title="@string/squeeze_display_title">
+      
+        <SwitchPreference
+            android:key="squeeze_enabled"
+            android:title="@string/squeeze_enabled_title"
+            android:defaultValue="true"
+            android:summaryOn="Squeeze gestures are enabled"
+            android:summaryOff="Squeeze gestures are disabled" />
+
+        <SwitchPreference
+            android:key="squeeze_haptic_feedback"
+            android:title="@string/touchscreen_gestures_haptic_feedback_title"
+            android:defaultValue="true"
+            android:summary="Vibrate when a squeeze gesture is activated"
+            android:dependency="squeeze_enabled" />
+
+        <ListPreference
+            android:key="squeeze_short"
+            android:defaultValue="0"
+            android:title="@string/squeeze_short_title"
+            android:dialogTitle="@string/squeeze_short_title"
+            android:entries="@array/action_entries_squeeze"
+            android:entryValues="@array/action_values_squeeze"
+            android:dependency="squeeze_enabled" />
+        
+        <ListPreference
+            android:key="squeeze_long"
+            android:defaultValue="0"
+            android:title="@string/squeeze_long_title"
+            android:dialogTitle="@string/squeeze_long_title"
+            android:entries="@array/action_entries_squeeze"
+            android:entryValues="@array/action_values_squeeze"
+            android:dependency="squeeze_enabled" />
+
+        <ListPreference
+            android:key="long_squeeze_duration"
+            android:title="Long Squeeze activation time"
+	    android:defaultValue="700"
+            android:entries="@array/long_squeeze_entries"
+            android:entryValues="@array/long_squeeze_entries_values"
+            android:dependency="squeeze_enabled" />
+
+        <org.lineageos.settings.device.widget.SeekBarPreference
+            android:key="squeeze_force"
+            android:title="Squeeze force"
+            android:summary="Adjust the squeeze force"
+            android:max="100"
+            android:defaultValue="30"
+            android:layout="@layout/preference_slider"
+            android:dependency="squeeze_enabled" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="advanced_settings"
+        android:title="Advanced">
+
+        <SwitchPreference
+            android:key="haptic_ignore_ringer"
+            android:title="Haptic feedback ignores ringer mode"
+            android:defaultValue="true"
+            android:summary="Vibrate even when in Do Not Disturb Mode" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
