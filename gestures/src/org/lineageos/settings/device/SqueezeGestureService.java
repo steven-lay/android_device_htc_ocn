@@ -108,7 +108,6 @@ public class SqueezeGestureService extends Service {
     private WakeLock mGestureWakeLock;
     private CameraManager mCameraManager;
     private Vibrator mVibrator;
-    private ScreenStateReceiver mScreenStateReceiver;
     private SensorManager mSensorManager;
     private WindowManager windowManager;
     private ImageView squeezeForceView;
@@ -124,6 +123,7 @@ public class SqueezeGestureService extends Service {
     private boolean mHapticIgnoreRinger;
     private boolean mLongSqueezeHandled = false;
     private boolean mSqueezedDown = false;
+    private boolean isScreenOn = true;
 
     private Sensor mEdgeSensor = null;
     private Sensor mEdgeGestureSensor = null;
@@ -138,6 +138,11 @@ public class SqueezeGestureService extends Service {
         super.onCreate();
 
         mContext = this;
+
+        IntentFilter screenStateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        screenStateFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        registerReceiver(mScreenStateReceiver, screenStateFilter);
+
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         loadPreferences(sharedPrefs);
         sharedPrefs.registerOnSharedPreferenceChangeListener(mPrefListener);
@@ -182,6 +187,19 @@ public class SqueezeGestureService extends Service {
         }
     }
 
+    private BroadcastReceiver mScreenStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+				enableEdgeSensorEventListener();
+                isScreenOn = true;
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+				disableEdgeSensorEventListener();
+                isScreenOn = false;
+            }
+        }
+    };
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -192,6 +210,17 @@ public class SqueezeGestureService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+	private void disableEdgeSensorEventListener() {
+		if (DEBUG) Log.d(TAG, "unregisterListener mEdgeSensorEventListener");
+        mSensorManager.unregisterListener(mEdgeSensorEventListener);
+	}
+
+	private void enableEdgeSensorEventListener() {
+		if (DEBUG) Log.d(TAG, "registerListener mEdgeSensorEventListener");
+        mSensorManager.registerListener(mEdgeSensorEventListener,
+                mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
+	}
 
 	/**
 	 *  This sensor will be responsible for handling long squeeze actions. averageValue should
@@ -233,6 +262,8 @@ public class SqueezeGestureService extends Service {
         public void onSensorChanged(SensorEvent sensorEvent) {
             float value = sensorEvent.values[0];
             if (value == 1.0f) {
+				if (!isScreenOn)
+					enableEdgeSensorEventListener();
                 mGestureWakeLock.acquire(5000);
                 mHoldDownTime = SystemClock.elapsedRealtime();
                 mSqueezedDown = true;
@@ -247,6 +278,8 @@ public class SqueezeGestureService extends Service {
                     mGestureWakeLock.release();
 				}
                 mSqueezedDown = false;
+				if (!isScreenOn)
+					disableEdgeSensorEventListener();
             }
         }
     }
@@ -424,7 +457,7 @@ public class SqueezeGestureService extends Service {
     }
 
     private void takeScreenshot() {
-	if (ScreenStateReceiver.isScreenOn()) {
+	if (isScreenOn) {
             simulateKey(KeyEvent.KEYCODE_SYSRQ);
 	    doHapticFeedback();
 	} else {
