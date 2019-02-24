@@ -208,9 +208,6 @@ JAVA_SOURCE_OVERLAYS := org.lineageos.hardware|$(DEVICE_PATH)/lineagehw|**/*.jav
 # Media
 TARGET_USES_MEDIA_EXTENSIONS := true
 
-# Power
-TARGET_USES_INTERACTION_BOOST := true
-
 # Properties
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 
