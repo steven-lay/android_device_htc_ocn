@@ -132,7 +132,6 @@ void vendor_load_properties()
             load_properties(htc_eeuk_properties);
         } else if (bootcid == "HTC__039" || bootcid == "OPTUS001" || bootcid == "VODAP021" ) {
             property_override_dual("ro.product.name", "ro.vendor.product.name", "ocnuhl_00710");
-            property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "htc/ocnuhl_00710/htc_ocnuhl:8.0.0/OPR6.170623.013/1055687.13:user/release-keys");
             load_properties(htc_aus_properties);
         } else {
             property_override_dual("ro.product.name", "ro.vendor.product.name", "ocndugl_00401");
