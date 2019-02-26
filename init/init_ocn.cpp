@@ -135,7 +135,7 @@ void vendor_load_properties()
             load_properties(htc_aus_properties);
         } else {
             property_override_dual("ro.product.name", "ro.vendor.product.name", "ocndugl_00401");
-            property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "htc/ocndugl_00401/htc_ocndugl:8.0.0/OPR6.170623.013/1002308.19:user/release-keys");
+           // property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "htc/ocndugl_00401/htc_ocndugl:8.0.0/OPR6.170623.013/1002308.19:user/release-keys");
             load_properties(htc_emea_properties);
         }
     } else if (bootmid == "2PZC20000") {
@@ -154,7 +154,7 @@ void vendor_load_properties()
            // property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "");
             load_properties(htc_indiads_properties);
         } else if (bootcid == "HTC__621"){
-          //  property_override_dual("ro.product.name", "ro.vendor.product.name", "");
+           // property_override_dual("ro.product.name", "ro.vendor.product.name", "");
            // property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "");
             load_properties(htc_asiads_properties);
         } else {
@@ -173,11 +173,11 @@ void vendor_load_properties()
         property_override_dual("ro.product.model", "ro.vendor.product.model", "HTC U11");
         if (bootcid == "BS_US001") {
             property_override_dual("ro.product.name", "ro.vendor.product.name", "ocnwhl_00617");
-            property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "htc/ocnwhl_00617/htc_ocnwhl:8.0.0/OPR6.170623.013/1011554.7:user/release-keys");
+            //property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "htc/ocnwhl_00617/htc_ocnwhl:8.0.0/OPR6.170623.013/1011554.7:user/release-keys");
             load_properties(htc_unlocked_properties);
         } else {
             property_override_dual("ro.product.name", "ro.vendor.product.name", "ocnwhl_00651");
-            property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "htc/ocnwhl_00651/htc_ocnwhl:8.0.0/OPR6.170623.013/1002308.10:user/release-keys");
+            //property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "htc/ocnwhl_00651/htc_ocnwhl:8.0.0/OPR6.170623.013/1002308.10:user/release-keys");
             load_properties(htc_sprint_properties);
         }
     }
