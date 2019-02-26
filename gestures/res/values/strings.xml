@@ -15,7 +15,7 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="gesture_screen_off_title">HTC Screen Off Gestures</string>
-    <string name="gesture_edge_sense_title">HTC Edge Sense</string>
+    <string name="gesture_edge_sense_title">HTC Squeeze Gestures</string>
     <string name="style_summary"></string>
 
     <!-- Gestures: Touchscreen gestures -->
