@@ -97,7 +97,6 @@ public class SqueezeGestureService extends Service {
 
     private static final int SQUEEZE_FORCE_DEFAULT = 30;
     private static final int SQUEEZE_FORCE_MULTIPLIER = 6;
-    private static final int GESTURE_WAKELOCK_DURATION = 500;
     private static final int LONG_SQUEEZE_DURATION_DEFAULT = 700;
 
     private static final int ACTION_TAKE_SCREENSHOT = 12;
@@ -410,7 +409,6 @@ public class SqueezeGestureService extends Service {
     }
 
     private void launchCamera() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
         final Intent intent = new Intent(lineageos.content.Intent.ACTION_SCREEN_CAMERA_GESTURE);
         mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT,
                 Manifest.permission.STATUS_BAR_SERVICE);
@@ -418,7 +416,6 @@ public class SqueezeGestureService extends Service {
     }
 
     private void launchBrowser() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
         mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
         final Intent intent = getLaunchableIntent(
                 new Intent(Intent.ACTION_VIEW, Uri.parse("http:")));
@@ -427,7 +424,6 @@ public class SqueezeGestureService extends Service {
     }
 
     private void launchDialer() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
         mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
         final Intent intent = new Intent(Intent.ACTION_DIAL, null);
         startActivitySafely(intent);
@@ -435,7 +431,6 @@ public class SqueezeGestureService extends Service {
     }
 
     private void launchEmail() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
         mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
         final Intent intent = getLaunchableIntent(
                 new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:")));
@@ -444,7 +439,6 @@ public class SqueezeGestureService extends Service {
     }
 
     private void launchMessages() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
         mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
         final String defaultApplication = Settings.Secure.getString(
                 mContext.getContentResolver(), "sms_default_application");
@@ -468,7 +462,6 @@ public class SqueezeGestureService extends Service {
     private void toggleFlashlight() {
         String rearCameraId = getRearCameraId();
         if (rearCameraId != null) {
-            mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
             try {
                 mCameraManager.setTorchMode(rearCameraId, !mTorchEnabled);
                 mTorchEnabled = !mTorchEnabled;
@@ -495,13 +488,11 @@ public class SqueezeGestureService extends Service {
     }
 
     private void volumeDown() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
         mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
         doHapticFeedback();
     }
 
     private void volumeUp() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
         mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0);
         doHapticFeedback();
     }
