@@ -75,7 +75,7 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
     private static final int SWIPE_UP = 2;
 
     private static final String CONTROL_PATH =
-            "/sys/class/htc_sensorhub/sensor_hub/gesture_motion";
+        "/sys/class/htc_sensorhub/sensor_hub/gesture_motion";
 
     /* Sensor gesture definition used to instantiate GestureMotionSensor, externally usable */
     /* These values also correspond to kernel driver values, so don't change them */
@@ -98,7 +98,7 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
     private int mSwipeUpAction;
 
     private boolean mHapticIgnoreRinger;
-    private boolean mDisableHaptic;
+    private boolean mHapticFeedbackEnabled;
 
     @Override
     public void onCreate() {
@@ -120,12 +120,12 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
                 mSensor = sensor;
                 if (!FileUtils.writeLine(CONTROL_PATH, Integer.toHexString(SENSOR_GESTURE_ALL))) {
                     Log.w(TAG, "Failed to write control path, unable to disable sensor");
-        }
+                }
             }
         }
         if (mSensor != null) {
             mSensorManager.registerListener(mSensorEventListener,
-                    mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                mSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mScreenStateReceiver = new ScreenStateReceiver();
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(Intent.ACTION_SCREEN_ON);
@@ -142,14 +142,20 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
         unregisterReceiver(mScreenStateReceiver);
     }
 
-    public final void onAccuracyChanged(Sensor sensor, int i) {
+    private void tryHapticFeedback() {
+        if (mHapticIgnoreRinger && mHapticFeedbackEnabled)
+            doHapticFeedback();
+        if (mHapticFeedbackEnabled && mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT)
+            doHapticFeedback();
     }
+
+    public final void onAccuracyChanged(Sensor sensor, int i) {}
 
     public final void onSensorChanged(SensorEvent sensorEvent) {
         mSensorManager.unregisterListener(mSensorEventListener);
         float gesture = sensorEvent.values[0];
-        if (DEBUG) Log.d(TAG, "Sensor type=" + sensorEvent.sensor.getType()
-                + "," + sensorEvent.values[0] + "," + sensorEvent.values[1]);
+        if (DEBUG) Log.d(TAG, "Sensor type=" + sensorEvent.sensor.getType() +
+            "," + sensorEvent.values[0] + "," + sensorEvent.values[1]);
         int action = gestureToAction((int) gesture);
         if (action > -1) {
             handleGestureAction(action);
@@ -158,21 +164,21 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
 
     private boolean isDoubleTapEnabled() {
         return (Settings.Secure.getInt(mContext.getContentResolver(),
-                    Settings.Secure.DOUBLE_TAP_TO_WAKE, 0) != 0);
+            Settings.Secure.DOUBLE_TAP_TO_WAKE, 0) != 0);
     }
 
     private int gestureToAction(int gesture) {
         if (DEBUG) Log.d(TAG, "Gesture to action: " + gesture);
+        tryHapticFeedback();
         switch (gesture) {
             case DOUBLE_TAP:
-                    if (!isDoubleTapEnabled()) {
-                        mSensorManager.registerListener(mSensorEventListener,
-                            mSensor, SensorManager.SENSOR_DELAY_FASTEST);
-                        return -1;
-                    }
-                    mPowerManager.wakeUp(SystemClock.uptimeMillis());
-                    doHapticFeedback();
+                if (!isDoubleTapEnabled()) {
+                    mSensorManager.registerListener(mSensorEventListener,
+                        mSensor, SensorManager.SENSOR_DELAY_FASTEST);
                     return -1;
+                }
+                mPowerManager.wakeUp(SystemClock.uptimeMillis());
+                return -1;
             case SWIPE_UP:
                 return mSwipeUpAction;
             case DOUBLE_SWIPE_DOWN:
@@ -224,49 +230,52 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
                 break;
         }
         mSensorManager.registerListener(mSensorEventListener,
-                mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            mSensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     private void loadPreferences(SharedPreferences sharedPreferences) {
         try {
             mSwipeUpAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_UP,
-                        Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
             mSwipeDownAction = Integer.parseInt(sharedPreferences.getString(KEY_DOUBLE_SWIPE_DOWN,
-                        Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
             mSwipeLeftAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_LEFT,
-                    Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
             mSwipeRightAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_RIGHT,
-                        Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
             mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
+            mHapticFeedbackEnabled = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_ENABLED, true);
         } catch (NumberFormatException e) {
             Log.e(TAG, "Error loading preferences");
         }
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            try {
-                if (KEY_SWIPE_UP.equals(key)) {
-                    mSwipeUpAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_UP,
-                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
-                } else if (KEY_DOUBLE_SWIPE_DOWN.equals(key)) {
-                    mSwipeDownAction = Integer.parseInt(sharedPreferences.getString(KEY_DOUBLE_SWIPE_DOWN,
-                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
-                } else if (KEY_SWIPE_LEFT.equals(key)) {
-                    mSwipeLeftAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_LEFT,
-                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
-                } else if (KEY_SWIPE_RIGHT.equals(key)) {
-                    mSwipeRightAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_RIGHT,
-                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
-		} else if (HAPTIC_FEEDBACK_IGNORE_RINGER.equals(key)) {
-		    mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
-		}
-            } catch (NumberFormatException e) {
-                Log.e(TAG, "Error loading preferences");
+        new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                try {
+                    if (KEY_SWIPE_UP.equals(key)) {
+                        mSwipeUpAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_UP,
+                            Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                    } else if (KEY_DOUBLE_SWIPE_DOWN.equals(key)) {
+                        mSwipeDownAction = Integer.parseInt(sharedPreferences.getString(KEY_DOUBLE_SWIPE_DOWN,
+                            Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                    } else if (KEY_SWIPE_LEFT.equals(key)) {
+                        mSwipeLeftAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_LEFT,
+                            Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                    } else if (KEY_SWIPE_RIGHT.equals(key)) {
+                        mSwipeRightAction = Integer.parseInt(sharedPreferences.getString(KEY_SWIPE_RIGHT,
+                            Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                    } else if (HAPTIC_FEEDBACK_IGNORE_RINGER.equals(key)) {
+                        mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
+                    } else if (HAPTIC_FEEDBACK_ENABLED.equals(key)) {
+                        mHapticFeedbackEnabled = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_ENABLED, true);
+                    }
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "Error loading preferences");
+                }
             }
-        }
-    };
+        };
 
 }

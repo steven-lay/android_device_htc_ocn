@@ -32,6 +32,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.Manifest;
+import android.media.AudioManager;
 import android.media.session.MediaSessionLegacyHelper;
 import android.net.Uri;
 import android.os.IBinder;
@@ -107,7 +108,7 @@ public class SqueezeGestureService extends HTCSuperGestures {
     private long mHoldDownTime;
 
     private boolean mHapticIgnoreRinger;
-    private boolean mDisableHaptic;
+    private boolean mHapticFeedbackEnabled;
 
     private final int LONG_SQUEEZE_ACTION = 1;
     private final int SHORT_SQUEEZE_VIBRATION = 2;
@@ -166,6 +167,13 @@ public class SqueezeGestureService extends HTCSuperGestures {
     public void onDestroy() {
         super.onDestroy();
         mSensorManager.unregisterListener(mEdgeGestureSensorEventListener);
+    }
+
+    private void tryHapticFeedback() {
+        if (mHapticIgnoreRinger && mHapticFeedbackEnabled)
+            doHapticFeedback();
+        if (mHapticFeedbackEnabled && mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT)
+            doHapticFeedback();
     }
 
     /**
@@ -276,7 +284,7 @@ public class SqueezeGestureService extends HTCSuperGestures {
             mSqueezeEnabled = sharedPreferences.getBoolean(SQUEEZE_GESTURE_ENABLE, true);
             mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
             mForcePref += mForcePrefMin;
-            //mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+            mHapticFeedbackEnabled = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_ENABLED, true);
             mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
             mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
                 Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
@@ -310,8 +318,8 @@ public class SqueezeGestureService extends HTCSuperGestures {
                         if (!FileUtils.writeLine(EDGE_THRESHOLD_PATH, Integer.toString(mForcePref))) {
                             Log.w(TAG, "Failed to write force threshold sysfs path");
                         }
-                   // } else if (SQUEEZE_HAPTIC_FEEDBACK_ENABLED.equals(key)) {
-                     //   mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+                    } else if (HAPTIC_FEEDBACK_ENABLED.equals(key)) {
+                        mHapticFeedbackEnabled = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_ENABLED, true);
                     } else if (SQUEEZE_LONG_SQUEEZE_DURATION.equals(key)) {
                         mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
                             Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
@@ -334,7 +342,7 @@ public class SqueezeGestureService extends HTCSuperGestures {
     }
 
     private void turnScreenOnOff() {
-	simulateKey(KeyEvent.KEYCODE_POWER);
+        simulateKey(KeyEvent.KEYCODE_POWER);
     }
 
     public static String getForegroundApp(Context context) {

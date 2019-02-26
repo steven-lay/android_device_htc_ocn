@@ -77,15 +77,14 @@ public abstract class HTCSuperGestures extends Service {
     private static final String GESTURE_WAKEUP_REASON = "gesture-wakeup";
     protected static final String TAG = "GestureService";
 
-    private AudioManager mAudioManager;
     private CameraManager mCameraManager;
     private String mRearCameraId;
     private Vibrator mVibrator;
     private boolean mTorchEnabled;
+    protected AudioManager mAudioManager;
     protected Context mContext;
     protected PowerManager mPowerManager;
     protected WakeLock mGestureWakeLock;
-    protected boolean mHapticIgnoreRinger;
 
     @Override
     public void onCreate() {
@@ -224,9 +223,7 @@ public abstract class HTCSuperGestures extends Service {
     }
 
     protected void doHapticFeedback() {
-        final boolean enabled = LineageSettings.System.getInt(mContext.getContentResolver(),
-                    LineageSettings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK, 1) != 0;
-        if (mVibrator == null) {
+        if (mVibrator == null || !mVibrator.hasVibrator()) {
             return;
         }
         mVibrator.vibrate(50);
