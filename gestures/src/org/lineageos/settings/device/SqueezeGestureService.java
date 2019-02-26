@@ -261,9 +261,10 @@ public class SqueezeGestureService extends Service {
         public void onSensorChanged(SensorEvent sensorEvent) {
             float value = sensorEvent.values[0];
             if (value == 1.0f) {
-				if (!isScreenOn)
+				if (!isScreenOn) {
 					enableEdgeSensorEventListener();
-                mGestureWakeLock.acquire(5000);
+					mGestureWakeLock.acquire(5000);
+				}
                 mHoldDownTime = SystemClock.elapsedRealtime();
                 mSqueezedDown = true;
             } else {
