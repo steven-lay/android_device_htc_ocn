@@ -173,7 +173,7 @@ void vendor_load_properties()
         property_override_dual("ro.product.model", "ro.vendor.product.model", "HTC U11");
         if (bootcid == "BS_US001") {
             property_override_dual("ro.product.name", "ro.vendor.product.name", "ocnwhl_00617");
-            //property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "htc/ocnwhl_00617/htc_ocnwhl:8.0.0/OPR6.170623.013/1011554.7:user/release-keys");
+            property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "htc/ocnwhl_00617/htc_ocnwhl:8.0.0/OPR6.170623.013/1011554.6:user/release-keys");
             load_properties(htc_unlocked_properties);
         } else {
             property_override_dual("ro.product.name", "ro.vendor.product.name", "ocnwhl_00651");
