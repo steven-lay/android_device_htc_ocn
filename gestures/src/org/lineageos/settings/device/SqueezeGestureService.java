@@ -173,14 +173,14 @@ public class SqueezeGestureService extends Service {
         if (mEdgeSensor != null) {
             if (mSqueezeEnabled) {
                 mSensorManager.registerListener(mEdgeSensorEventListener,
-                        mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                    mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
                 if (DEBUG) Log.d(TAG, "Registered Edge Sensor Listener");
             }
         }
         if (mEdgeGestureSensor != null) {
             if (mSqueezeEnabled) {
                 mSensorManager.registerListener(mEdgeGestureSensorEventListener,
-                        mEdgeGestureSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                    mEdgeGestureSensor, SensorManager.SENSOR_DELAY_FASTEST);
                 if (DEBUG) Log.d(TAG, "Registered Edge Gesture Sensor Listener");
             }
         }
@@ -190,10 +190,10 @@ public class SqueezeGestureService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-				enableEdgeSensorEventListener();
+                enableEdgeSensorEventListener();
                 isScreenOn = true;
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-				disableEdgeSensorEventListener();
+                disableEdgeSensorEventListener();
                 isScreenOn = false;
             }
         }
@@ -210,61 +210,59 @@ public class SqueezeGestureService extends Service {
         return null;
     }
 
-	private void disableEdgeSensorEventListener() {
-		if (DEBUG) Log.d(TAG, "unregisterListener mEdgeSensorEventListener");
+    private void disableEdgeSensorEventListener() {
+        if (DEBUG) Log.d(TAG, "unregisterListener mEdgeSensorEventListener");
         mSensorManager.unregisterListener(mEdgeSensorEventListener);
-	}
+    }
 
-	private void enableEdgeSensorEventListener() {
-		if (DEBUG) Log.d(TAG, "registerListener mEdgeSensorEventListener");
+    private void enableEdgeSensorEventListener() {
+        if (DEBUG) Log.d(TAG, "registerListener mEdgeSensorEventListener");
         mSensorManager.registerListener(mEdgeSensorEventListener,
-                mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
-	}
+            mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
+    }
 
-	/**
-	 *  This sensor will be responsible for handling long squeeze actions. averageValue should
-	 *  be equal (or almost equal) to the value of sensorEvent.values[1] for HtcEdgeGestureSensor.
-	 *  For when we're in deep sleep, this sensor relies on the other to hold a wakelock to process
-	 *  the incoming sensor events.
-	 */
+    /**
+     *  This sensor will be responsible for handling long squeeze actions. averageValue should
+     *  be equal (or almost equal) to the value of sensorEvent.values[1] for HtcEdgeGestureSensor.
+     *  For when we're in deep sleep, this sensor relies on the other to hold a wakelock to process
+     *  the incoming sensor events.
+     */
     private class HtcEdgeSensorEventListener implements SensorEventListener {
 
-        public final void onAccuracyChanged(Sensor sensor, int i) {
-        }
+        public final void onAccuracyChanged(Sensor sensor, int i) {}
 
         public void onSensorChanged(SensorEvent sensorEvent) {
-			float averageValue = ((sensorEvent.values[8] + sensorEvent.values[9])/2);
-			if (mSqueezedDown && (averageValue > mForcePref)) {
-				if ((SystemClock.elapsedRealtime() - mHoldDownTime) > mLongSqueezeDuration) {
+            float averageValue = ((sensorEvent.values[8] + sensorEvent.values[9]) / 2);
+            if (mSqueezedDown && (averageValue > mForcePref)) {
+                if ((SystemClock.elapsedRealtime() - mHoldDownTime) > mLongSqueezeDuration) {
                     int action = gestureToAction(LONGSQUEEZE);
                     if (action > -1) {
                         handleGestureAction(action);
                         mSqueezedDown = false;
-					}
-				}
-			}
+                    }
+                }
+            }
         }
     }
 
-	/**
-	 *  This sensor will be responsible for handling short squeeze actions, as well as holding a
-	 *  wakelock for the other sensor to work in deep sleep.
-	 *  sensorEvent.values[0] = 1.0f the moment the edge sensors are squeezed down
-	 *  sensorEvent.values[0] = 2.0f the moment the squeezed edge sensors are released
-	 *  sensorEvent.values[1] holds the value of the squeeze force
-	 */
+    /**
+     *  This sensor will be responsible for handling short squeeze actions, as well as holding a
+     *  wakelock for the other sensor to work in deep sleep.
+     *  sensorEvent.values[0] = 1.0f the moment the edge sensors are squeezed down
+     *  sensorEvent.values[0] = 2.0f the moment the squeezed edge sensors are released
+     *  sensorEvent.values[1] holds the value of the squeeze force
+     */
     private class HtcEdgeGestureSensorEventListener implements SensorEventListener {
 
-        public final void onAccuracyChanged(Sensor sensor, int i) {
-        }
+        public final void onAccuracyChanged(Sensor sensor, int i) {}
 
         public void onSensorChanged(SensorEvent sensorEvent) {
             float value = sensorEvent.values[0];
             if (value == 1.0f) {
-				if (!isScreenOn) {
-					enableEdgeSensorEventListener();
-					mGestureWakeLock.acquire(5000);
-				}
+                if (!isScreenOn) {
+                    enableEdgeSensorEventListener();
+                    mGestureWakeLock.acquire(5000);
+                }
                 mHoldDownTime = SystemClock.elapsedRealtime();
                 mSqueezedDown = true;
             } else {
@@ -276,10 +274,10 @@ public class SqueezeGestureService extends Service {
                         handleGestureAction(action);
                 } else if (mGestureWakeLock.isHeld()) {
                     mGestureWakeLock.release();
-				}
+                }
                 mSqueezedDown = false;
-				if (!isScreenOn)
-					disableEdgeSensorEventListener();
+                if (!isScreenOn)
+                    disableEdgeSensorEventListener();
             }
         }
     }
@@ -341,59 +339,59 @@ public class SqueezeGestureService extends Service {
     private void loadPreferences(SharedPreferences sharedPreferences) {
         try {
             mShortSqueezeAction = Integer.parseInt(sharedPreferences.getString(SQUEEZE_SHORT_ACTION,
-                        Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
             mLongSqueezeAction = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_ACTION,
-                        Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
             mSqueezeEnabled = sharedPreferences.getBoolean(SQUEEZE_GESTURE_ENABLE, true);
             mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
             mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
-	    mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+            mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
             mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
             mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
-                        Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
+                Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
         } catch (NumberFormatException e) {
             Log.e(TAG, "Error loading preferences");
         }
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            try {
-                if (SQUEEZE_SHORT_ACTION.equals(key)) {
-                    mShortSqueezeAction = Integer.parseInt(sharedPreferences.getString(SQUEEZE_SHORT_ACTION,
-                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
-                } else if (SQUEEZE_LONG_ACTION.equals(key)) {
-                    mLongSqueezeAction = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_ACTION,
-                                Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
-                } else if (SQUEEZE_GESTURE_ENABLE.equals(key)) {
-                    mSqueezeEnabled = sharedPreferences.getBoolean(SQUEEZE_GESTURE_ENABLE, true);
-                    if(mSqueezeEnabled){
-                        mSensorManager.registerListener(mEdgeSensorEventListener,
-                            mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
-                        mSensorManager.registerListener(mEdgeGestureSensorEventListener,
-                            mEdgeGestureSensor, SensorManager.SENSOR_DELAY_FASTEST);
-                    } else {
-                        mSensorManager.unregisterListener(mEdgeSensorEventListener);
-                        mSensorManager.unregisterListener(mEdgeGestureSensorEventListener);
+        new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                try {
+                    if (SQUEEZE_SHORT_ACTION.equals(key)) {
+                        mShortSqueezeAction = Integer.parseInt(sharedPreferences.getString(SQUEEZE_SHORT_ACTION,
+                            Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                    } else if (SQUEEZE_LONG_ACTION.equals(key)) {
+                        mLongSqueezeAction = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_ACTION,
+                            Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
+                    } else if (SQUEEZE_GESTURE_ENABLE.equals(key)) {
+                        mSqueezeEnabled = sharedPreferences.getBoolean(SQUEEZE_GESTURE_ENABLE, true);
+                        if (mSqueezeEnabled) {
+                            mSensorManager.registerListener(mEdgeSensorEventListener,
+                                mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                            mSensorManager.registerListener(mEdgeGestureSensorEventListener,
+                                mEdgeGestureSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                        } else {
+                            mSensorManager.unregisterListener(mEdgeSensorEventListener);
+                            mSensorManager.unregisterListener(mEdgeGestureSensorEventListener);
+                        }
+                    } else if (SQUEEZE_FORCE.equals(key)) {
+                        mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
+                        mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
+                    } else if (SQUEEZE_HAPTIC_FEEDBACK_ENABLED.equals(key)) {
+                        mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+                    } else if (SQUEEZE_LONG_SQUEEZE_DURATION.equals(key)) {
+                        mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
+                            Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
+                    } else if (HAPTIC_FEEDBACK_IGNORE_RINGER.equals(key)) {
+                        mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
                     }
-                } else if (SQUEEZE_FORCE.equals(key)) {
-                    mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
-                    mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
-                } else if (SQUEEZE_HAPTIC_FEEDBACK_ENABLED.equals(key)) {
-		    mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
-		} else if (SQUEEZE_LONG_SQUEEZE_DURATION.equals(key)) {
-                    mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
-			Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
-		} else if (HAPTIC_FEEDBACK_IGNORE_RINGER.equals(key)) {
-		    mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
-		}
-            } catch (NumberFormatException e) {
-                Log.e(TAG, "Error loading preferences");
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "Error loading preferences");
+                }
             }
-        }
-    };
+        };
 
     private class TorchModeCallback extends CameraManager.TorchCallback {
         @Override
@@ -412,14 +410,14 @@ public class SqueezeGestureService extends Service {
     private void launchCamera() {
         final Intent intent = new Intent(lineageos.content.Intent.ACTION_SCREEN_CAMERA_GESTURE);
         mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT,
-                Manifest.permission.STATUS_BAR_SERVICE);
+            Manifest.permission.STATUS_BAR_SERVICE);
         doHapticFeedback();
     }
 
     private void launchBrowser() {
         mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
         final Intent intent = getLaunchableIntent(
-                new Intent(Intent.ACTION_VIEW, Uri.parse("http:")));
+            new Intent(Intent.ACTION_VIEW, Uri.parse("http:")));
         startActivitySafely(intent);
         doHapticFeedback();
     }
@@ -434,7 +432,7 @@ public class SqueezeGestureService extends Service {
     private void launchEmail() {
         mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
         final Intent intent = getLaunchableIntent(
-                new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:")));
+            new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:")));
         startActivitySafely(intent);
         doHapticFeedback();
     }
@@ -442,7 +440,7 @@ public class SqueezeGestureService extends Service {
     private void launchMessages() {
         mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
         final String defaultApplication = Settings.Secure.getString(
-                mContext.getContentResolver(), "sms_default_application");
+            mContext.getContentResolver(), "sms_default_application");
         final PackageManager pm = mContext.getPackageManager();
         final Intent intent = pm.getLaunchIntentForPackage(defaultApplication);
         if (intent != null) {
@@ -452,12 +450,12 @@ public class SqueezeGestureService extends Service {
     }
 
     private void takeScreenshot() {
-	if (isScreenOn) {
+        if (isScreenOn) {
             simulateKey(KeyEvent.KEYCODE_SYSRQ);
-	    doHapticFeedback();
-	} else {
-	    Log.d(TAG, "Cannot take screenshot while screen is off");
-	}
+            doHapticFeedback();
+        } else {
+            Log.d(TAG, "Cannot take screenshot while screen is off");
+        }
     }
 
     private void toggleFlashlight() {
@@ -505,7 +503,7 @@ public class SqueezeGestureService extends Service {
             return;
         }
         KeyEvent event = new KeyEvent(SystemClock.uptimeMillis(),
-                SystemClock.uptimeMillis(), KeyEvent.ACTION_DOWN, keycode, 0);
+            SystemClock.uptimeMillis(), KeyEvent.ACTION_DOWN, keycode, 0);
         helper.sendMediaButtonEvent(event, true);
         event = KeyEvent.changeAction(event, KeyEvent.ACTION_UP);
         helper.sendMediaButtonEvent(event, true);
@@ -516,9 +514,9 @@ public class SqueezeGestureService extends Service {
             Log.w(TAG, "No intent passed to startActivitySafely");
             return;
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_SINGLE_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+            Intent.FLAG_ACTIVITY_SINGLE_TOP |
+            Intent.FLAG_ACTIVITY_CLEAR_TOP);
         try {
             final UserHandle user = new UserHandle(UserHandle.USER_CURRENT);
             mContext.startActivityAsUser(intent, null, user);
@@ -531,19 +529,19 @@ public class SqueezeGestureService extends Service {
         if (mVibrator == null || !mVibrator.hasVibrator() || !mHapticFeedbackEnabled) {
             return;
         }
-	if (mHapticIgnoreRinger) {
-	    mVibrator.vibrate(50);
-	} else if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-	    mVibrator.vibrate(50);
-	}
+        if (mHapticIgnoreRinger) {
+            mVibrator.vibrate(50);
+        } else if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+            mVibrator.vibrate(50);
+        }
     }
 
     private String getRearCameraId() {
         if (mRearCameraId == null) {
             try {
-                for (final String cameraId : mCameraManager.getCameraIdList()) {
+                for (final String cameraId: mCameraManager.getCameraIdList()) {
                     final CameraCharacteristics characteristics =
-                            mCameraManager.getCameraCharacteristics(cameraId);
+                        mCameraManager.getCameraCharacteristics(cameraId);
                     final int orientation = characteristics.get(CameraCharacteristics.LENS_FACING);
                     if (orientation == CameraCharacteristics.LENS_FACING_BACK) {
                         mRearCameraId = cameraId;
@@ -559,26 +557,26 @@ public class SqueezeGestureService extends Service {
 
     private Intent getLaunchableIntent(Intent intent) {
         PackageManager pm = mContext.getPackageManager();
-        List<ResolveInfo> resInfo = pm.queryIntentActivities(intent, 0);
+        List < ResolveInfo > resInfo = pm.queryIntentActivities(intent, 0);
         if (resInfo.isEmpty()) {
             return null;
         }
         return pm.getLaunchIntentForPackage(resInfo.get(0).activityInfo.packageName);
     }
 
-    public static String getForegroundApp(Context context){
+    public static String getForegroundApp(Context context) {
         ActivityManager manager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
-        List< ActivityManager.RunningTaskInfo > runningTaskInfo = manager.getRunningTasks(1); 
+        List < ActivityManager.RunningTaskInfo > runningTaskInfo = manager.getRunningTasks(1);
 
         ComponentName componentInfo = runningTaskInfo.get(0).topActivity;
         PackageManager packageManager = context.getPackageManager();
 
         String appName = "empty";
         try {
-			return appName = (String)packageManager.getApplicationLabel(packageManager.getApplicationInfo(
-													componentInfo.getPackageName(), PackageManager.GET_META_DATA));
+            return appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(
+                componentInfo.getPackageName(), PackageManager.GET_META_DATA));
         } catch (NameNotFoundException e) {
-	        Log.e("Application not found ", e.toString());
+            Log.e("Application not found ", e.toString());
             return "empty";
         }
 
@@ -595,9 +593,9 @@ public class SqueezeGestureService extends Service {
                 } catch (Exception e) {
                     Log.e("Exception when sendKeyDownUpSync", e.toString());
                 }
-           }
+            }
 
-       }.start();
+        }.start();
     }
 
 }
