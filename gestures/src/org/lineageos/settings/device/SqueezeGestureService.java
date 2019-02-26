@@ -99,6 +99,7 @@ public class SqueezeGestureService extends Service {
     private static final int LONG_SQUEEZE_DURATION_DEFAULT = 700;
 
     private static final int ACTION_TAKE_SCREENSHOT = 12;
+    private static final int ACTION_TURN_SCREEN_ON_OFF = 13;
 
     private Context mContext;
     private PowerManager mPowerManager;
@@ -291,6 +292,9 @@ public class SqueezeGestureService extends Service {
             case ACTION_TAKE_SCREENSHOT:
                 takeScreenshot();
                 break;
+            case ACTION_TURN_SCREEN_ON_OFF:
+                turnScreenOnOff();
+                break;
         }
     }
 
@@ -427,6 +431,10 @@ public class SqueezeGestureService extends Service {
             }
             doHapticFeedback();
         }
+    }
+
+    private void turnScreenOnOff() {
+	simulateKey(KeyEvent.KEYCODE_POWER);
     }
 
     private void playPauseMusic() {
