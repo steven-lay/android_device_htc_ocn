@@ -69,8 +69,8 @@
             android:key="squeeze_force"
             android:title="Squeeze force"
             android:summary="Adjust the squeeze force"
-            android:max="100"
-            android:defaultValue="30"
+            android:max="200"
+            android:defaultValue="150"
             android:layout="@layout/preference_slider"
             android:dependency="squeeze_enabled" />
 

@@ -63,6 +63,7 @@ import android.widget.ImageView;
 import android.graphics.PixelFormat;
 import android.view.Display;
 import android.view.Gravity;
+import android.os.Handler;
 
 import java.util.Iterator;
 import java.lang.Runtime;
@@ -81,7 +82,6 @@ public class SqueezeGestureService extends Service {
     private static final int LONGSQUEEZE = 101;
 
     private static final String TAG = "SqueezeService";
-    private static final String HTC_EDGESENSOR = "hTC Edge Sensor";
     private static final String HTC_EDGEGESTURESENSOR = "hTC Edge Gesture";
     private static final String GESTURE_WAKEUP_REASON = "squeeze-gesture-wakeup";
 
@@ -95,8 +95,7 @@ public class SqueezeGestureService extends Service {
     private static final String SQUEEZE_LONG_SQUEEZE_DURATION = "long_squeeze_duration";
     private static final String HAPTIC_FEEDBACK_IGNORE_RINGER = "haptic_ignore_ringer";
 
-    private static final int SQUEEZE_FORCE_DEFAULT = 30;
-    private static final int SQUEEZE_FORCE_MULTIPLIER = 6;
+    private static final int SQUEEZE_FORCE_DEFAULT = 150;
     private static final int LONG_SQUEEZE_DURATION_DEFAULT = 700;
 
     private static final int ACTION_TAKE_SCREENSHOT = 12;
@@ -104,6 +103,7 @@ public class SqueezeGestureService extends Service {
     private Context mContext;
     private PowerManager mPowerManager;
     private AudioManager mAudioManager;
+    private Handler mHandler;
     private WakeLock mGestureWakeLock;
     private CameraManager mCameraManager;
     private Vibrator mVibrator;
@@ -120,16 +120,15 @@ public class SqueezeGestureService extends Service {
     private boolean mSqueezeEnabled;
     private boolean mHapticFeedbackEnabled;
     private boolean mHapticIgnoreRinger;
-    private boolean mLongSqueezeHandled = false;
-    private boolean mSqueezedDown = false;
-    private boolean isScreenOn = true;
 
-    private Sensor mEdgeSensor = null;
     private Sensor mEdgeGestureSensor = null;
     private int mForcePref = 0;
+    private final int mForcePrefMin = 100;
     private String[] mIntStrings = new String[10];
 
-    private HtcEdgeSensorEventListener mEdgeSensorEventListener = new HtcEdgeSensorEventListener();
+    private final int LONG_SQUEEZE_ACTION = 1;
+    private final int SHORT_SQUEEZE_VIBRATION = 2;
+
     private HtcEdgeGestureSensorEventListener mEdgeGestureSensorEventListener = new HtcEdgeGestureSensorEventListener();
 
     @Override
@@ -137,10 +136,6 @@ public class SqueezeGestureService extends Service {
         super.onCreate();
 
         mContext = this;
-
-        IntentFilter screenStateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-        screenStateFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        registerReceiver(mScreenStateReceiver, screenStateFilter);
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         loadPreferences(sharedPrefs);
@@ -158,23 +153,12 @@ public class SqueezeGestureService extends Service {
         Iterator iterator = mSensorManager.getSensorList(-1).iterator();
         while (iterator.hasNext()) {
             Sensor sensor = (Sensor) iterator.next();
-            if (sensor.getName().equals(HTC_EDGESENSOR)) {
-                if (DEBUG) Log.d(TAG, "found Edge sensor");
-                mEdgeSensor = sensor;
+            if (sensor.getName().equals(HTC_EDGEGESTURESENSOR)) {
+                if (DEBUG) Log.d(TAG, "found Edge Gesture sensor");
+                mEdgeGestureSensor = sensor;
                 if (!FileUtils.writeLine(EDGE_THRESHOLD_PATH, Integer.toString(mForcePref))) {
                     Log.w(TAG, "Failed to write force threshold sysfs path");
                 }
-            }
-            if (sensor.getName().equals(HTC_EDGEGESTURESENSOR)) {
-                if (DEBUG) Log.d(TAG, "found Edge sensor");
-                mEdgeGestureSensor = sensor;
-            }
-        }
-        if (mEdgeSensor != null) {
-            if (mSqueezeEnabled) {
-                mSensorManager.registerListener(mEdgeSensorEventListener,
-                    mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
-                if (DEBUG) Log.d(TAG, "Registered Edge Sensor Listener");
             }
         }
         if (mEdgeGestureSensor != null) {
@@ -184,25 +168,29 @@ public class SqueezeGestureService extends Service {
                 if (DEBUG) Log.d(TAG, "Registered Edge Gesture Sensor Listener");
             }
         }
-    }
 
-    private BroadcastReceiver mScreenStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                enableEdgeSensorEventListener();
-                isScreenOn = true;
-            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                disableEdgeSensorEventListener();
-                isScreenOn = false;
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what) {
+                case LONG_SQUEEZE_ACTION:
+                    tryHapticFeedback();
+                    int action = gestureToAction(LONGSQUEEZE);
+                    if (action > -1)
+                        handleGestureAction(action);
+                    break;
+                case SHORT_SQUEEZE_VIBRATION:
+                    tryHapticFeedback();
+                    break;
+                }
             }
-        }
-    };
+        };
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mSensorManager.unregisterListener(mEdgeSensorEventListener);
         mSensorManager.unregisterListener(mEdgeGestureSensorEventListener);
     }
 
@@ -210,46 +198,10 @@ public class SqueezeGestureService extends Service {
         return null;
     }
 
-    private void disableEdgeSensorEventListener() {
-        if (DEBUG) Log.d(TAG, "unregisterListener mEdgeSensorEventListener");
-        mSensorManager.unregisterListener(mEdgeSensorEventListener);
-    }
-
-    private void enableEdgeSensorEventListener() {
-        if (DEBUG) Log.d(TAG, "registerListener mEdgeSensorEventListener");
-        mSensorManager.registerListener(mEdgeSensorEventListener,
-            mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
-    }
-
     /**
-     *  This sensor will be responsible for handling long squeeze actions. averageValue should
-     *  be equal (or almost equal) to the value of sensorEvent.values[1] for HtcEdgeGestureSensor.
-     *  For when we're in deep sleep, this sensor relies on the other to hold a wakelock to process
-     *  the incoming sensor events.
-     */
-    private class HtcEdgeSensorEventListener implements SensorEventListener {
-
-        public final void onAccuracyChanged(Sensor sensor, int i) {}
-
-        public void onSensorChanged(SensorEvent sensorEvent) {
-            float averageValue = ((sensorEvent.values[8] + sensorEvent.values[9]) / 2);
-            if (mSqueezedDown && (averageValue > mForcePref)) {
-                if ((SystemClock.elapsedRealtime() - mHoldDownTime) > mLongSqueezeDuration) {
-                    int action = gestureToAction(LONGSQUEEZE);
-                    if (action > -1) {
-                        handleGestureAction(action);
-                        mSqueezedDown = false;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     *  This sensor will be responsible for handling short squeeze actions, as well as holding a
-     *  wakelock for the other sensor to work in deep sleep.
      *  sensorEvent.values[0] = 1.0f the moment the edge sensors are squeezed down
      *  sensorEvent.values[0] = 2.0f the moment the squeezed edge sensors are released
+     *  sensorEvent.values[0] = 3.0f squeezed down for too long or gesture cancelled
      *  sensorEvent.values[1] holds the value of the squeeze force
      */
     private class HtcEdgeGestureSensorEventListener implements SensorEventListener {
@@ -258,26 +210,32 @@ public class SqueezeGestureService extends Service {
 
         public void onSensorChanged(SensorEvent sensorEvent) {
             float value = sensorEvent.values[0];
+            if (DEBUG) Log.d(TAG, "HtcEdgeGestureSensor value = " + value);
             if (value == 1.0f) {
-                if (!isScreenOn) {
-                    enableEdgeSensorEventListener();
-                    mGestureWakeLock.acquire(5000);
-                }
                 mHoldDownTime = SystemClock.elapsedRealtime();
-                mSqueezedDown = true;
-            } else {
-                float force = sensorEvent.values[1];
+                if (mLongSqueezeAction != TouchscreenGestureConstants.ACTION_DO_NOTHING)
+                    mHandler.sendEmptyMessageDelayed(LONG_SQUEEZE_ACTION, mLongSqueezeDuration);
+                if (mShortSqueezeAction != TouchscreenGestureConstants.ACTION_DO_NOTHING)
+                    mHandler.sendEmptyMessageDelayed(SHORT_SQUEEZE_VIBRATION, 100);
+                if (!ScreenStateReceiver.isScreenOn())
+                    mGestureWakeLock.acquire(5000);
+            } else if (value == 2.0f) {
                 long SqueezeReleaseTime = SystemClock.elapsedRealtime() - mHoldDownTime;
-                if (SqueezeReleaseTime > 100 && SqueezeReleaseTime < mLongSqueezeDuration && (force > mForcePref)) {
+                if (SqueezeReleaseTime > 100 && SqueezeReleaseTime < mLongSqueezeDuration) {
+                    mHandler.removeMessages(LONG_SQUEEZE_ACTION);
                     int action = gestureToAction(SHORTSQUEEZE);
                     if (action > -1)
                         handleGestureAction(action);
-                } else if (mGestureWakeLock.isHeld()) {
-                    mGestureWakeLock.release();
+                } else if (SqueezeReleaseTime < 100) {
+                    mHandler.removeMessages(LONG_SQUEEZE_ACTION);
+                    mHandler.removeMessages(SHORT_SQUEEZE_VIBRATION);
+                    if (mGestureWakeLock.isHeld())
+                        mGestureWakeLock.release();
                 }
-                mSqueezedDown = false;
-                if (!isScreenOn)
-                    disableEdgeSensorEventListener();
+            } else if (value == 3.0f) {
+                mHandler.removeMessages(LONG_SQUEEZE_ACTION);
+                if (mGestureWakeLock.isHeld())
+                    mGestureWakeLock.release();
             }
         }
     }
@@ -344,7 +302,7 @@ public class SqueezeGestureService extends Service {
                 Integer.toString(TouchscreenGestureConstants.ACTION_DO_NOTHING)));
             mSqueezeEnabled = sharedPreferences.getBoolean(SQUEEZE_GESTURE_ENABLE, true);
             mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
-            mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
+            mForcePref += mForcePrefMin;
             mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
             mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
             mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
@@ -368,17 +326,17 @@ public class SqueezeGestureService extends Service {
                     } else if (SQUEEZE_GESTURE_ENABLE.equals(key)) {
                         mSqueezeEnabled = sharedPreferences.getBoolean(SQUEEZE_GESTURE_ENABLE, true);
                         if (mSqueezeEnabled) {
-                            mSensorManager.registerListener(mEdgeSensorEventListener,
-                                mEdgeSensor, SensorManager.SENSOR_DELAY_FASTEST);
                             mSensorManager.registerListener(mEdgeGestureSensorEventListener,
                                 mEdgeGestureSensor, SensorManager.SENSOR_DELAY_FASTEST);
                         } else {
-                            mSensorManager.unregisterListener(mEdgeSensorEventListener);
                             mSensorManager.unregisterListener(mEdgeGestureSensorEventListener);
                         }
                     } else if (SQUEEZE_FORCE.equals(key)) {
                         mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
-                        mForcePref = SQUEEZE_FORCE_MULTIPLIER * (mForcePref + 1);
+                        mForcePref += mForcePrefMin;
+                        if (!FileUtils.writeLine(EDGE_THRESHOLD_PATH, Integer.toString(mForcePref))) {
+                            Log.w(TAG, "Failed to write force threshold sysfs path");
+                        }
                     } else if (SQUEEZE_HAPTIC_FEEDBACK_ENABLED.equals(key)) {
                         mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
                     } else if (SQUEEZE_LONG_SQUEEZE_DURATION.equals(key)) {
@@ -450,7 +408,7 @@ public class SqueezeGestureService extends Service {
     }
 
     private void takeScreenshot() {
-        if (isScreenOn) {
+        if (ScreenStateReceiver.isScreenOn()) {
             simulateKey(KeyEvent.KEYCODE_SYSRQ);
             doHapticFeedback();
         } else {
