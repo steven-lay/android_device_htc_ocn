@@ -31,21 +31,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraAccessException;
 import android.Manifest;
 import android.media.AudioManager;
 import android.media.session.MediaSessionLegacyHelper;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
 import android.os.UserHandle;
-import android.os.Vibrator;
-import android.os.VibrationEffect;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -59,80 +52,61 @@ import org.lineageos.internal.util.FileUtils;
 
 import java.util.List;
 
-public class ScreenGestureService extends Service implements SensorEventListener {
+public class ScreenGestureService extends HTCSuperGestures implements SensorEventListener {
 
     private static final boolean DEBUG = true;
 
-    private static final String TAG = "GestureService";
-    private static final String GESTURE_WAKEUP_REASON = "gesture-wakeup";
+    private static final String HAPTIC_FEEDBACK_ENABLED = "screen_haptic_feedback";
+    private static final String HAPTIC_FEEDBACK_IGNORE_RINGER = "screen_haptic_ignore_ringer";
+
     private static final String HTC_GESTURES = "hTC Gesture_Motion";
 
-    private static final String KEY_SWIPE_UP = "swipe_up_action_key";
     private static final String KEY_DOUBLE_SWIPE_DOWN = "double_swipe_down_action_key";
     private static final String KEY_SWIPE_LEFT = "swipe_left_action_key";
     private static final String KEY_SWIPE_RIGHT = "swipe_right_action_key";
-
-    private static final String HAPTIC_FEEDBACK_IGNORE_RINGER = "haptic_ignore_ringer";
-
-    private static final int GESTURE_WAKELOCK_DURATION = 500;
+    private static final String KEY_SWIPE_UP = "swipe_up_action_key";
 
     // Gestures
+    private static final int DOUBLE_SWIPE_DOWN = 6;
     private static final int DOUBLE_TAP = 15;
-    private static final int SWIPE_UP = 2;
     private static final int SWIPE_DOWN = 3;
     private static final int SWIPE_LEFT = 4;
     private static final int SWIPE_RIGHT = 5;
-    private static final int DOUBLE_SWIPE_DOWN = 6;
+    private static final int SWIPE_UP = 2;
 
     private static final String CONTROL_PATH =
             "/sys/class/htc_sensorhub/sensor_hub/gesture_motion";
 
     /* Sensor gesture definition used to instantiate GestureMotionSensor, externally usable */
     /* These values also correspond to kernel driver values, so don't change them */
-    public static final int SENSOR_GESTURE_SWIPE_UP = 0x4;
+    public static final int SENSOR_GESTURE_ALL = 0x807C;
+    public static final int SENSOR_GESTURE_CAMERA = 0x40;
+    public static final int SENSOR_GESTURE_DOUBLE_TAP = 0x8000;
     public static final int SENSOR_GESTURE_SWIPE_DOWN = 0x8;
     public static final int SENSOR_GESTURE_SWIPE_LEFT = 0x10;
     public static final int SENSOR_GESTURE_SWIPE_RIGHT = 0x20;
-    public static final int SENSOR_GESTURE_CAMERA = 0x40;
-    public static final int SENSOR_GESTURE_DOUBLE_TAP = 0x8000;
-    public static final int SENSOR_GESTURE_ALL = 0x807C;
+    public static final int SENSOR_GESTURE_SWIPE_UP = 0x4;
 
-    private Context mContext;
-    private PowerManager mPowerManager;
-    private AudioManager mAudioManager;
-    private WakeLock mGestureWakeLock;
-    private CameraManager mCameraManager;
-    private Vibrator mVibrator;
     private ScreenStateReceiver mScreenStateReceiver;
-    private SensorManager mSensorManager;
     private Sensor mSensor = null;
     private SensorEventListener mSensorEventListener;
+    private SensorManager mSensorManager;
 
-    private String mRearCameraId;
-    private boolean mTorchEnabled;
-    private boolean mHapticIgnoreRinger;
-
-    private int mSwipeUpAction;
     private int mSwipeDownAction;
     private int mSwipeLeftAction;
     private int mSwipeRightAction;
+    private int mSwipeUpAction;
+
+    private boolean mHapticIgnoreRinger;
+    private boolean mDisableHaptic;
 
     @Override
     public void onCreate() {
-        if (DEBUG) Log.d(TAG, "Creating service");
         super.onCreate();
 
-        mContext = this;
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         loadPreferences(sharedPrefs);
         sharedPrefs.registerOnSharedPreferenceChangeListener(mPrefListener);
-        mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        mGestureWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "HtcGestureWakeLock");
-        mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
-        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-
-        mCameraManager.registerTorchCallback(new TorchModeCallback(), null);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
@@ -166,11 +140,6 @@ public class ScreenGestureService extends Service implements SensorEventListener
         super.onDestroy();
         mSensorManager.unregisterListener(this);
         unregisterReceiver(mScreenStateReceiver);
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 
     public final void onAccuracyChanged(Sensor sensor, int i) {
@@ -299,177 +268,5 @@ public class ScreenGestureService extends Service implements SensorEventListener
             }
         }
     };
-
-    private class TorchModeCallback extends CameraManager.TorchCallback {
-        @Override
-        public void onTorchModeChanged(String cameraId, boolean enabled) {
-            if (!cameraId.equals(mRearCameraId)) return;
-            mTorchEnabled = enabled;
-        }
-
-        @Override
-        public void onTorchModeUnavailable(String cameraId) {
-            if (!cameraId.equals(mRearCameraId)) return;
-            mTorchEnabled = false;
-        }
-    }
-
-    private void launchCamera() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
-        final Intent intent = new Intent(lineageos.content.Intent.ACTION_SCREEN_CAMERA_GESTURE);
-        mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT,
-                Manifest.permission.STATUS_BAR_SERVICE);
-        doHapticFeedback();
-    }
-
-    private void launchBrowser() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final Intent intent = getLaunchableIntent(
-                new Intent(Intent.ACTION_VIEW, Uri.parse("http:")));
-        startActivitySafely(intent);
-        doHapticFeedback();
-    }
-
-    private void launchDialer() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final Intent intent = new Intent(Intent.ACTION_DIAL, null);
-        startActivitySafely(intent);
-        doHapticFeedback();
-    }
-
-    private void launchEmail() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final Intent intent = getLaunchableIntent(
-                new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:")));
-        startActivitySafely(intent);
-        doHapticFeedback();
-    }
-
-    private void launchMessages() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final String defaultApplication = Settings.Secure.getString(
-                mContext.getContentResolver(), "sms_default_application");
-        final PackageManager pm = mContext.getPackageManager();
-        final Intent intent = pm.getLaunchIntentForPackage(defaultApplication);
-        if (intent != null) {
-            startActivitySafely(intent);
-            doHapticFeedback();
-        }
-    }
-
-    private void toggleFlashlight() {
-        String rearCameraId = getRearCameraId();
-        if (rearCameraId != null) {
-            mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
-            try {
-                mCameraManager.setTorchMode(rearCameraId, !mTorchEnabled);
-                mTorchEnabled = !mTorchEnabled;
-            } catch (CameraAccessException e) {
-                // Ignore
-            }
-            doHapticFeedback();
-        }
-    }
-
-    private void playPauseMusic() {
-        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
-        doHapticFeedback();
-    }
-
-    private void previousTrack() {
-        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
-        doHapticFeedback();
-    }
-
-    private void nextTrack() {
-        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_NEXT);
-        doHapticFeedback();
-    }
-
-    private void volumeDown() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
-        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
-        doHapticFeedback();
-    }
-
-    private void volumeUp() {
-        mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
-        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0);
-        doHapticFeedback();
-    }
-
-    private void dispatchMediaKeyWithWakeLockToMediaSession(final int keycode) {
-        final MediaSessionLegacyHelper helper = MediaSessionLegacyHelper.getHelper(mContext);
-        if (helper == null) {
-            Log.w(TAG, "Unable to send media key event");
-            return;
-        }
-        KeyEvent event = new KeyEvent(SystemClock.uptimeMillis(),
-                SystemClock.uptimeMillis(), KeyEvent.ACTION_DOWN, keycode, 0);
-        helper.sendMediaButtonEvent(event, true);
-        event = KeyEvent.changeAction(event, KeyEvent.ACTION_UP);
-        helper.sendMediaButtonEvent(event, true);
-    }
-
-    private void startActivitySafely(final Intent intent) {
-        if (intent == null) {
-            Log.w(TAG, "No intent passed to startActivitySafely");
-            return;
-        }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_SINGLE_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        try {
-            final UserHandle user = new UserHandle(UserHandle.USER_CURRENT);
-            mContext.startActivityAsUser(intent, null, user);
-        } catch (ActivityNotFoundException e) {
-            // Ignore
-        }
-    }
-
-    private void doHapticFeedback() {
-        final boolean enabled = LineageSettings.System.getInt(mContext.getContentResolver(),
-                    LineageSettings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK, 1) != 0;
-        if (mVibrator == null || !mVibrator.hasVibrator() || !enabled) {
-            return;
-        }
-	if (mHapticIgnoreRinger) {
-	    mVibrator.vibrate(50);
-	} else if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-	    mVibrator.vibrate(50);
-	}
-    }
-
-    private String getRearCameraId() {
-        if (mRearCameraId == null) {
-            try {
-                for (final String cameraId : mCameraManager.getCameraIdList()) {
-                    final CameraCharacteristics characteristics =
-                            mCameraManager.getCameraCharacteristics(cameraId);
-                    final int orientation = characteristics.get(CameraCharacteristics.LENS_FACING);
-                    if (orientation == CameraCharacteristics.LENS_FACING_BACK) {
-                        mRearCameraId = cameraId;
-                        break;
-                    }
-                }
-            } catch (CameraAccessException e) {
-                // Ignore
-            }
-        }
-        return mRearCameraId;
-    }
-
-    private Intent getLaunchableIntent(Intent intent) {
-        PackageManager pm = mContext.getPackageManager();
-        List<ResolveInfo> resInfo = pm.queryIntentActivities(intent, 0);
-        if (resInfo.isEmpty()) {
-            return null;
-        }
-        return pm.getLaunchIntentForPackage(resInfo.get(0).activityInfo.packageName);
-    }
 
 }

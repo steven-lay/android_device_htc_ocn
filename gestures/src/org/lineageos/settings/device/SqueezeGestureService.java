@@ -31,21 +31,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraAccessException;
 import android.Manifest;
-import android.media.AudioManager;
 import android.media.session.MediaSessionLegacyHelper;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
 import android.os.UserHandle;
-import android.os.Vibrator;
-import android.os.VibrationEffect;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -58,7 +50,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ApplicationInfo;
 import android.view.MotionEvent;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.graphics.PixelFormat;
 import android.view.Display;
@@ -74,7 +65,7 @@ import org.lineageos.internal.util.FileUtils;
 
 import java.util.List;
 
-public class SqueezeGestureService extends Service {
+public class SqueezeGestureService extends HTCSuperGestures {
 
     private static final boolean DEBUG = false;
 
@@ -87,13 +78,14 @@ public class SqueezeGestureService extends Service {
 
     private static final String EDGE_THRESHOLD_PATH = "/sys/class/htc_sensorhub/sensor_hub/edge_thd";
 
-    private static final String SQUEEZE_SHORT_ACTION = "squeeze_short";
-    private static final String SQUEEZE_LONG_ACTION = "squeeze_long";
-    private static final String SQUEEZE_GESTURE_ENABLE = "squeeze_enabled";
     private static final String SQUEEZE_FORCE = "squeeze_force";
-    private static final String SQUEEZE_HAPTIC_FEEDBACK_ENABLED = "squeeze_haptic_feedback";
+    private static final String SQUEEZE_GESTURE_ENABLE = "squeeze_enabled";
+    private static final String SQUEEZE_LONG_ACTION = "squeeze_long";
     private static final String SQUEEZE_LONG_SQUEEZE_DURATION = "long_squeeze_duration";
-    private static final String HAPTIC_FEEDBACK_IGNORE_RINGER = "haptic_ignore_ringer";
+    private static final String SQUEEZE_SHORT_ACTION = "squeeze_short";
+
+    private static final String HAPTIC_FEEDBACK_ENABLED = "squeeze_haptic_feedback";
+    private static final String HAPTIC_FEEDBACK_IGNORE_RINGER = "squeeze_haptic_ignore_ringer";
 
     private static final int SQUEEZE_FORCE_DEFAULT = 150;
     private static final int LONG_SQUEEZE_DURATION_DEFAULT = 700;
@@ -101,31 +93,21 @@ public class SqueezeGestureService extends Service {
     private static final int ACTION_TAKE_SCREENSHOT = 12;
     private static final int ACTION_TURN_SCREEN_ON_OFF = 13;
 
-    private Context mContext;
-    private PowerManager mPowerManager;
-    private AudioManager mAudioManager;
     private Handler mHandler;
-    private WakeLock mGestureWakeLock;
-    private CameraManager mCameraManager;
-    private Vibrator mVibrator;
-    private SensorManager mSensorManager;
-    private WindowManager windowManager;
     private ImageView squeezeForceView;
+    private Sensor mEdgeGestureSensor = null;
+    private SensorManager mSensorManager;
 
-    private String mRearCameraId;
-    private boolean mTorchEnabled;
-    private int mShortSqueezeAction;
+    private boolean mSqueezeEnabled;
+    private final int mForcePrefMin = 100;
+    private int mForcePref = 0;
     private int mLongSqueezeAction;
     private int mLongSqueezeDuration = 700;
+    private int mShortSqueezeAction;
     private long mHoldDownTime;
-    private boolean mSqueezeEnabled;
-    private boolean mHapticFeedbackEnabled;
-    private boolean mHapticIgnoreRinger;
 
-    private Sensor mEdgeGestureSensor = null;
-    private int mForcePref = 0;
-    private final int mForcePrefMin = 100;
-    private String[] mIntStrings = new String[10];
+    private boolean mHapticIgnoreRinger;
+    private boolean mDisableHaptic;
 
     private final int LONG_SQUEEZE_ACTION = 1;
     private final int SHORT_SQUEEZE_VIBRATION = 2;
@@ -136,18 +118,9 @@ public class SqueezeGestureService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        mContext = this;
-
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         loadPreferences(sharedPrefs);
         sharedPrefs.registerOnSharedPreferenceChangeListener(mPrefListener);
-        mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        mGestureWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "HtcGestureWakeLock");
-        mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
-        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-
-        mCameraManager.registerTorchCallback(new TorchModeCallback(), null);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
@@ -193,10 +166,6 @@ public class SqueezeGestureService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mSensorManager.unregisterListener(mEdgeGestureSensorEventListener);
-    }
-
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 
     /**
@@ -307,7 +276,7 @@ public class SqueezeGestureService extends Service {
             mSqueezeEnabled = sharedPreferences.getBoolean(SQUEEZE_GESTURE_ENABLE, true);
             mForcePref = sharedPreferences.getInt(SQUEEZE_FORCE, SQUEEZE_FORCE_DEFAULT);
             mForcePref += mForcePrefMin;
-            mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+            //mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
             mHapticIgnoreRinger = sharedPreferences.getBoolean(HAPTIC_FEEDBACK_IGNORE_RINGER, true);
             mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
                 Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
@@ -341,8 +310,8 @@ public class SqueezeGestureService extends Service {
                         if (!FileUtils.writeLine(EDGE_THRESHOLD_PATH, Integer.toString(mForcePref))) {
                             Log.w(TAG, "Failed to write force threshold sysfs path");
                         }
-                    } else if (SQUEEZE_HAPTIC_FEEDBACK_ENABLED.equals(key)) {
-                        mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
+                   // } else if (SQUEEZE_HAPTIC_FEEDBACK_ENABLED.equals(key)) {
+                     //   mHapticFeedbackEnabled = sharedPreferences.getBoolean(SQUEEZE_HAPTIC_FEEDBACK_ENABLED, true);
                     } else if (SQUEEZE_LONG_SQUEEZE_DURATION.equals(key)) {
                         mLongSqueezeDuration = Integer.parseInt(sharedPreferences.getString(SQUEEZE_LONG_SQUEEZE_DURATION,
                             Integer.toString(LONG_SQUEEZE_DURATION_DEFAULT)));
@@ -355,62 +324,6 @@ public class SqueezeGestureService extends Service {
             }
         };
 
-    private class TorchModeCallback extends CameraManager.TorchCallback {
-        @Override
-        public void onTorchModeChanged(String cameraId, boolean enabled) {
-            if (!cameraId.equals(mRearCameraId)) return;
-            mTorchEnabled = enabled;
-        }
-
-        @Override
-        public void onTorchModeUnavailable(String cameraId) {
-            if (!cameraId.equals(mRearCameraId)) return;
-            mTorchEnabled = false;
-        }
-    }
-
-    private void launchCamera() {
-        final Intent intent = new Intent(lineageos.content.Intent.ACTION_SCREEN_CAMERA_GESTURE);
-        mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT,
-            Manifest.permission.STATUS_BAR_SERVICE);
-        doHapticFeedback();
-    }
-
-    private void launchBrowser() {
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final Intent intent = getLaunchableIntent(
-            new Intent(Intent.ACTION_VIEW, Uri.parse("http:")));
-        startActivitySafely(intent);
-        doHapticFeedback();
-    }
-
-    private void launchDialer() {
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final Intent intent = new Intent(Intent.ACTION_DIAL, null);
-        startActivitySafely(intent);
-        doHapticFeedback();
-    }
-
-    private void launchEmail() {
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final Intent intent = getLaunchableIntent(
-            new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:")));
-        startActivitySafely(intent);
-        doHapticFeedback();
-    }
-
-    private void launchMessages() {
-        mPowerManager.wakeUp(SystemClock.uptimeMillis(), GESTURE_WAKEUP_REASON);
-        final String defaultApplication = Settings.Secure.getString(
-            mContext.getContentResolver(), "sms_default_application");
-        final PackageManager pm = mContext.getPackageManager();
-        final Intent intent = pm.getLaunchIntentForPackage(defaultApplication);
-        if (intent != null) {
-            startActivitySafely(intent);
-            doHapticFeedback();
-        }
-    }
-
     private void takeScreenshot() {
         if (ScreenStateReceiver.isScreenOn()) {
             simulateKey(KeyEvent.KEYCODE_SYSRQ);
@@ -420,114 +333,8 @@ public class SqueezeGestureService extends Service {
         }
     }
 
-    private void toggleFlashlight() {
-        String rearCameraId = getRearCameraId();
-        if (rearCameraId != null) {
-            try {
-                mCameraManager.setTorchMode(rearCameraId, !mTorchEnabled);
-                mTorchEnabled = !mTorchEnabled;
-            } catch (CameraAccessException e) {
-                // Ignore
-            }
-            doHapticFeedback();
-        }
-    }
-
     private void turnScreenOnOff() {
 	simulateKey(KeyEvent.KEYCODE_POWER);
-    }
-
-    private void playPauseMusic() {
-        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
-        doHapticFeedback();
-    }
-
-    private void previousTrack() {
-        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
-        doHapticFeedback();
-    }
-
-    private void nextTrack() {
-        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_NEXT);
-        doHapticFeedback();
-    }
-
-    private void volumeDown() {
-        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
-        doHapticFeedback();
-    }
-
-    private void volumeUp() {
-        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0);
-        doHapticFeedback();
-    }
-
-    private void dispatchMediaKeyWithWakeLockToMediaSession(final int keycode) {
-        final MediaSessionLegacyHelper helper = MediaSessionLegacyHelper.getHelper(mContext);
-        if (helper == null) {
-            Log.w(TAG, "Unable to send media key event");
-            return;
-        }
-        KeyEvent event = new KeyEvent(SystemClock.uptimeMillis(),
-            SystemClock.uptimeMillis(), KeyEvent.ACTION_DOWN, keycode, 0);
-        helper.sendMediaButtonEvent(event, true);
-        event = KeyEvent.changeAction(event, KeyEvent.ACTION_UP);
-        helper.sendMediaButtonEvent(event, true);
-    }
-
-    private void startActivitySafely(final Intent intent) {
-        if (intent == null) {
-            Log.w(TAG, "No intent passed to startActivitySafely");
-            return;
-        }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-            Intent.FLAG_ACTIVITY_SINGLE_TOP |
-            Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        try {
-            final UserHandle user = new UserHandle(UserHandle.USER_CURRENT);
-            mContext.startActivityAsUser(intent, null, user);
-        } catch (ActivityNotFoundException e) {
-            // Ignore
-        }
-    }
-
-    private void doHapticFeedback() {
-        if (mVibrator == null || !mVibrator.hasVibrator() || !mHapticFeedbackEnabled) {
-            return;
-        }
-        if (mHapticIgnoreRinger) {
-            mVibrator.vibrate(50);
-        } else if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-            mVibrator.vibrate(50);
-        }
-    }
-
-    private String getRearCameraId() {
-        if (mRearCameraId == null) {
-            try {
-                for (final String cameraId: mCameraManager.getCameraIdList()) {
-                    final CameraCharacteristics characteristics =
-                        mCameraManager.getCameraCharacteristics(cameraId);
-                    final int orientation = characteristics.get(CameraCharacteristics.LENS_FACING);
-                    if (orientation == CameraCharacteristics.LENS_FACING_BACK) {
-                        mRearCameraId = cameraId;
-                        break;
-                    }
-                }
-            } catch (CameraAccessException e) {
-                // Ignore
-            }
-        }
-        return mRearCameraId;
-    }
-
-    private Intent getLaunchableIntent(Intent intent) {
-        PackageManager pm = mContext.getPackageManager();
-        List < ResolveInfo > resInfo = pm.queryIntentActivities(intent, 0);
-        if (resInfo.isEmpty()) {
-            return null;
-        }
-        return pm.getLaunchIntentForPackage(resInfo.get(0).activityInfo.packageName);
     }
 
     public static String getForegroundApp(Context context) {
