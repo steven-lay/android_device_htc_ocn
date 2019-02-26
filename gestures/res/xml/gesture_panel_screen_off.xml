@@ -21,12 +21,12 @@
     <PreferenceCategory
         android:key="screen_actions_key"
         android:title="@string/touchscreen_gestures_display_title">
-       
-        <lineageos.preference.LineageSystemSettingSwitchPreference
-            android:key="touchscreen_gesture_haptic_feedback"
-            android:title="@string/touchscreen_gestures_haptic_feedback_title"
-            android:summary="@string/touchscreen_gestures_haptic_feedback_summary"
-            android:defaultValue="true" />
+
+        <SwitchPreference
+        android:key="screen_haptic_feedback"
+        android:title="@string/touchscreen_gestures_haptic_feedback_title"
+        android:defaultValue="true"
+        android:summary="Vibrate when a screen off gesture is activated" />
    
         <ListPreference
             android:key="swipe_up_action_key"
@@ -70,7 +70,7 @@
         android:title="Advanced">
 
         <SwitchPreference
-            android:key="haptic_ignore_ringer"
+            android:key="screen_haptic_ignore_ringer"
             android:title="Haptic feedback ignores ringer mode"
             android:defaultValue="true"
             android:summary="Vibrate even when in Do Not Disturb Mode" />
