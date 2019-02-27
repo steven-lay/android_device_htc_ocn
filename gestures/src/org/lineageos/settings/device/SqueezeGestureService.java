@@ -278,6 +278,8 @@ public class SqueezeGestureService extends HTCSuperGestures {
                 turnScreenOnOff();
                 break;
             case ACTION_DOZE:
+                if (!isDozeEnabled(mContext))
+                    enableDoze(mContext);
                 launchDozePulse(mContext);
         }
     }
@@ -339,15 +341,19 @@ public class SqueezeGestureService extends HTCSuperGestures {
             }
         };
 
- //   private static boolean isDozeEnabled() {
- //       return Settings.Secure.getInt(context.getContentResolver(),
- //             DOZE_ENABLED, 1) != 0;
- //   }
+    private static boolean enableDoze(Context context) {
+        return Settings.Secure.putInt(context.getContentResolver(),
+                DOZE_ENABLED, 1);
+    }
+
+    private static boolean isDozeEnabled(Context context) {
+        return Settings.Secure.getInt(context.getContentResolver(),
+                DOZE_ENABLED, 1) != 0;
+    }
 
     private static void launchDozePulse(Context context) {
-//        if (isDozeEnabled())
-            context.sendBroadcastAsUser(new Intent(DOZE_INTENT),
-                    new UserHandle(UserHandle.USER_CURRENT));
+        context.sendBroadcastAsUser(new Intent(DOZE_INTENT),
+                new UserHandle(UserHandle.USER_CURRENT));
     }
 
     private void takeScreenshot() {
