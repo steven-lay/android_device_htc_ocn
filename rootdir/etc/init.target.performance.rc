@@ -10,46 +10,6 @@ on init
 
     write /sys/module/lpm_levels/parameters/sleep_disabled Y
 
-    # disable thermal core control until CPU is configured
-    write /sys/module/msm_thermal/core_control/enabled 0
-
-    # bring CPUs online
-    write /sys/devices/system/cpu/cpu0/online 1
-    write /sys/devices/system/cpu/cpu1/online 1
-    write /sys/devices/system/cpu/cpu2/online 1
-    write /sys/devices/system/cpu/cpu3/online 1
-    write /sys/devices/system/cpu/cpu4/online 1
-    write /sys/devices/system/cpu/cpu5/online 1
-    write /sys/devices/system/cpu/cpu6/online 1
-    write /sys/devices/system/cpu/cpu7/online 1
-
-    # configure governor settings for little cluster
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "schedutil"
-    write /sys/devices/system/cpu/cpufreq/policy0/schedutil/up_rate_limit_us 500
-    write /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us 20000
-
-    # configure governor settings for big cluster
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor "schedutil"
-    write /sys/devices/system/cpu/cpufreq/policy4/schedutil/up_rate_limit_us 500
-    write /sys/devices/system/cpu/cpufreq/policy4/schedutil/down_rate_limit_us 20000
-    # CPU is configured, re-enable thermal core control
-    write /sys/module/msm_thermal/core_control/enabled 1
-
-    # Setup power retention
-    write /sys/module/lpm_levels/system/pwr/cpu0/ret/idle_enabled N
-    write /sys/module/lpm_levels/system/pwr/cpu1/ret/idle_enabled N
-    write /sys/module/lpm_levels/system/pwr/cpu2/ret/idle_enabled N
-    write /sys/module/lpm_levels/system/pwr/cpu3/ret/idle_enabled N
-    write /sys/module/lpm_levels/system/perf/cpu4/ret/idle_enabled N
-    write /sys/module/lpm_levels/system/perf/cpu5/ret/idle_enabled N
-    write /sys/module/lpm_levels/system/perf/cpu6/ret/idle_enabled N
-    write /sys/module/lpm_levels/system/perf/cpu7/ret/idle_enabled N
-    write /sys/module/lpm_levels/system/pwr/pwr-l2-dynret/idle_enabled N
-    write /sys/module/lpm_levels/system/pwr/pwr-l2-ret/idle_enabled N
-    write /sys/module/lpm_levels/system/perf/perf-l2-dynret/idle_enabled N
-    write /sys/module/lpm_levels/system/perf/perf-l2-ret/idle_enabled N
-    write /sys/module/lpm_levels/parameters/sleep_disabled N
-
     # Add a cpuset for the camera daemon
     mkdir /dev/cpuset/camera-daemon 0750 cameraserver cameraserver
     write /dev/cpuset/camera-daemon/cpus 0-7
@@ -116,6 +76,46 @@ on property:sys.boot_completed=1
     # Enable UFS powersaving
     write /sys/devices/soc/${ro.boot.bootdevice}/clkgate_enable 1
     write /sys/devices/soc/${ro.boot.bootdevice}/hibern8_on_idle_enable 1
+
+    # disable thermal core control until CPU is configured
+    write /sys/module/msm_thermal/core_control/enabled 0
+
+    # bring CPUs online
+    write /sys/devices/system/cpu/cpu0/online 1
+    write /sys/devices/system/cpu/cpu1/online 1
+    write /sys/devices/system/cpu/cpu2/online 1
+    write /sys/devices/system/cpu/cpu3/online 1
+    write /sys/devices/system/cpu/cpu4/online 1
+    write /sys/devices/system/cpu/cpu5/online 1
+    write /sys/devices/system/cpu/cpu6/online 1
+    write /sys/devices/system/cpu/cpu7/online 1
+
+    # configure governor settings for little cluster
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "schedutil"
+    write /sys/devices/system/cpu/cpufreq/policy0/schedutil/up_rate_limit_us 500
+    write /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us 20000
+
+    # configure governor settings for big cluster
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor "schedutil"
+    write /sys/devices/system/cpu/cpufreq/policy4/schedutil/up_rate_limit_us 500
+    write /sys/devices/system/cpu/cpufreq/policy4/schedutil/down_rate_limit_us 20000
+    # CPU is configured, re-enable thermal core control
+    write /sys/module/msm_thermal/core_control/enabled 1
+
+    # Setup power retention
+    write /sys/module/lpm_levels/system/pwr/cpu0/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/cpu1/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/cpu2/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/cpu3/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/cpu4/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/cpu5/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/cpu6/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/cpu7/ret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/pwr-l2-dynret/idle_enabled N
+    write /sys/module/lpm_levels/system/pwr/pwr-l2-ret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/perf-l2-dynret/idle_enabled N
+    write /sys/module/lpm_levels/system/perf/perf-l2-ret/idle_enabled N
+    write /sys/module/lpm_levels/parameters/sleep_disabled N
 
     # Enable bus-dcvs
     write /sys/class/devfreq/soc:qcom,cpubw/governor "bw_hwmon"
