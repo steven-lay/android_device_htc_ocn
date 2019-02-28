@@ -125,7 +125,7 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
         }
         if (mSensor != null) {
             mSensorManager.registerListener(mSensorEventListener,
-                mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                mSensor, SensorManager.SENSOR_DELAY_GAME);
             mScreenStateReceiver = new ScreenStateReceiver();
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(Intent.ACTION_SCREEN_ON);
@@ -174,7 +174,7 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
             case DOUBLE_TAP:
                 if (!isDoubleTapEnabled()) {
                     mSensorManager.registerListener(mSensorEventListener,
-                        mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                        mSensor, SensorManager.SENSOR_DELAY_GAME);
                     return -1;
                 }
                 mPowerManager.wakeUp(SystemClock.uptimeMillis());
@@ -230,7 +230,7 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
                 break;
         }
         mSensorManager.registerListener(mSensorEventListener,
-            mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            mSensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
     private void loadPreferences(SharedPreferences sharedPreferences) {
