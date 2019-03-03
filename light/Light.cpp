@@ -112,6 +112,9 @@ void Light::setCapacitiveLight(const LightState& state) {
 
     uint32_t brightness = rgbToBrightness(state);
 
+    if (brightness > 0 && brightness < 16)
+        brightness = 16;
+    
     mCapacitive << brightness << std::endl;
 }
 
