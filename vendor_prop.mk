@@ -130,8 +130,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Perf
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.sys.fw.bg_apps_limit=60 \
-    ro.vendor.qti.config.zram=true
+    ro.sys.fw.bg_apps_limit=60
 
 # Radio
 PRODUCT_PROPERTY_OVERRIDES += \
