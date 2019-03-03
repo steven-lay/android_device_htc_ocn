@@ -87,7 +87,6 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
     public static final int SENSOR_GESTURE_SWIPE_RIGHT = 0x20;
     public static final int SENSOR_GESTURE_SWIPE_UP = 0x4;
 
-    private ScreenStateReceiver mScreenStateReceiver;
     private Sensor mSensor = null;
     private SensorEventListener mSensorEventListener;
     private SensorManager mSensorManager;
@@ -126,11 +125,6 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
         if (mSensor != null) {
             mSensorManager.registerListener(mSensorEventListener,
                 mSensor, SensorManager.SENSOR_DELAY_GAME);
-            mScreenStateReceiver = new ScreenStateReceiver();
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(Intent.ACTION_SCREEN_ON);
-            intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
-            registerReceiver(mScreenStateReceiver, intentFilter);
         }
     }
 
@@ -139,7 +133,6 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
         if (DEBUG) Log.d(TAG, "Destroying service");
         super.onDestroy();
         mSensorManager.unregisterListener(this);
-        unregisterReceiver(mScreenStateReceiver);
     }
 
     private void tryHapticFeedback() {
