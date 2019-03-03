@@ -169,7 +169,6 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
 
     private int gestureToAction(int gesture) {
         if (DEBUG) Log.d(TAG, "Gesture to action: " + gesture);
-        tryHapticFeedback();
         switch (gesture) {
             case DOUBLE_TAP:
                 if (!isDoubleTapEnabled()) {
@@ -177,6 +176,7 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
                         mSensor, SensorManager.SENSOR_DELAY_GAME);
                     return -1;
                 }
+                tryHapticFeedback();
                 mPowerManager.wakeUp(SystemClock.uptimeMillis());
                 return -1;
             case SWIPE_UP:
@@ -197,36 +197,47 @@ public class ScreenGestureService extends HTCSuperGestures implements SensorEven
         switch (action) {
             case TouchscreenGestureConstants.ACTION_CAMERA:
                 launchCamera();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_FLASHLIGHT:
                 toggleFlashlight();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_BROWSER:
                 launchBrowser();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_DIALER:
                 launchDialer();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_EMAIL:
                 launchEmail();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_MESSAGES:
                 launchMessages();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_PLAY_PAUSE_MUSIC:
                 playPauseMusic();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_PREVIOUS_TRACK:
                 previousTrack();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_NEXT_TRACK:
                 nextTrack();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_VOLUME_DOWN:
                 volumeDown();
+                tryHapticFeedback();
                 break;
             case TouchscreenGestureConstants.ACTION_VOLUME_UP:
                 volumeUp();
+                tryHapticFeedback();
                 break;
         }
         mSensorManager.registerListener(mSensorEventListener,
