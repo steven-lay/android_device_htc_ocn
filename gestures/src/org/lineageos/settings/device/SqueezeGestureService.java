@@ -128,6 +128,8 @@ public class SqueezeGestureService extends HTCSuperGestures {
         loadPreferences(sharedPrefs);
         sharedPrefs.registerOnSharedPreferenceChangeListener(mPrefListener);
 
+        mHandler = new Handler();
+
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         Iterator iterator = mSensorManager.getSensorList(-1).iterator();
@@ -148,12 +150,13 @@ public class SqueezeGestureService extends HTCSuperGestures {
                 if (DEBUG) Log.d(TAG, "Registered Edge Gesture Sensor Listener");
             }
         }
+    }
 
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what) {
+    private class mHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
                 case LONG_SQUEEZE_ACTION:
                     tryHapticFeedback();
                     int action = gestureToAction(LONGSQUEEZE);
@@ -163,9 +166,8 @@ public class SqueezeGestureService extends HTCSuperGestures {
                 case SHORT_SQUEEZE_VIBRATION:
                     tryHapticFeedback();
                     break;
-                }
             }
-        };
+        }
     }
 
     @Override
