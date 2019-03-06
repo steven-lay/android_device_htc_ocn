@@ -361,7 +361,6 @@ public class SqueezeGestureService extends HTCSuperGestures {
     private void takeScreenshot() {
         if (ScreenStateReceiver.isScreenOn()) {
             simulateKey(KeyEvent.KEYCODE_SYSRQ);
-            doHapticFeedback();
         } else {
             Log.d(TAG, "Cannot take screenshot while screen is off");
         }
