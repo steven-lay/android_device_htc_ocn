@@ -235,6 +235,7 @@ VENDOR_SECURITY_PATCH := 2018-11-01
 -include device/qcom/sepolicy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
 BOARD_PLAT_PRIVATE_SEPOLICY_DIR += $(DEVICE_PATH)/sepolicy/private
+SELINUX_IGNORE_NEVERALLOWS := true
 
 # Sensors
 USE_SENSOR_MULTI_HAL := true
