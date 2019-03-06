@@ -146,7 +146,7 @@ public class SqueezeGestureService extends HTCSuperGestures {
         if (mEdgeGestureSensor != null) {
             if (mSqueezeEnabled) {
                 mSensorManager.registerListener(mEdgeGestureSensorEventListener,
-                    mEdgeGestureSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                    mEdgeGestureSensor, SensorManager.SENSOR_DELAY_GAME);
                 if (DEBUG) Log.d(TAG, "Registered Edge Gesture Sensor Listener");
             }
         }
@@ -319,7 +319,7 @@ public class SqueezeGestureService extends HTCSuperGestures {
                         mSqueezeEnabled = sharedPreferences.getBoolean(SQUEEZE_GESTURE_ENABLE, true);
                         if (mSqueezeEnabled) {
                             mSensorManager.registerListener(mEdgeGestureSensorEventListener,
-                                mEdgeGestureSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                                mEdgeGestureSensor, SensorManager.SENSOR_DELAY_GAME);
                         } else {
                             mSensorManager.unregisterListener(mEdgeGestureSensorEventListener);
                         }
