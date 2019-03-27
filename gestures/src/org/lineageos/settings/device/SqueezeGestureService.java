@@ -206,9 +206,13 @@ public class SqueezeGestureService extends HTCSuperGestures {
                 long SqueezeReleaseTime = SystemClock.elapsedRealtime() - mHoldDownTime;
                 if (SqueezeReleaseTime > 100 && SqueezeReleaseTime < mLongSqueezeDuration) {
                     mHandler.removeMessages(LONG_SQUEEZE_ACTION);
-                    int action = gestureToAction(SHORTSQUEEZE);
-                    if (action > -1)
-                        handleGestureAction(action);
+                    if (getForegroundApp(mContext).equals("Camera")) {
+                        simulateKey(KeyEvent.KEYCODE_VOLUME_UP);
+                    } else {
+                        int action = gestureToAction(SHORTSQUEEZE);
+                        if (action > -1)
+                            handleGestureAction(action);
+                    }
                 } else if (SqueezeReleaseTime < 100) {
                     mHandler.removeMessages(LONG_SQUEEZE_ACTION);
                     mHandler.removeMessages(SHORT_SQUEEZE_VIBRATION);
