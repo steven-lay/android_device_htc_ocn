@@ -33,7 +33,17 @@
     <string name="squeeze_enabled_summary">Perform various actions using squeeze gestures</string>
     <string name="squeeze_short_title">Short Squeeze gesture</string>
     <string name="squeeze_long_title">Long Squeeze gesture</string>
-
+    <string name="squeeze_gestures_enabled">Squeeze gestures are enabled</string>
+    <string name="squeeze_gestures_disabled">Squeeze gestures are disabled</string>
+    <string name="squeeze_long_activation_time">Long Squeeze activation time</string>
+    <string name="squeeze_force_title">Long Squeeze activation time</string>
+    <string name="squeeze_force_summary">Adjust the squeeze force</string>
+    <string name="squeeze_advanced_settings_title">Advanced</string>
+    <string name="squeeze_haptic_ignore_ringer_title">Haptic feedback ignores ringer mode</string>
+    <string name="squeeze_haptic_ignore_ringer_summary">Vibrate even when in Do Not Disturb Mode</string>
+    <string name="squeeze_gestures_activated">Vibrate when a squeeze gesture is activated</string>
+    <string name="squeeze_gestures_screen_off_activated">Vibrate when a screen off gesture is activated</string>
+	
     <!-- Action Strings -->
     <string name="action_dialog_title">Gesture action</string>
     <string name="action_do_nothing">Do nothing</string>
