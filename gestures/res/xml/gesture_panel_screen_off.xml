@@ -26,7 +26,7 @@
         android:key="screen_haptic_feedback"
         android:title="@string/touchscreen_gestures_haptic_feedback_title"
         android:defaultValue="true"
-        android:summary="Vibrate when a screen off gesture is activated" />
+        android:summary="@string/squeeze_gestures_screen_off_activated" />
    
         <ListPreference
             android:key="swipe_up_action_key"
@@ -67,13 +67,13 @@
 
     <PreferenceCategory
         android:key="advanced_settings"
-        android:title="Advanced">
+        android:title="@string/squeeze_advanced_settings_title">
 
         <SwitchPreference
             android:key="screen_haptic_ignore_ringer"
-            android:title="Haptic feedback ignores ringer mode"
+            android:title="@string/squeeze_haptic_ignore_ringer_title"
             android:defaultValue="true"
-            android:summary="Vibrate even when in Do Not Disturb Mode" />
+            android:summary="@string/squeeze_haptic_ignore_ringer_summary" />
 
     </PreferenceCategory>
 

@@ -26,14 +26,14 @@
             android:key="squeeze_enabled"
             android:title="@string/squeeze_enabled_title"
             android:defaultValue="true"
-            android:summaryOn="Squeeze gestures are enabled"
-            android:summaryOff="Squeeze gestures are disabled" />
+            android:summaryOn="@string/squeeze_gestures_enabled"
+            android:summaryOff="@string/squeeze_gestures_disabled" />
 
         <SwitchPreference
             android:key="squeeze_haptic_feedback"
             android:title="@string/touchscreen_gestures_haptic_feedback_title"
             android:defaultValue="true"
-            android:summary="Vibrate when a squeeze gesture is activated"
+            android:summary="@string/squeeze_gestures_activated"
             android:dependency="squeeze_enabled" />
 
         <ListPreference
@@ -58,7 +58,7 @@
 
         <ListPreference
             android:key="long_squeeze_duration"
-            android:title="Long Squeeze activation time"
+            android:title="@string/squeeze_long_activation_time"
             android:summary="%s"
             android:defaultValue="700"
             android:entries="@array/long_squeeze_entries"
@@ -67,8 +67,8 @@
 
         <org.lineageos.settings.device.widget.SeekBarPreference
             android:key="squeeze_force"
-            android:title="Squeeze force"
-            android:summary="Adjust the squeeze force"
+            android:title="@string/squeeze_force_title"
+            android:summary="@string/squeeze_force_summary"
             android:max="200"
             android:defaultValue="150"
             android:layout="@layout/preference_slider"
@@ -78,13 +78,13 @@
 
     <PreferenceCategory
         android:key="advanced_settings"
-        android:title="Advanced">
+        android:title="@string/squeeze_advanced_settings_title">
 
         <SwitchPreference
             android:key="squeeze_haptic_ignore_ringer"
-            android:title="Haptic feedback ignores ringer mode"
+            android:title="@string/squeeze_haptic_ignore_ringer_title"
             android:defaultValue="true"
-            android:summary="Vibrate even when in Do Not Disturb Mode" />
+            android:summary="@string/squeeze_haptic_ignore_ringer_summary" />
 
     </PreferenceCategory>
 
