@@ -127,6 +127,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     mmp.enable.3g2=true \
     persist.media.treble_omx=false \
     persist.mm.enable.prefetch=true
+    
+# NFC
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.nfc.port=I2C
 
 # Perf
 PRODUCT_PROPERTY_OVERRIDES += \
