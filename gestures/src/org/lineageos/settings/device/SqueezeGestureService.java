@@ -66,8 +66,6 @@ import org.lineageos.internal.util.FileUtils;
 
 import java.util.List;
 
-import static android.provider.Settings.Secure.DOZE_ENABLED;
-
 public class SqueezeGestureService extends HTCSuperGestures {
 
     private static final boolean DEBUG = false;
@@ -80,8 +78,6 @@ public class SqueezeGestureService extends HTCSuperGestures {
     private static final String GESTURE_WAKEUP_REASON = "squeeze-gesture-wakeup";
 
     private static final String EDGE_THRESHOLD_PATH = "/sys/class/htc_sensorhub/sensor_hub/edge_thd";
-
-    private static final String DOZE_INTENT = "com.android.systemui.doze.pulse";
 
     private static final String SQUEEZE_FORCE = "squeeze_force";
     private static final String SQUEEZE_GESTURE_ENABLE = "squeeze_enabled";
@@ -97,7 +93,6 @@ public class SqueezeGestureService extends HTCSuperGestures {
 
     private static final int ACTION_TAKE_SCREENSHOT = 12;
     private static final int ACTION_TURN_SCREEN_ON_OFF = 13;
-    private static final int ACTION_DOZE = 14;
 
     private Handler mHandler;
     private ImageView squeezeForceView;
@@ -281,8 +276,6 @@ public class SqueezeGestureService extends HTCSuperGestures {
             case ACTION_TURN_SCREEN_ON_OFF:
                 turnScreenOnOff();
                 break;
-            case ACTION_DOZE:
-                launchDozePulse(mContext);
         }
     }
 
@@ -342,17 +335,6 @@ public class SqueezeGestureService extends HTCSuperGestures {
                 }
             }
         };
-
- //   private static boolean isDozeEnabled() {
- //       return Settings.Secure.getInt(context.getContentResolver(),
- //             DOZE_ENABLED, 1) != 0;
- //   }
-
-    private static void launchDozePulse(Context context) {
-//        if (isDozeEnabled())
-            context.sendBroadcastAsUser(new Intent(DOZE_INTENT),
-                    new UserHandle(UserHandle.USER_CURRENT));
-    }
 
     private void takeScreenshot() {
         if (ScreenStateReceiver.isScreenOn()) {

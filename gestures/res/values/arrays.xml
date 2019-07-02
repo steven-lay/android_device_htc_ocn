@@ -47,7 +47,6 @@
         <item>@string/action_volume_up</item>
         <item>@string/action_take_screenshot</item>
         <item>@string/action_turn_screen_on_off</item>
-        <item>@string/action_doze</item>
     </string-array>
 
 
@@ -81,7 +80,6 @@
         <item>11</item>
         <item>12</item>
         <item>13</item>
-        <item>14</item>
     </string-array>
 
     <string-array name="long_squeeze_entries" translatable="false">

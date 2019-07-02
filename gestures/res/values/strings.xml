@@ -60,6 +60,5 @@
     <string name="action_volume_up">Raise media volume</string>
     <string name="action_take_screenshot">Take a screenshot</string>
     <string name="action_turn_screen_on_off">Turn Screen On/Off</string>
-    <string name="action_doze">Trigger Ambient Display</string>
 
 </resources>
