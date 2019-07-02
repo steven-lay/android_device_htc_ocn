@@ -19,47 +19,76 @@ package org.lineageos.settings.doze;
 
 import android.content.Context;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.hardware.TriggerEvent;
-import android.hardware.TriggerEventListener;
 import android.os.SystemClock;
 import android.util.Log;
 
-public class TiltSensor {
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class TiltSensor implements SensorEventListener {
 
     private static final boolean DEBUG = false;
     private static final String TAG = "TiltSensor";
 
-    private Context mContext;
-    private Sensor mPickup;
+    private static final int BATCH_LATENCY_IN_MS = 100;
+    private static final int MIN_PULSE_INTERVAL_MS = 2500;
+
     private SensorManager mSensorManager;
-    private TriggerEventListener mListener;
+    private Sensor mSensor;
+    private Context mContext;
+    private ExecutorService mExecutorService;
+
+    private long mEntryTimestamp;
 
     public TiltSensor(Context context) {
         mContext = context;
-        mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
-        mPickup = mSensorManager.getDefaultSensor(Sensor.TYPE_PICK_UP_GESTURE);
-        mListener = new TriggerListener();
-        mSensorManager.requestTriggerSensor(mListener, mPickup);
+        mSensorManager = mContext.getSystemService(SensorManager.class);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_TILT_DETECTOR);
+        mExecutorService = Executors.newSingleThreadExecutor();
     }
 
-    private class TriggerListener extends TriggerEventListener {
-        @Override
-        public void onTrigger(TriggerEvent event) {
-            if (DEBUG) Log.d(TAG, "Pick up detected");
-            Utils.launchDozePulse(mContext);
-            mSensorManager.cancelTriggerSensor(mListener, mPickup);
-            mSensorManager.requestTriggerSensor(mListener, mPickup);
+    private Future<?> submit(Runnable runnable) {
+        return mExecutorService.submit(runnable);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (DEBUG) Log.d(TAG, "Got sensor event: " + event.values[0]);
+
+        long delta = SystemClock.elapsedRealtime() - mEntryTimestamp;
+        if (delta < MIN_PULSE_INTERVAL_MS) {
+            return;
+        } else {
+            mEntryTimestamp = SystemClock.elapsedRealtime();
         }
-    };
+
+        if (event.values[0] == 1) {
+            Utils.launchDozePulse(mContext);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        /* Empty */
+    }
 
     protected void enable() {
         if (DEBUG) Log.d(TAG, "Enabling");
-        mSensorManager.requestTriggerSensor(mListener, mPickup);
+        submit(() -> {
+            mSensorManager.registerListener(this, mSensor,
+                    SensorManager.SENSOR_DELAY_NORMAL, BATCH_LATENCY_IN_MS * 1000);
+            mEntryTimestamp = SystemClock.elapsedRealtime();
+        });
     }
 
     protected void disable() {
         if (DEBUG) Log.d(TAG, "Disabling");
-        mSensorManager.cancelTriggerSensor(mListener, mPickup);
+        submit(() -> {
+            mSensorManager.unregisterListener(this, mSensor);
+        });
     }
 }
