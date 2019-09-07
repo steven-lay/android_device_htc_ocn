@@ -1000,41 +1000,60 @@ vendor/lib64/libhtc_common.so
 # NFC
 vendor/firmware/libpn553_fw.so
 
-# Perf - energy awareness
-vendor/bin/energy-awareness
+# Perf - Moto Nash
+lib/libqti_performance.so|e0cf48ae48fa076c643414539e6a99c1
+lib/vendor.qti.hardware.perf@1.0.so|9e72abe8d9a4eb6a1cda60400116f49d
+lib/libqti-perfd-client_system.so|f9621ac51b079030fb38ff578310fd5b
+lib64/libqti_performance.so|161306ac9d66be6d3e0f3f3cb5205526
+lib64/vendor.qti.hardware.perf@1.0.so|63d52f4dffec24e5e99444851a641860
+lib64/libqti-perfd-client_system.so|afaf979aa82daaee847b91052d231f4d
+vendor/bin/energy-awareness|70fe111680e37aa3588ff2267d6627e5
+vendor/bin/hw/vendor.qti.hardware.perf@1.0-service|545f9fe9a8935f92e21ad04fa6fee08a
+vendor/etc/init/vendor.qti.hardware.perf@1.0-service.rc|61509522db6b85b648785b92b1bdf7c9
+vendor/etc/perf/commonresourceconfigs.xml|f7c3e35726d049d7e828644834b5956a
+vendor/etc/perf/perfboostsconfig.xml|81bb7e32c88799af331fc4dd003f43a1
+vendor/etc/perf/perf-profile0.conf|0afb2832f36dbcdf3f477cb8215be504
+vendor/etc/perf/perf-profile1.conf|1d31fd3fa7a326c471c68220cbcfe940
+vendor/etc/perf/perf-profile2.conf|092d6d99f0cff7b6c644d8286335194e
+vendor/etc/perf/perf-profile3.conf|31138f5229e5ab49620bd2e4c51630be
+vendor/etc/perf/perf-profile4.conf|d094ec01c3f3c67b7fdb1ab7666de110
+vendor/etc/perf/perf-profile5.conf|4c7ad85f8eee8c6ccba5e86700a4a6e8
+vendor/etc/perf/perf-profile6.conf|44cbabfdb697187528c0583164fa32d1
+vendor/etc/perf/targetconfig.xml|ccdced2adc60cc1caa9fb1483b455ebb
+vendor/etc/perf/targetresourceconfigs.xml|3de741fd8fdf13115203eeafdcadc883
+vendor/etc/powerhint.xml|d9b0bdba8df7df25faa8090d7818398a
+vendor/lib/libperfgluelayer.so|2bf13fda181e92147c5542dd089bd1d4
+vendor/lib/libqti-perfd-client.so|4fa7f987acd2ef33287e5e3c317afbf7
+vendor/lib/libqti-perfd.so|b14c3a05284f1eab9f030839428c6c26
+vendor/lib/libqti-util.so|69c28280bc5658e7f9b53a1bd641c060
+vendor/lib/libqti-utils.so|2dd6355d1808554d4666ec76d6757f52
+vendor/lib/vendor.qti.hardware.perf@1.0.so|63d52f4dffec24e5e99444851a641860
+vendor/lib64/libperfgluelayer.so|24fefa02f4a1c1f291044114d3e4d356
+vendor/lib64/libqti-perfd-client.so|36f954df499a5c1c71efcd430ad4e6f8
+vendor/lib64/libqti-perfd.so|ad205459c2f8a9990307524295f61c3e
+vendor/lib64/libqti-util.so|dae75c9dd98fef234e0af1c1b88f948f
+vendor/lib64/libqti-utils.so|1f741dc8f75d41358c57dad6943e50a4
+vendor/lib64/vendor.qti.hardware.perf@1.0.so|63d52f4dffec24e5e99444851a641860
 
-# Perf - Xiaomi msm8998
-vendor/bin/hw/vendor.qti.hardware.perf@1.0-service|8f26b2b56b0c64b8b1818a00c07f48c2812bb4b2
-vendor/etc/init/vendor.qti.hardware.perf@1.0-service.rc|b50182aadab2e31409df61c523d0fb914a394e43
-vendor/etc/perf/perf-profile0.conf
-vendor/etc/perf/perf-profile1.conf
-vendor/etc/perf/perf-profile2.conf
-vendor/etc/perf/perf-profile3.conf
-vendor/etc/perf/perf-profile4.conf
-vendor/etc/perf/perf-profile5.conf
-vendor/etc/perf/perf-profile6.conf
-vendor/etc/perf/perfboostsconfig.xml|5334c3537113b44b6c9ff8f79a33205c645d848a
-vendor/lib/libfeedbackhandler.so|4a2783a03cf4f9935eb63e4525621d70c7fb0462
-vendor/lib/libperfgluelayer.so|f38d3a317e41718fd574c39edb843f10cc05f8bd
-vendor/lib/libqti-perfd-client.so|4dc73bb0039c9db0fea0bf622370f4e393647c41
-vendor/lib/libqti-perfd.so|6e7e7f3475907379eaee321b9192e15e929b1170
-vendor/lib/libqti-util.so|c285827ce550f235aa78c4e44f936868ff7e31f4
-vendor/lib/vendor.qti.hardware.perf@1.0_vendor.so|ffaaf98078ff3be80f8635de8475dd9862b00f21
-vendor/lib64/libfeedbackhandler.so|020f98e879322323371431a4c52d9fe1988a6293
-vendor/lib64/libperfgluelayer.so|76fdb82c7e275a7fc273281f9e5619ce477d784c
-vendor/lib64/libqti-perfd-client.so|ef2c0ab71a10206173fa99f5c329288a7ec75887
-vendor/lib64/libqti-perfd.so|2f2c5b8292fd83c26831c4bed8c6479f7f4649b1
-vendor/lib64/libqti-util.so|7d85e9bb97ce1aef4b604c38a6076cf9d22d67a1
-vendor/lib64/vendor.qti.hardware.perf@1.0_vendor.so|11f80bc9ce4eb7a5ce937423f24ce2830e74f13f
+# IOP - Moto Nash
+lib/vendor.qti.hardware.iop@1.0.so|ef725c65226cabe4c6f168a0baa4e4a2
+lib/vendor.qti.hardware.iop@2.0.so|a75ab66d02653ef89bbafa0432acfdfc
+lib64/vendor.qti.hardware.iop@1.0.so|17ea0109bdf7defdee09f06070ad7f8b
+lib64/vendor.qti.hardware.iop@2.0.so|19e3073775bf50d56d9c1ac967256bdc
+vendor/lib/vendor.qti.hardware.iop@2.0.so|a75ab66d02653ef89bbafa0432acfdfc
+vendor/lib/hw/vendor.qti.hardware.iop@2.0-impl.so|16a220568147ae34358c3f92ca69108e
+vendor/lib/libqti-iopd-client.so|68b3a1de911ba4898938a847c98f9984
+vendor/lib/vendor.qti.hardware.iop@1.0.so|ef725c65226cabe4c6f168a0baa4e4a2
+vendor/lib64/vendor.qti.hardware.iop@2.0.so|19e3073775bf50d56d9c1ac967256bdc
+vendor/lib64/hw/vendor.qti.hardware.iop@2.0-impl.so|dd8758bd07ebdcb115db5b226108797e
+vendor/lib64/libqti-iopd-client.so|943bb72dce4e88b98c3a92e3ae20048f
+vendor/lib64/vendor.qti.hardware.iop@1.0.so|17ea0109bdf7defdee09f06070ad7f8b
 
 # Peripheral manager
 vendor/bin/pm-proxy
 vendor/bin/pm-service
 vendor/lib/libperipheral_client.so
 vendor/lib64/libperipheral_client.so
-
-# Power
-vendor/etc/powerhint.xml|c23d3a9d8d2ba3b1bbd09c272d75c7143ba17cd0
 
 # QMI
 vendor/bin/irsc_util
