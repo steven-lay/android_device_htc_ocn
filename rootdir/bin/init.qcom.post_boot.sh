@@ -49,4 +49,4 @@ real_path=${misc_link##*>}
 setprop persist.vendor.mmi.misc_dev_path $real_path
 
 # Post-setup services
-setprop sys.post_boot.parsed 1
+setprop vendor.post_boot.parsed 1
