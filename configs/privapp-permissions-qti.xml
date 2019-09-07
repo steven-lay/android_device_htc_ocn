@@ -46,4 +46,12 @@ It allows additional grants on top of privapp-permissions-platform.xml
         <permission name="android.permission.READ_FRAME_BUFFER"/>
         <permission name="android.permission.WRITE_MEDIA_STORAGE"/>
     </privapp-permissions>
+
+    <privapp-permissions package="com.qualcomm.location">
+        <permission name="android.permission.CONTROL_LOCATION_UPDATES"/>
+    </privapp-permissions>
+
+    <privapp-permissions package="org.lineageos.settings.device">
+        <permission name="android.permission.WRITE_SECURE_SETTINGS"/>
+    </privapp-permissions>
 </permissions>
