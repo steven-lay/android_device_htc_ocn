@@ -1034,6 +1034,8 @@ vendor/lib64/libqti-perfd.so|ad205459c2f8a9990307524295f61c3e
 vendor/lib64/libqti-util.so|dae75c9dd98fef234e0af1c1b88f948f
 vendor/lib64/libqti-utils.so|1f741dc8f75d41358c57dad6943e50a4
 vendor/lib64/vendor.qti.hardware.perf@1.0.so|63d52f4dffec24e5e99444851a641860
+vendor/lib64/vendor.qti.hardware.perf@1.0_vendor.so|caf222ad1ed8869410c419c43d1405ea
+vendor/lib/vendor.qti.hardware.perf@1.0_vendor.so|f922ad90288408e88a609696c51c7796
 
 # IOP - Moto Nash
 lib/vendor.qti.hardware.iop@1.0.so|ef725c65226cabe4c6f168a0baa4e4a2
