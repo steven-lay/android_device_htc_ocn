@@ -12,8 +12,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
     <string name="gesture_screen_off_title">锁屏手势</string>
     <string name="gesture_edge_sense_title">Edge Sense 边框触控</string>
     <string name="style_summary">手势预览</string>
@@ -43,7 +43,7 @@
     <string name="squeeze_haptic_ignore_ringer_summary">触觉反馈发生时忽略振铃模式</string>
     <string name="squeeze_gestures_activated">触发握压手势时振动</string>
     <string name="squeeze_gestures_screen_off_activated">触发锁屏手势时振动</string>
-	
+
     <!-- Action Strings -->
     <string name="action_dialog_title">手势动作</string>
     <string name="action_do_nothing">什么都不做</string>
@@ -55,7 +55,7 @@
     <string name="action_messages">查看信息</string>
     <string name="action_play_pause_music">播放/暂停播放</string>
     <string name="action_previous_track">切换上一曲</string>
-    <string name="action_next_track">切换下一曲/string>
+    <string name="action_next_track">切换下一曲</string>
     <string name="action_volume_down">降低音量</string>
     <string name="action_volume_up">提高音量</string>
     <string name="action_take_screenshot">截取屏幕</string>
