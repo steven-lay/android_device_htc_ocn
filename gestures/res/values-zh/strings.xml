@@ -21,7 +21,7 @@
     <!-- Gestures: Touchscreen gestures -->
     <string name="touchscreen_gestures_haptic_feedback_title">触觉反馈</string>
     <string name="touchscreen_gestures_haptic_feedback_summary">检测到触屏手势时振动</string>
-    <string name="touchscreen_gestures_display_title">触屏手势展示<</string>
+    <string name="touchscreen_gestures_display_title">触屏手势展示</string>
     <string name="touchscreen_swipe_up_title">单指上滑</string>
     <string name="touchscreen_double_swipe_down_title">单指双次下滑</string>
     <string name="touchscreen_swipe_left_title">单指左滑</string>
