@@ -2,10 +2,6 @@
   {
     "repository": "android_kernel_htc_msm8998",
     "target_path": "kernel/htc/msm8998"
-  },
- {
-   "repository": "android_device_qcom_common",
-   "target_path": "device/qcom/common"
- }
+  }
 ]
 
